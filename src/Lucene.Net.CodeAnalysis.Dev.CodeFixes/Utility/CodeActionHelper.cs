@@ -37,5 +37,18 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Utility
             var title = string.Format(resourceValue, args);
             return CodeAction.Create(title, createChangedDocument, equivalenceKey);
         }
+
+        /// <summary>
+        /// Create a CodeAction using a resource string and formatting arguments.
+        /// </summary>
+        public static CodeAction CreateFromResource(
+            string resourceValue,
+            Func<CancellationToken, Task<Solution>> createChangedSolution,
+            string equivalenceKey,
+            params object[] args)
+        {
+            var title = string.Format(resourceValue, args);
+            return CodeAction.Create(title, createChangedSolution, equivalenceKey);
+        }
     }
 }

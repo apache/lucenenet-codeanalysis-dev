@@ -122,4 +122,7 @@ under the License.
     <value>Use {0}</value>
     <comment>Title for code fix; {0} is the code element to utilize.</comment>
   </data>
+  <data name="MakeXInternal" xml:space="preserve">
+    <value>Make {0} internal</value>
+  </data>
 </root>

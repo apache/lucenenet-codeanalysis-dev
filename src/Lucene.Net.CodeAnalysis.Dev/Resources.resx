@@ -197,4 +197,16 @@ under the License.
     <value>Methods that return array types should be analyzed to determine whether they are better suited to be one or more out parameters or to return a ValueTuple</value>
     <comment>The title of the diagnostic.</comment>
   </data>
+  <data name="LuceneDev1005_AnalyzerTitle" xml:space="preserve">
+    <value>Types in the Support namespace should not be public</value>
+  </data>
+  <data name="LuceneDev1005_AnalyzerDescription" xml:space="preserve">
+    <value>Types in the Lucene.Net.Support namespace should not be public.</value>
+  </data>
+  <data name="LuceneDev1005_AnalyzerMessageFormat" xml:space="preserve">
+    <value>{0} '{1}' should not have public accessibility in the Support namespace</value>
+  </data>
+  <data name="LuceneDev1005_CodeFixTitle" xml:space="preserve">
+    <value>Make {0} internal</value>
+  </data>
 </root>

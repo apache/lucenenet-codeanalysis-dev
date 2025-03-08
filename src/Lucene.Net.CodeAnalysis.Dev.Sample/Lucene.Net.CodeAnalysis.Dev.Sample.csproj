@@ -32,8 +32,8 @@ under the License.
     <_PackageVersionPropsFilePath>$(_NuGetPackageOutputPath)\Lucene.Net.CodeAnalysis.Dev.Version.props</_PackageVersionPropsFilePath>
     <!-- We install the analyzer package in a local directory so we don't pollute the
           .nuget cache on the dev machine with temporary builds -->
-    <RestorePackagesPath>obj\LocalNuGetPackages</RestorePackagesPath>
-    <_RestorePackagesPath>$(RestorePackagesPath)\lucene.net.codeanalsis.dev</_RestorePackagesPath>
+    <RestorePackagesPath>obj/LocalNuGetPackages</RestorePackagesPath>
+    <_RestorePackagesPath>$(RestorePackagesPath)/lucene.net.codeanalysis.dev</_RestorePackagesPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="Exists('$(_NuGetPackageOutputPath)')">
