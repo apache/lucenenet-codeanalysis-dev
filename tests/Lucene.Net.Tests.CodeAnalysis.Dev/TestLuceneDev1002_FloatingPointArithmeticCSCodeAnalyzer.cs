@@ -51,18 +51,35 @@ namespace Lucene.Net.Tests.CodeAnalysis.Dev
        }
        ";
 
-            var expected = new DiagnosticResult
+            var expected1 = new DiagnosticResult
             {
                 Id = LuceneDev1002_FloatingPointArithmeticCSCodeAnalyzer.DiagnosticId,
-                Message = string.Format("'{0}' may fail due to floating point precision issues on .NET Framework and .NET Core prior to version 3.0. Floating point type arithmetic needs to be checked on x86 in .NET Framework and may require extra casting.", "float1.ToString"),
+                Message = string.Format(
+                    "'{0}' may fail due to floating point precision issues on .NET Framework and .NET Core prior to version 3.0. Floating point type arithmetic needs to be checked on x86 in .NET Framework and may require extra casting.",
+                    "(double)float1 * (double)float2"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
-                    new[] {
-                                    new DiagnosticResultLocation("Test0.cs", 15, 33)
-                        }
+                    new[]
+                    {
+                        new DiagnosticResultLocation("Test0.cs", 17, 31)
+                    }
             };
 
-            VerifyCSharpDiagnostic(test, expected);
+            var expected2 = new DiagnosticResult
+            {
+                Id = LuceneDev1002_FloatingPointArithmeticCSCodeAnalyzer.DiagnosticId,
+                Message = string.Format(
+                    "'{0}' may fail due to floating point precision issues on .NET Framework and .NET Core prior to version 3.0. Floating point type arithmetic needs to be checked on x86 in .NET Framework and may require extra casting.",
+                    "/ foo"),
+                Severity = DiagnosticSeverity.Warning,
+                Locations =
+                    new[]
+                    {
+                        new DiagnosticResultLocation("Test0.cs", 17, 65)
+                    }
+            };
+
+            VerifyCSharpDiagnostic(test, expected1, expected2);
         }
     }
 }

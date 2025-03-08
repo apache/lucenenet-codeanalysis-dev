@@ -54,7 +54,7 @@ namespace Lucene.Net.Tests.CodeAnalysis.Dev
             var expected = new DiagnosticResult
             {
                 Id = LuceneDev1003_ArrayMethodParameterCSCodeAnalyzer.DiagnosticId,
-                Message = string.Format("'{0}' needs to be analyzed to determine whether the array can be replaced with a ref or out parameter.", "int[] pos"),
+                Message = string.Format("'{0}' needs to be analyzed to determine whether the array can be replaced with a ref or out parameter", "int[] pos"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
                     new[] {

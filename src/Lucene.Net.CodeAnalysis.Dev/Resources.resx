@@ -126,7 +126,7 @@
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
   <data name="LuceneDev1000_AnalyzerTitle" xml:space="preserve">
-    <value>Floating point types should not be compared for exact equality.</value>
+    <value>Floating point types should not be compared for exact equality</value>
     <comment>The title of the diagnostic.</comment>
   </data>
   <data name="LuceneDev1001_AnalyzerDescription" xml:space="preserve">
@@ -138,7 +138,7 @@
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
   <data name="LuceneDev1001_AnalyzerTitle" xml:space="preserve">
-    <value>Floating point types should be formatted with J2N.Numerics.Single.ToString() or J2N.Numerics.Double.ToString().</value>
+    <value>Floating point types should be formatted with J2N methods</value>
     <comment>The title of the diagnostic.</comment>
   </data>
   <data name="LuceneDev1002_AnalyzerDescription" xml:space="preserve">
@@ -150,7 +150,7 @@
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
   <data name="LuceneDev1002_AnalyzerTitle" xml:space="preserve">
-    <value>Floating point type arithmetic needs to be checked on x86 in .NET Framework.</value>
+    <value>Floating point type arithmetic needs to be checked</value>
     <comment>The title of the diagnostic.</comment>
   </data>
   <data name="LuceneDev1003_AnalyzerDescription" xml:space="preserve">
@@ -158,11 +158,11 @@
     <comment>Java is lacking ref and out parameters. As a result, code ported from Java may use parameters that accept a 1-dimensional array in order to facilitate returning a reference  to a value type. In .NET these hacks are unnecessary and these parameters should be converted to ref, out, or ValueTuple parameters.</comment>
   </data>
   <data name="LuceneDev1003_AnalyzerMessageFormat" xml:space="preserve">
-    <value>'{0}' needs to be analyzed to determine whether the array can be replaced with a ref or out parameter.</value>
+    <value>'{0}' needs to be analyzed to determine whether the array can be replaced with a ref or out parameter</value>
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
   <data name="LuceneDev1003_AnalyzerTitle" xml:space="preserve">
-    <value>Method parameters that accept array types should be analyzed to determine whether they are better suited to be ref or out parameters.</value>
+    <value>Method parameters that accept array types should be analyzed to determine whether they are better suited to be ref or out parameters</value>
     <comment>The title of the diagnostic.</comment>
   </data>
   <data name="LuceneDev1004_AnalyzerDescription" xml:space="preserve">
@@ -170,11 +170,11 @@
     <comment>Java is lacking ref and out parameters. As a result, code ported from Java may use methods that return a 1-dimensional array in order to facilitate returning a reference to multiple value types. In .NET these hacks are unnecessary and these return values should be converted to out parameters or return a ValueTuple.</comment>
   </data>
   <data name="LuceneDev1004_AnalyzerMessageFormat" xml:space="preserve">
-    <value>'{0}' return type needs to be analyzed to determine whether the array return value can be replaced with one or more out parameters or a return ValueTuple instead of an array to avoid the heap allocation.</value>
+    <value>'{0}' return type needs to be analyzed to determine whether the array return value can be replaced with one or more out parameters or a return ValueTuple instead of an array to avoid the heap allocation</value>
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
   <data name="LuceneDev1004_AnalyzerTitle" xml:space="preserve">
-    <value>Methods that return array types should be analyzed to determine whether they are better suited to be one or more out parameters or to return a ValueTuple.</value>
+    <value>Methods that return array types should be analyzed to determine whether they are better suited to be one or more out parameters or to return a ValueTuple</value>
     <comment>The title of the diagnostic.</comment>
   </data>
 </root>

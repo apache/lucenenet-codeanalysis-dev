@@ -50,7 +50,7 @@ namespace Lucene.Net.Tests.CodeAnalysis.Dev
             var expected = new DiagnosticResult
             {
                 Id = LuceneDev1004_ArrayMethodReturnValueCSCodeAnalyzer.DiagnosticId,
-                Message = string.Format("'{0}' return type needs to be analyzed to determine whether the array return value can be replaced with one or more out parameters or a return ValueTuple instead of an array to avoid the heap allocation.", "byte[]"),
+                Message = string.Format("'{0}' return type needs to be analyzed to determine whether the array return value can be replaced with one or more out parameters or a return ValueTuple instead of an array to avoid the heap allocation", "byte[]"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
                     new[] {

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "DebugRoslynAnalyzers": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "../Lucene.Net.CodeAnalysis.Dev.Sample/Lucene.Net.CodeAnalysis.Dev.Sample.csproj"
+    }
+  }
+}
