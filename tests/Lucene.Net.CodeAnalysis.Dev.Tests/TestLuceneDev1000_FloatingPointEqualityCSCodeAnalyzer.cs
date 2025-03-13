@@ -1,11 +1,9 @@
-﻿using Lucene.Net.CodeAnalysis.Dev;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using NUnit.Framework;
-using System;
 using TestHelper;
 
-namespace Lucene.Net.Tests.CodeAnalysis.Dev
+namespace Lucene.Net.CodeAnalysis.Dev.Tests
 {
     public class TestLuceneDev1000_FloatingPointEqualityCSCodeAnalyzer : DiagnosticVerifier
     {

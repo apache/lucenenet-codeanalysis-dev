@@ -1,15 +1,9 @@
-﻿using Lucene.Net.CodeAnalysis.Dev;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TestHelper;
 
-namespace Lucene.Net.Tests.CodeAnalysis.Dev
+namespace Lucene.Net.CodeAnalysis.Dev.Tests
 {
     public class TestLuceneDev1002_FloatingPointArithmeticCSCodeAnalyzer : DiagnosticVerifier
     {

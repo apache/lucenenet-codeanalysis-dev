@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8170F744
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.CodeAnalysis.Dev", "src\Lucene.Net.CodeAnalysis.Dev\Lucene.Net.CodeAnalysis.Dev.csproj", "{0611A6A8-372D-4E03-BAAF-731FF4844D6C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.CodeAnalysis.Dev", "tests\Lucene.Net.Tests.CodeAnalysis.Dev\Lucene.Net.Tests.CodeAnalysis.Dev.csproj", "{007DD065-3DF1-4AC1-9403-FE11E4654AF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.CodeAnalysis.Dev.Tests", "tests\Lucene.Net.CodeAnalysis.Dev.Tests\Lucene.Net.CodeAnalysis.Dev.Tests.csproj", "{007DD065-3DF1-4AC1-9403-FE11E4654AF4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.CodeAnalysis.Dev.Sample", "src\Lucene.Net.CodeAnalysis.Dev.Sample\Lucene.Net.CodeAnalysis.Dev.Sample.csproj", "{62BE25C9-72F2-4348-96C4-7329252E9DE8}"
 EndProject
