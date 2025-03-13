@@ -138,7 +138,7 @@
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
   <data name="LuceneDev1001_AnalyzerTitle" xml:space="preserve">
-    <value>Floating point types should be formatted with J2N methods</value>
+    <value>Floating point types should be formatted with J2N Numerics Single or Double ToString methods</value>
     <comment>The title of the diagnostic.</comment>
   </data>
   <data name="LuceneDev1002_AnalyzerDescription" xml:space="preserve">
@@ -150,7 +150,7 @@
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
   <data name="LuceneDev1002_AnalyzerTitle" xml:space="preserve">
-    <value>Floating point type arithmetic needs to be checked</value>
+    <value>Floating point type arithmetic needs to be checked on some x86 platforms</value>
     <comment>The title of the diagnostic.</comment>
   </data>
   <data name="LuceneDev1003_AnalyzerDescription" xml:space="preserve">
