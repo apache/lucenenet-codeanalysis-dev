@@ -10,6 +10,10 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
     <Version>1.0.0</Version>
+
+    <!-- This is needed so that the cross-platform C# language server can find the generated Resources.Designer.cs file -->
+    <!-- see: https://github.com/dotnet/msbuild/issues/8086 -->
+    <CoreCompileDependsOn>PrepareResources;$(CompileDependsOn)</CoreCompileDependsOn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,8 +25,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Resources.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="Resources.resx" />
-    <EmbeddedResource Update="Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
+    <!--
+      This approach allows the Resources.designer.cs file to be generated into obj,
+      instead of checked into source control. It also fixes an issue with JetBrains Rider
+      where it doesn't generate comments on the generated properties.
+      See: https://github.com/dotnet/msbuild/issues/8086
+      and https://youtrack.jetbrains.com/issue/RIDER-74074/PublicResXFileCodeGenerator-does-not-generate-comments-and-the-order-of-properties-changes
+    -->
+    <EmbeddedResource Update="Resources.resx">
+      <Generator>MSBuild:Compile</Generator>
+      <StronglyTypedFileName>$(IntermediateOutputPath)/Resources.designer.cs</StronglyTypedFileName>
+      <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+      <StronglyTypedNamespace>Lucene.Net.CodeAnalysis.Dev</StronglyTypedNamespace>
+      <StronglyTypedClassName>Resources</StronglyTypedClassName>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
