@@ -1,0 +1,26 @@
+# This file contains the allowed analyzer rule "Category" and corresponding "Diagnostic ID range"
+# FORMAT:
+# 'Category': Comma separate list of 'StartId-EndId' or 'Id' or 'Prefix'
+
+#
+# The ranges below represent the **currently used IDs** for the corresponding category.
+# When implementing a new rule for the category, BEFORE submitting a PR:
+#   1. Choose the rule ID immediately following the range end.
+#   2. Update the range end to the chosen rule ID.
+#   3. Commit and push the change to this file to `main`, with this file being the only file in the commit.
+#   4. Your rule ID is now reserved and can be used in your PR.
+#
+# In the event of conflict in step 3, make sure you discard your changes, pull latest, and try again.
+# DO NOT remove ID ranges already defined or merge this file in git.  
+#
+Design: LuceneDev1000-LuceneDev1004
+Globalization:
+Mobility:
+Performance:
+Security:
+Usage:
+Naming:
+Interoperability:
+Maintainability:
+Reliability:
+Documentation:
