@@ -396,4 +396,24 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+###########################################
+#                 Custom
+###########################################
+
+# BeyondCompare .orig files (when doing conflict resolution)
+*.orig
+
+# Build artifacts
+_artifacts/
+
+# Rider / ReSharper
 .idea/
+*.sln.iml
+
+# Rider - allow shared inspection + code style profiles
+!.idea/.idea.SPDX.CodeAnalysis/.idea/inspectionProfiles/
+!.idea/.idea.SPDX.CodeAnalysis/.idea/codeStyles/
+
+# Custom Tools
+.tools/*
