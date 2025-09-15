@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Lucene.Net.CodeAnalysis.Dev.Utility;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using NUnit.Framework;
 using TestHelper;
@@ -52,7 +53,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
 
             var expected = new DiagnosticResult
             {
-                Id = LuceneDev1003_ArrayMethodParameterCSCodeAnalyzer.DiagnosticId,
+                Id = Descriptors.LuceneDev1003_ArrayMethodParameter.Id,
                 Message = string.Format("'{0}' needs to be analyzed to determine whether the array can be replaced with a ref or out parameter", "int[] pos"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =

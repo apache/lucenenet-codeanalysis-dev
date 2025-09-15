@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Lucene.Net.CodeAnalysis.Dev.Utility;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using NUnit.Framework;
 using TestHelper;
@@ -48,7 +49,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
 
             var expected = new DiagnosticResult
             {
-                Id = LuceneDev1004_ArrayMethodReturnValueCSCodeAnalyzer.DiagnosticId,
+                Id = Descriptors.LuceneDev1004_ArrayMethodReturnValue.Id,
                 Message = string.Format("'{0}' return type needs to be analyzed to determine whether the array return value can be replaced with one or more out parameters or a return ValueTuple instead of an array to avoid the heap allocation", "byte[]"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =

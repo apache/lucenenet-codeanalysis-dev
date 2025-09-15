@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Lucene.Net.CodeAnalysis.Dev.Utility;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using NUnit.Framework;
 using TestHelper;
@@ -47,7 +48,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
 
             var expected1 = new DiagnosticResult
             {
-                Id = LuceneDev1002_FloatingPointArithmeticCSCodeAnalyzer.DiagnosticId,
+                Id = Descriptors.LuceneDev1002_FloatingPointArithmetic.Id,
                 Message = string.Format(
                     "'{0}' may fail due to floating point precision issues on .NET Framework and .NET Core prior to version 3.0. Floating point type arithmetic needs to be checked on x86 in .NET Framework and may require extra casting.",
                     "(double)float1 * (double)float2"),
@@ -61,7 +62,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
 
             var expected2 = new DiagnosticResult
             {
-                Id = LuceneDev1002_FloatingPointArithmeticCSCodeAnalyzer.DiagnosticId,
+                Id = Descriptors.LuceneDev1002_FloatingPointArithmetic.Id,
                 Message = string.Format(
                     "'{0}' may fail due to floating point precision issues on .NET Framework and .NET Core prior to version 3.0. Floating point type arithmetic needs to be checked on x86 in .NET Framework and may require extra casting.",
                     "/ foo"),

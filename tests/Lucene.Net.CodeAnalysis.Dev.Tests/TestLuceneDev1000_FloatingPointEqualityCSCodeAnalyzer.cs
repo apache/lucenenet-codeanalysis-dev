@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Lucene.Net.CodeAnalysis.Dev.Utility;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using NUnit.Framework;
 using TestHelper;
@@ -50,7 +51,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
 
             var expected = new DiagnosticResult
             {
-                Id = LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer.DiagnosticId,
+                Id = Descriptors.LuceneDev1000_FloatingPointEquality.Id,
                 Message = string.Format("'{0}' may fail due to JIT optimizations. Floating point types should not be compared for exact equality.", "termA < termB"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
@@ -90,7 +91,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
 
             var expected = new DiagnosticResult
             {
-                Id = LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer.DiagnosticId,
+                Id = Descriptors.LuceneDev1000_FloatingPointEquality.Id,
                 Message = string.Format("'{0}' may fail due to JIT optimizations. Floating point types should not be compared for exact equality.", "termA == termB"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
@@ -130,7 +131,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
 
             var expected = new DiagnosticResult
             {
-                Id = LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer.DiagnosticId,
+                Id = Descriptors.LuceneDev1000_FloatingPointEquality.Id,
                 Message = string.Format("'{0}' may fail due to JIT optimizations. Floating point types should not be compared for exact equality.", "termA > termB"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
@@ -170,7 +171,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
 
             var expected = new DiagnosticResult
             {
-                Id = LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer.DiagnosticId,
+                Id = Descriptors.LuceneDev1000_FloatingPointEquality.Id,
                 Message = string.Format("'{0}' may fail due to JIT optimizations. Floating point types should not be compared for exact equality.", "termA <= termB"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
@@ -210,7 +211,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
 
             var expected = new DiagnosticResult
             {
-                Id = LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer.DiagnosticId,
+                Id = Descriptors.LuceneDev1000_FloatingPointEquality.Id,
                 Message = string.Format("'{0}' may fail due to JIT optimizations. Floating point types should not be compared for exact equality.", "termA >= termB"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
@@ -247,7 +248,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
 
             var expected = new DiagnosticResult
             {
-                Id = LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer.DiagnosticId,
+                Id = Descriptors.LuceneDev1000_FloatingPointEquality.Id,
                 Message = string.Format("'{0}' may fail due to JIT optimizations. Floating point types should not be compared for exact equality.", "myFloat1 == myFloat2"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
@@ -283,7 +284,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
 
             var expected = new DiagnosticResult
             {
-                Id = LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer.DiagnosticId,
+                Id = Descriptors.LuceneDev1000_FloatingPointEquality.Id,
                 Message = string.Format("'{0}' may fail due to JIT optimizations. Floating point types should not be compared for exact equality.", "a == b"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
@@ -321,7 +322,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
 
             var expected = new DiagnosticResult
             {
-                Id = LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer.DiagnosticId,
+                Id = Descriptors.LuceneDev1000_FloatingPointEquality.Id,
                 Message = string.Format("'{0}' may fail due to JIT optimizations. Floating point types should not be compared for exact equality.", "a.Score == b.Score"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
@@ -357,7 +358,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
 
             var expected = new DiagnosticResult
             {
-                Id = LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer.DiagnosticId,
+                Id = Descriptors.LuceneDev1000_FloatingPointEquality.Id,
                 Message = string.Format("'{0}' may fail due to JIT optimizations. Floating point types should not be compared for exact equality.", "a.Equals"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =

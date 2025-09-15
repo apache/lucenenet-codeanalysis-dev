@@ -15,18 +15,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class LuceneDev1004_ArrayMethodReturnValueCSCodeAnalyzer : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "LuceneDev1004";
-
-        // You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
-        // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/Localizing%20Analyzers.md for more on localization
-        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(Resources.LuceneDev1004_AnalyzerTitle), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(Resources.LuceneDev1004_AnalyzerMessageFormat), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.LuceneDev1004_AnalyzerDescription), Resources.ResourceManager, typeof(Resources));
-        private const string Category = "Design";
-
-        private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [Descriptors.LuceneDev1004_ArrayMethodReturnValue];
 
         public override void Initialize(AnalysisContext context)
         {
@@ -47,7 +36,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
                     if (arrayTypeSyntax.ElementType is PredefinedTypeSyntax predefinedTypeSyntax)
                     {
                         if (predefinedTypeSyntax.Keyword.ValueText != "char")
-                            context.ReportDiagnostic(Diagnostic.Create(Rule, arrayTypeSyntax.GetLocation(), arrayTypeSyntax.ToString()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.LuceneDev1004_ArrayMethodReturnValue, arrayTypeSyntax.GetLocation(), arrayTypeSyntax.ToString()));
                     }
                 }
             }
