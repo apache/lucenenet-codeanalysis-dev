@@ -17,6 +17,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.CodeAnalysis.Dev
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.CodeAnalysis.Dev.Package", "src\Lucene.Net.CodeAnalysis.Dev.Package\Lucene.Net.CodeAnalysis.Dev.Package.csproj", "{A476A043-926E-488B-A825-02EB0B410CFD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		DiagnosticCategoryAndIdRanges.txt = DiagnosticCategoryAndIdRanges.txt
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		Directory.Packages.props = Directory.Packages.props
+		LICENSE.txt = LICENSE.txt
+		Lucene.Net.CodeAnalysis.Dev.ChildProcessDbgSettings = Lucene.Net.CodeAnalysis.Dev.ChildProcessDbgSettings
+		NOTICE.txt = NOTICE.txt
+		README.md = README.md
+		version.json = version.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
