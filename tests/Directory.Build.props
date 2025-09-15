@@ -1,0 +1,8 @@
+﻿<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <!--<PropertyGroup Label="Code Coverage Settings">
+    <Exclude>[*.Tests]*,[*]NUnit3.TestAdapter.*,[*]Microsoft.CodeAnalysis.Analyzer.Testing.*</Exclude>
+    <ExcludeByFile>**/*Tests*.cs</ExcludeByFile>
+  </PropertyGroup>-->
+</Project>

@@ -1,0 +1,29 @@
+<Project>
+  <PropertyGroup Label="Central Package Management Settings">
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  
+  <PropertyGroup Label="Shared NuGet Package Reference Versions">
+    <RoslynAnalyzerPackageVersion>4.14.0</RoslynAnalyzerPackageVersion>
+  </PropertyGroup>
+  
+  <ItemGroup Label="NuGet Package Reference Versions">
+    <PackageVersion Include="Nerdbank.GitVersioning" Version="3.7.115" />
+    <PackageVersion Include="NUnit" Version="4.4.0" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="5.1.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzer.Testing" Version="1.1.2" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="$(RoslynAnalyzerPackageVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="$(RoslynAnalyzerPackageVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Features" Version="$(RoslynAnalyzerPackageVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(RoslynAnalyzerPackageVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.VisualBasic" Version="$(RoslynAnalyzerPackageVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.VisualBasic.Features" Version="$(RoslynAnalyzerPackageVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="$(RoslynAnalyzerPackageVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="$(RoslynAnalyzerPackageVersion)" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="Microsoft.VSSDK.BuildTools" Version="17.14.2094" />
+  </ItemGroup>
+  
+</Project>
