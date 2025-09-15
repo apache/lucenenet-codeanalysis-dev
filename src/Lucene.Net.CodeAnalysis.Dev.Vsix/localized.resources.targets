@@ -1,0 +1,17 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <GetVsixSourceItemsDependsOn>$(GetVsixSourceItemsDependsOn);IncludeResourcesInVsix</GetVsixSourceItemsDependsOn>
+  </PropertyGroup>
+
+  <Target Name="IncludeResourcesInVsix">
+    <ItemGroup>
+      <VSIXSourceItem Include="..\Lucene.Net.CodeAnalysis.Dev\bin\$(Configuration)\netstandard2.0\**\*.resources.dll">
+        <VsixSubPath>%(RecursiveDir)</VsixSubPath>
+        <!-- Although these do not contain analyzers, we need this setting to ensure they are loaded in the analyzer load context. -->
+        <AssetType>Microsoft.VisualStudio.Analyzer</AssetType>
+      </VSIXSourceItem>
+    </ItemGroup>
+  </Target>
+
+</Project>

@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <RootNamespace>Lucene.Net.CodeAnalysis.Dev.Vsix</RootNamespace>
+    <AssemblyName>Lucene.Net.CodeAnalysis.Dev.Vsix</AssemblyName>
+
+    <!-- Newer versions of VS and the SDK allow loading as 64 bit, so we need this for compatibility when loading in VS  -->
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+
+  <!-- If not building inside Visual Studio, convert this to a class library project so it will succeed.
+       We don't use the output in from the command line, anyway. The BuildVsix option is so we can use
+       the old build tools to build a VSIX on the command-line (not necessary in most cases). -->
+  <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' == 'true' Or '$(BuildVsix)' == 'true' ">
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+    <IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
+    <CopyBuildOutputToOutputDirectory>false</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+    <VSSDKTargetPlatformRegRootSuffix>Roslyn</VSSDKTargetPlatformRegRootSuffix>
+
+    <!-- Import build tools -->
+    <CustomAfterMicrosoftCSharpTargets Condition="Exists('$(VsSDKInstall)\Microsoft.VsSDK.targets')">$(VsSDKInstall)\Microsoft.VsSDK.targets</CustomAfterMicrosoftCSharpTargets>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true' Or '$(BuildVsix)' == 'true'">
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" PrivateAssets="all" />
+  </ItemGroup>
+
+  <Import Project="localized.resources.targets" />
+
+  <PropertyGroup>
+    <StartAction>Program</StartAction>
+    <StartProgram>$(DevEnvDir)devenv.exe</StartProgram>
+    <StartArguments>/rootsuffix $(VSSDKTargetPlatformRegRootSuffix)</StartArguments>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.CodeAnalysis.Dev.CodeFixes\Lucene.Net.CodeAnalysis.Dev.CodeFixes.csproj" Condition="Exists('..\Lucene.Net.CodeAnalysis.Dev.CodeFixes\Lucene.Net.CodeAnalysis.Dev.CodeFixes.csproj')" />
+    <ProjectReference Include="..\Lucene.Net.CodeAnalysis.Dev\Lucene.Net.CodeAnalysis.Dev.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- https://github.com/dotnet/sdk/issues/433 -->
+    <ProjectReference Update="@(ProjectReference)" AdditionalProperties="TargetFramework=netstandard2.0" />
+
+    <!-- https://github.com/Microsoft/extendvs/issues/57 -->
+    <ProjectReference Update="@(ProjectReference)" Name="%(Filename)" />
+  </ItemGroup>
+
+</Project>
