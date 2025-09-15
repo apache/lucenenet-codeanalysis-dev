@@ -30,7 +30,7 @@
     directory as this script) as the target directory.
 
 .PARAMETER Version
-    The version of Apache RAT to use (default: 0.16).
+    The version of Apache RAT to use (default: 0.13).
 
 .PARAMETER ExcludeFileName
     Name of an exclude file containing path patterns that RAT should ignore.
@@ -43,19 +43,19 @@
 .EXAMPLE
     pwsh ./rat.ps1
 
-    Runs Apache RAT (default version 0.16) with exclusions from `rat-exclude.txt`.
+    Runs Apache RAT (default version 0.13) with exclusions from `rat-exclude.txt`.
 
 .EXAMPLE
-    pwsh ./rat.ps1 -Version 0.16 -ExcludeFileName custom-exclude.txt
+    pwsh ./rat.ps1 -Version 0.13 -ExcludeFileName custom-exclude.txt
 
-    Runs Apache RAT version 0.16 using the specified exclude file.
+    Runs Apache RAT version 0.13 using the specified exclude file.
 
 .NOTES
     This script is intended for use by release managers when preparing official
     ASF releases. It is not normally required for day-to-day development.
 #>
 param(
-    [string]$Version = "0.16",
+    [string]$Version = "0.13",
     [string]$ExcludeFileName = ".rat-excludes"
 )
 
@@ -88,27 +88,20 @@ if (-not (Test-Path $ratExcludeFile)) {
     $useExclude = $true
 }
 
-# Run from the script directory so '.' means the repository root next to this script
-Push-Location $scriptDir
-try {
-    $argsList = @(
-        "-jar", $ratJar,
-        "--dir", ".",
-        "--addLicense",
-        "--force"
-    )
+$argsList = @(
+    "-jar", $ratJar,
+    "--dir", "`"$scriptDir`"",
+    "--addLicense",
+    "--force"
+)
 
-    if ($useExclude) {
-        $argsList += @("--exclude-file", $ratExcludeFile)
-    }
-
-    # Call java with argument list. Use & to invoke program.
-    & java @argsList
-
-    if ($LASTEXITCODE -ne 0) {
-        throw "RAT exited with code $LASTEXITCODE"
-    }
+if ($useExclude) {
+    $argsList += @("--exclude-file", "`"$ratExcludeFile`"")
 }
-finally {
-    Pop-Location
+
+# Call java with argument list. Use & to invoke program.
+& java @argsList
+
+if ($LASTEXITCODE -ne 0) {
+    throw "RAT exited with code $LASTEXITCODE"
 }
