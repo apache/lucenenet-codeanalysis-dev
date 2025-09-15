@@ -1,31 +1,49 @@
-﻿using Lucene.Net.CodeAnalysis.Dev.Utility;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+using Lucene.Net.CodeAnalysis.Dev.Tests.Utility;
+using Lucene.Net.CodeAnalysis.Dev.Utility;
+using Microsoft.CodeAnalysis.Testing;
 using NUnit.Framework;
-using TestHelper;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.CodeAnalysis.Dev.Tests
 {
-    public class TestLuceneDev1002_FloatingPointArithmeticCSCodeAnalyzer : DiagnosticVerifier
+    public class TestLuceneDev1002_FloatingPointArithmeticCSCodeAnalyzer
     {
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new LuceneDev1002_FloatingPointArithmeticCSCodeAnalyzer();
-        }
 
         //No diagnostics expected to show up
         [Test]
-        public void TestEmptyFile()
+        public async Task TestEmptyFile()
         {
-            var test = @"";
+            var testCode = @"";
 
-            VerifyCSharpDiagnostic(test);
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1002_FloatingPointArithmeticCSCodeAnalyzer())
+            {
+                TestCode = testCode
+            };
+
+            await test.RunAsync();
         }
 
         [Test]
-        public void TestDiagnostic_Float_ToString()
+        public async Task TestDiagnostic_Float_ToString()
         {
-            var test = @"
+            var testCode = @"
         using System;
         using System.Collections.Generic;
         using System.Linq;
@@ -41,40 +59,28 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
             public void MyMethod()
             {
                 long foo = 33;
-                var result = ((double)float1 * (double)float2)) / foo;
+                var result = ((double)float1 * (double)float2) / foo;
             }
        }
        ";
 
-            var expected1 = new DiagnosticResult
+            var expected1 = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1002_FloatingPointArithmetic.Id)
+                .WithMessageFormat(Descriptors.LuceneDev1002_FloatingPointArithmetic.MessageFormat)
+                .WithArguments("((double)float1 * (double)float2) / foo")
+                .WithLocation("/0/Test0.cs", line: 17, column: 30);
+
+            var expected2 = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1002_FloatingPointArithmetic.Id)
+                .WithMessageFormat(Descriptors.LuceneDev1002_FloatingPointArithmetic.MessageFormat)
+                .WithArguments("(double)float1 * (double)float2")
+                .WithLocation("/0/Test0.cs", line: 17, column: 31);
+
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1002_FloatingPointArithmeticCSCodeAnalyzer())
             {
-                Id = Descriptors.LuceneDev1002_FloatingPointArithmetic.Id,
-                Message = string.Format(
-                    "'{0}' may fail due to floating point precision issues on .NET Framework and .NET Core prior to version 3.0. Floating point type arithmetic needs to be checked on x86 in .NET Framework and may require extra casting.",
-                    "(double)float1 * (double)float2"),
-                Severity = DiagnosticSeverity.Warning,
-                Locations =
-                    new[]
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 17, 31)
-                    }
+                TestCode = testCode,
+                ExpectedDiagnostics = { expected1, expected2 }
             };
 
-            var expected2 = new DiagnosticResult
-            {
-                Id = Descriptors.LuceneDev1002_FloatingPointArithmetic.Id,
-                Message = string.Format(
-                    "'{0}' may fail due to floating point precision issues on .NET Framework and .NET Core prior to version 3.0. Floating point type arithmetic needs to be checked on x86 in .NET Framework and may require extra casting.",
-                    "/ foo"),
-                Severity = DiagnosticSeverity.Warning,
-                Locations =
-                    new[]
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 17, 65)
-                    }
-            };
-
-            VerifyCSharpDiagnostic(test, expected1, expected2);
+            await test.RunAsync();
         }
     }
 }

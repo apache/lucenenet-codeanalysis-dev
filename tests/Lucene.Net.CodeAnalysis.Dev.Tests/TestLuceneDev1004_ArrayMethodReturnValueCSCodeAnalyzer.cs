@@ -1,31 +1,49 @@
-﻿using Lucene.Net.CodeAnalysis.Dev.Utility;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+using Lucene.Net.CodeAnalysis.Dev.Tests.Utility;
+using Lucene.Net.CodeAnalysis.Dev.Utility;
+using Microsoft.CodeAnalysis.Testing;
 using NUnit.Framework;
-using TestHelper;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.CodeAnalysis.Dev.Tests
 {
-    public class TestLuceneDev1004_ArrayMethodReturnValueCSCodeAnalyzer : DiagnosticVerifier
+    public class TestLuceneDev1004_ArrayMethodReturnValueCSCodeAnalyzer
     {
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new LuceneDev1004_ArrayMethodReturnValueCSCodeAnalyzer();
-        }
 
         //No diagnostics expected to show up
         [Test]
-        public void TestEmptyFile()
+        public async Task TestEmptyFile()
         {
-            var test = @"";
+            var testCode = @"";
 
-            VerifyCSharpDiagnostic(test);
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1004_ArrayMethodReturnValueCSCodeAnalyzer())
+            {
+                TestCode = testCode
+            };
+
+            await test.RunAsync();
         }
 
         [Test]
-        public void TestDiagnostic_GetVersionByteArrayFromCompactInt32_ByteArrayReturnType()
+        public async Task TestDiagnostic_GetVersionByteArrayFromCompactInt32_ByteArrayReturnType()
         {
-            var test = @"
+            var testCode = @"
         using System;
         using System.Collections.Generic;
         using System.Linq;
@@ -47,24 +65,25 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
         }
        ";
 
-            var expected = new DiagnosticResult
+
+            var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1004_ArrayMethodReturnValue.Id)
+                .WithMessageFormat(Descriptors.LuceneDev1004_ArrayMethodReturnValue.MessageFormat)
+                .WithArguments("byte[]")
+                .WithLocation("/0/Test0.cs", line: 11, column: 27);
+
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1004_ArrayMethodReturnValueCSCodeAnalyzer())
             {
-                Id = Descriptors.LuceneDev1004_ArrayMethodReturnValue.Id,
-                Message = string.Format("'{0}' return type needs to be analyzed to determine whether the array return value can be replaced with one or more out parameters or a return ValueTuple instead of an array to avoid the heap allocation", "byte[]"),
-                Severity = DiagnosticSeverity.Warning,
-                Locations =
-                    new[] {
-                                    new DiagnosticResultLocation("Test0.cs", 11, 27)
-                        }
+                TestCode = testCode,
+                ExpectedDiagnostics = { expected }
             };
 
-            VerifyCSharpDiagnostic(test, expected);
+            await test.RunAsync();
         }
 
         [Test]
-        public void TestDiagnostic_GetVersionCharArrayFromCompactInt32_CharArrayReturnType()
+        public async Task TestDiagnostic_GetVersionCharArrayFromCompactInt32_CharArrayReturnType()
         {
-            var test = @"
+            var testCode = @"
         using System;
         using System.Collections.Generic;
         using System.Linq;
@@ -87,7 +106,12 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
        ";
 
             // We shouldn't trigger a warning on char[]
-            VerifyCSharpDiagnostic(test);
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1004_ArrayMethodReturnValueCSCodeAnalyzer())
+            {
+                TestCode = testCode
+            };
+
+            await test.RunAsync();
         }
     }
 }

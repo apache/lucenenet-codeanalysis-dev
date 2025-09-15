@@ -1,36 +1,53 @@
-﻿using Lucene.Net.CodeAnalysis.Dev.Utility;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+using Lucene.Net.CodeAnalysis.Dev.Tests.Utility;
+using Lucene.Net.CodeAnalysis.Dev.Utility;
+using Microsoft.CodeAnalysis.Testing;
 using NUnit.Framework;
-using TestHelper;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.CodeAnalysis.Dev.Tests
 {
-    public class TestLuceneDev1001_FloatingPointFormattingCSCodeAnalyzer : DiagnosticVerifier
+    public class TestLuceneDev1001_FloatingPointFormattingCSCodeAnalyzer
     {
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new LuceneDev1001_FloatingPointFormattingCSCodeAnalyzer();
-        }
-
         //No diagnostics expected to show up
         [Test]
-        public void TestEmptyFile()
+        public async Task TestEmptyFile()
         {
-            var test = @"";
+            var testCode = @"";
 
-            VerifyCSharpDiagnostic(test);
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1001_FloatingPointFormattingCSCodeAnalyzer())
+            {
+                TestCode = testCode
+            };
+
+            await test.RunAsync();
         }
 
         [Test]
-        public void TestDiagnostic_Float_ToString()
+        public async Task TestDiagnostic_Float_ToString()
         {
-            var test = @"
+            var testCode = @"
         using System;
         using System.Collections.Generic;
+        using System.Globalization;
         using System.Linq;
         using System.Text;
-        using System.Threading.Tasks;
         using System.Diagnostics;
 
         public class MyClass
@@ -44,18 +61,18 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
        }
        ";
 
-            var expected = new DiagnosticResult
+            var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1001_FloatingPointFormatting.Id)
+                .WithMessageFormat(Descriptors.LuceneDev1001_FloatingPointFormatting.MessageFormat)
+                .WithArguments("float1.ToString")
+                .WithLocation("/0/Test0.cs", line: 15, column: 33);
+
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1001_FloatingPointFormattingCSCodeAnalyzer())
             {
-                Id = Descriptors.LuceneDev1001_FloatingPointFormatting.Id,
-                Message = string.Format("'{0}' may fail due to floating point precision issues on .NET Framework and .NET Core prior to version 3.0. Floating point types should be formatted with J2N.Numerics.Single.ToString() or J2N.Numerics.Double.ToString().", "float1.ToString"),
-                Severity = DiagnosticSeverity.Warning,
-                Locations =
-                    new[] {
-                                    new DiagnosticResultLocation("Test0.cs", 15, 33)
-                        }
+                TestCode = testCode,
+                ExpectedDiagnostics = { expected }
             };
 
-            VerifyCSharpDiagnostic(test, expected);
+            await test.RunAsync();
         }
     }
 }
