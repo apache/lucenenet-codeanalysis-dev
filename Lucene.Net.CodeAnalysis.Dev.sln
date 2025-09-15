@@ -10,8 +10,16 @@ EndProject
 Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "eng", "eng\eng.folderproj", "{9A1C280A-5010-45E9-9EC8-B09F0F9517A2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1A48DD8E-1D71-43AE-B15D-977A87972623}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8170F744-3AE0-41EE-8986-611BA2C20425}"
+	ProjectSection(SolutionItems) = preProject
+		tests\Directory.Build.props = tests\Directory.Build.props
+		tests\Directory.Build.targets = tests\Directory.Build.targets
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.CodeAnalysis.Dev.Vsix", "src\Lucene.Net.CodeAnalysis.Dev.Vsix\Lucene.Net.CodeAnalysis.Dev.Vsix.csproj", "{B9116527-2486-4A4C-90F8-378DF26E39AF}"
 EndProject
