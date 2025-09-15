@@ -4,8 +4,10 @@ This project uses Nerdbank.GitVersioning to assist with creating version numbers
 
 ## Prerequisites
 
+- [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell) 6.0 or higher (see [this question](http://stackoverflow.com/questions/1825585/determine-installed-powershell-version) to check your PowerShell version)
 - [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 - [nbgv tool](https://www.nuget.org/packages/nbgv/) (the version must match the one defined in [Directory.Packages.props](../Directory.Packages.props))
+- [Java 8](https://adoptium.net/temurin/releases) or higher (either a JRE or JDK)
 
 ### Installing NBGV Tool
 
@@ -14,6 +16,20 @@ Perform a one-time install of the nbgv tool using the following dotnet CLI comma
 ```console
 dotnet tool install -g nbgv --version <theActualVersion>
 ```
+
+## Run the Apache Release Audit Tool
+
+The Release Audit Tool will ensure that all non-generated text files have a license header.
+
+```console
+pwsh ./rat.ps1
+```
+
+The tool will apply the updates directly to the local working directory. Review and commit the changes to your local Git clone, adding exclusions to `.rat-excludes` and re-running as necessary.
+
+- Exclude files that already have license headers
+- Exclude files that are automatically generated
+- Exclude files that don't work properly with license headers included (such as test data)
 
 ## Versioning Primer
 
