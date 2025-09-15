@@ -3,6 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = ".github", ".github\.github.folderproj", "{873A3BE7-3364-F423-9686-FFB58C0896C4}"
+EndProject
+Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "docs", "docs\docs.folderproj", "{F1CC6D09-070B-440A-BDA2-C7A8037076ED}"
+EndProject
+Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "eng", "eng\eng.folderproj", "{9A1C280A-5010-45E9-9EC8-B09F0F9517A2}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1A48DD8E-1D71-43AE-B15D-977A87972623}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8170F744-3AE0-41EE-8986-611BA2C20425}"
@@ -24,6 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
 		Directory.Packages.props = Directory.Packages.props
+		global.json = global.json
 		LICENSE.txt = LICENSE.txt
 		Lucene.Net.CodeAnalysis.Dev.ChildProcessDbgSettings = Lucene.Net.CodeAnalysis.Dev.ChildProcessDbgSettings
 		NOTICE.txt = NOTICE.txt
@@ -37,6 +44,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{873A3BE7-3364-F423-9686-FFB58C0896C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{873A3BE7-3364-F423-9686-FFB58C0896C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{873A3BE7-3364-F423-9686-FFB58C0896C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{873A3BE7-3364-F423-9686-FFB58C0896C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1CC6D09-070B-440A-BDA2-C7A8037076ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1CC6D09-070B-440A-BDA2-C7A8037076ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1CC6D09-070B-440A-BDA2-C7A8037076ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1CC6D09-070B-440A-BDA2-C7A8037076ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A1C280A-5010-45E9-9EC8-B09F0F9517A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A1C280A-5010-45E9-9EC8-B09F0F9517A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A1C280A-5010-45E9-9EC8-B09F0F9517A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A1C280A-5010-45E9-9EC8-B09F0F9517A2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B9116527-2486-4A4C-90F8-378DF26E39AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B9116527-2486-4A4C-90F8-378DF26E39AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9116527-2486-4A4C-90F8-378DF26E39AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
