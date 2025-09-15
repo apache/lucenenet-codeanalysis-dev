@@ -3,6 +3,7 @@
 
   <PropertyGroup Label="Assembly Documentation">
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
   
 </Project>

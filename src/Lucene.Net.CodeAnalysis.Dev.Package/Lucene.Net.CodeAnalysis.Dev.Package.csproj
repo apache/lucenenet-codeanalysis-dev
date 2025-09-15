@@ -1,0 +1,106 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(RepositoryRoot)eng/nuget.props" />
+
+  <PropertyGroup>
+    <!-- Note TargetFramework or TargetFrameworks must match the output projects for the directories to be build correctly -->
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeSymbols>false</IncludeSymbols>
+
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <DevelopmentDependency>true</DevelopmentDependency>
+  </PropertyGroup>
+
+  <PropertyGroup Label="NuGet Package Settings">
+    <PackageId>Lucene.Net.CodeAnalysis.Dev</PackageId>
+    <Description>Analyzers and code fixes for Lucene.NET development.</Description>
+    <PackageTags>$(PackageTags);code analysis;code maintenance;roslyn</PackageTags>
+    <PackageOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\_artifacts\NuGetPackages\$(Configuration)'))</PackageOutputPath>
+    <_PackageVersionPropsFile>$(PackageOutputPath)\Lucene.Net.CodeAnalysis.Dev.Version.props</_PackageVersionPropsFile>
+  </PropertyGroup>
+
+  <PropertyGroup Label="NuGet Package File Paths">
+    <_CodeAnalysisCSAssemblyFile>$(RepositoryRoot)src\Lucene.Net.CodeAnalysis.Dev\bin\$(Configuration)\$(TargetFramework)\Lucene.Net.CodeAnalysis.Dev.dll</_CodeAnalysisCSAssemblyFile>
+    <_CodeAnalysisCodeFixesCSAssemblyFile>$(RepositoryRoot)src\Lucene.Net.CodeAnalysis.Dev\bin\$(Configuration)\$(TargetFramework)\Lucene.Net.CodeAnalysis.Dev.CodeFixes.dll</_CodeAnalysisCodeFixesCSAssemblyFile>
+  </PropertyGroup>
+
+  <ItemGroup Label="Localized Resources">
+    <_CodeAnalyisisResources Include="$(RepositoryRoot)src\Lucene.Net.CodeAnalysis.Dev\bin\$(Configuration)\$(TargetFramework)\**\*.resources.dll" />
+  </ItemGroup>
+
+  <ItemGroup Label="NuGet Package Files">
+    <None Include="$(_CodeAnalysisCSAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+
+    <None Include="$(_CodeAnalysisCodeFixesCSAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" Condition="Exists('$(_CodeAnalysisCodeFixesCSAssemblyFile)')" />
+
+    <None Include="@(_CodeAnalyisisResources)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- We only need this to ensure it is built before this project is. We include all dependent projects because
+         it is required by the MSBuild target below. Granted, including only Lucene.Net.CodeAnalysis.Dev.csproj would work
+         in normal scenarios, but when executing an MSBuild target from a consuming project (SPDX.CodeAnalysis.Sample.csproj),
+         these are required to be built first and in the order that they are listed here. -->
+    <ProjectReference Include="..\Lucene.Net.CodeAnalysis.Dev\Lucene.Net.CodeAnalysis.Dev.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Lucene.Net.CodeAnalysis.Dev\Lucene.Net.CodeAnalysis.Dev.CodeFixes.csproj" ReferenceOutputAssembly="false" Condition="Exists('..\Lucene.Net.CodeAnalysis.Dev\Lucene.Net.CodeAnalysis.Dev.CodeFixes.csproj')" />
+  </ItemGroup>
+
+  <Target Name="EnsureDependenciesBuilt" BeforeTargets="PrepareForBuild">
+    <MSBuild Projects="@(ProjectReference)" Targets="Restore;PrepareForBuild;Build" Properties="Configuration=$(Configuration)" BuildInParallel="false" />
+  </Target>
+
+  <UsingTask TaskName="GenerateVersionProps" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+
+    <ParameterGroup>
+      <OutputFile ParameterType="System.String" Required="true" />
+      <Version ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+
+    <Task>
+      <Using Namespace="System.Xml" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+            var trimmedVersion = Version.Trim();
+            var settings = new XmlWriterSettings { Indent = true };
+            using (var writer = XmlWriter.Create(OutputFile, settings))
+            {
+                writer.WriteStartDocument();
+                writer.WriteStartElement("Project");
+                writer.WriteStartElement("PropertyGroup");
+                writer.WriteElementString("_CodeAnalysisPackageVersion", trimmedVersion);
+                writer.WriteEndElement(); // PropertyGroup
+                writer.WriteEndElement(); // Project
+                writer.WriteEndDocument();
+            }
+          ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="AppendDebugTimestampToPackageVersion"
+        AfterTargets="GetBuildVersion">
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+      <!-- Append timestamp every ~2 seconds -->
+      <PackageVersion>
+        $(PackageVersion)-debug-$([System.DateTime]::UtcNow.DayOfYear)-$([System.Math]::Floor($([System.DateTime]::UtcNow.TimeOfDay.TotalSeconds)))
+      </PackageVersion>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="GeneratePackageVersionProps" DependsOnTargets="GetBuildVersion" AfterTargets="BeforeBuild">
+    <MakeDir Directories="$(PackageOutputPath)" Condition="!Exists('$(PackageOutputPath)')" />
+
+    <GenerateVersionProps OutputFile="$(_PackageVersionPropsFile)" Version="$(PackageVersion)" />
+  </Target>
+
+  <Target Name="CleanNuGetPackagesDirectory" AfterTargets="Clean">
+    <ItemGroup>
+      <__NuGetFilePaths Include="$(PackageOutputPath)\*.nupkg" />
+    </ItemGroup>
+
+    <Delete Files="@(__NuGetFilePaths);$(_PackageVersionPropsFile)" />
+  </Target>
+
+</Project>

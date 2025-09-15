@@ -1,0 +1,68 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- This is very limited support for version wildcards (1.0.* and 1.0.0.*) and does
+      not take into consideration $(Version) or $(VersionPrefix) -->
+
+  <PropertyGroup Condition="$(FileVersion.Contains('*'))">
+    <WildcardFileVersion>$(FileVersion)</WildcardFileVersion>
+    <!-- Empty the FileVersion so that MSBuild doesn't complain later about it not being valid -->
+    <FileVersion></FileVersion>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(AssemblyVersion.Contains('*'))">
+    <WildcardAssemblyVersion>$(AssemblyVersion)</WildcardAssemblyVersion>
+    <!-- Empty the AssemblyVersion so that MSBuild doesn't complain later about it not being valid -->
+    <AssemblyVersion></AssemblyVersion>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+  </PropertyGroup>
+
+  <Target Name="EmitFileVersionAttribute" BeforeTargets="BeforeCompile" Condition="'$(WildcardFileVersion)' != ''">
+    <GenerateTimestampVersion VersionTemplate="$(WildcardFileVersion)">
+      <Output TaskParameter="OutputVersion" PropertyName="GeneratedFileVersion" />
+    </GenerateTimestampVersion>
+    <ItemGroup>
+      <AssemblyAttribute Include="System.Reflection.AssemblyFileVersion">
+        <_Parameter1>$(GeneratedFileVersion)</_Parameter1>
+      </AssemblyAttribute>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="EmitAssemblyVersionAttribute" BeforeTargets="BeforeCompile" Condition="'$(WildcardAssemblyVersion)' != ''">
+    <GenerateTimestampVersion VersionTemplate="$(WildcardAssemblyVersion)">
+      <Output TaskParameter="OutputVersion" PropertyName="GeneratedAssemblyVersion" />
+    </GenerateTimestampVersion>
+    <ItemGroup>
+      <AssemblyAttribute Include="System.Reflection.AssemblyVersion">
+        <_Parameter1>$(GeneratedAssemblyVersion)</_Parameter1>
+      </AssemblyAttribute>
+    </ItemGroup>
+  </Target>
+
+  <UsingTask TaskName="GenerateTimestampVersion"
+             TaskFactory="RoslynCodeTaskFactory"
+             AssemblyFile="$(MSBuildBinPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <VersionTemplate ParameterType="System.String" Required="false" />
+      <OutputVersion ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+        string baseVersion = VersionTemplate ?? "1.0.*";
+        var now = DateTime.UtcNow;
+        var build = (now - new DateTime(2000, 1, 1)).Days;
+        var revision = (int)(now.TimeOfDay.TotalSeconds / 2);
+
+        string[] parts = baseVersion.Split('.');
+        int major = parts.Length > 0 && int.TryParse(parts[0], out var m) ? m : 1;
+        int minor = parts.Length > 1 && int.TryParse(parts[1], out var n) ? n : 0;
+        int buildPart = parts.Length > 2 && parts[2] != "*" ? int.Parse(parts[2]) : build;
+        int revPart = parts.Length > 3 && parts[3] != "*" ? int.Parse(parts[3]) : revision;
+
+        OutputVersion = $"{major}.{minor}.{buildPart}.{revPart}";
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+</Project>

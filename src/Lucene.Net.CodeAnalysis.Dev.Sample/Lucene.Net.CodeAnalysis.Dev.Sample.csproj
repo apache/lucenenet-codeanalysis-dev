@@ -1,14 +1,94 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="../Lucene.Net.CodeAnalysis.Dev/Lucene.Net.CodeAnalysis.Dev.csproj"
-                          OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
-    </ItemGroup>
+  <PropertyGroup>
+    <_ArtifactsDirectory>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\_artifacts'))</_ArtifactsDirectory>
+    <_NuGetPackageOutputPath>$(_ArtifactsDirectory)\NuGetPackages\$(Configuration)</_NuGetPackageOutputPath>
+    <_PackageVersionPropsFilePath>$(_NuGetPackageOutputPath)\Lucene.Net.CodeAnalysis.Dev.Version.props</_PackageVersionPropsFilePath>
+    <!-- We install the analyzer package in a local directory so we don't pollute the
+          .nuget cache on the dev machine with temporary builds -->
+    <RestorePackagesPath>obj\LocalNuGetPackages</RestorePackagesPath>
+    <_RestorePackagesPath>$(RestorePackagesPath)\lucene.net.codeanalsis.dev</_RestorePackagesPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="Exists('$(_NuGetPackageOutputPath)')">
+    <RestoreSources>$(RestoreSources);$(_NuGetPackageOutputPath)</RestoreSources>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RestoreSources>$(RestoreSources);https://api.nuget.org/v3/index.json</RestoreSources>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Visual Studio blocks MSBuild from being able to check whether files are up-to-date.
+          So, we disable that here to gain access to that info. -->
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+  </PropertyGroup>
+
+  <Import Project="$(_PackageVersionPropsFilePath)" Condition="Exists('$(_PackageVersionPropsFilePath)')"/>
+
+  <ItemGroup Condition="Exists('$(_PackageVersionPropsFilePath)')">
+    <PackageReference Include="Lucene.Net.CodeAnalysis.Dev" VersionOverride="$(_CodeAnalysisPackageVersion)" />
+  </ItemGroup>
+
+  <Target Name="EnsureNuGetPackageBuilt" BeforeTargets="PrepareForBuild" Condition="'$(DesignTimeBuild)' != 'true'">
+
+    <Message Importance="high" Text="Running NuGet Package Build..." />
+
+    <!-- Build the project that produces the NuGet package -->
+    <MSBuild
+      Projects="..\Lucene.Net.CodeAnalysis.Dev.Package\Lucene.Net.CodeAnalysis.Dev.Package.csproj"
+      Targets="Restore;PrepareForBuild;Build"
+      Properties="Configuration=$(Configuration)"
+    />
+
+    <!-- Since we may be continually using the last build number (unless a commit occured),
+          we need to clear the project local NuGet cache. -->
+    <ForceDeleteDirectory DirectoryPath="$(_RestorePackagesPath)" />
+
+    <!-- Restore again, now that the .nupkg should exist -->
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="Restore"
+      Properties="Configuration=$(Configuration)" />
+  </Target>
+
+  <Target Name="CleanRestorePackagesPath" AfterTargets="Clean" Condition="'$(DesignTimeBuild)' != 'true'">
+    <ForceDeleteDirectory DirectoryPath="$(_RestorePackagesPath)" />
+  </Target>
+
+  <UsingTask
+    TaskName="ForceDeleteDirectory"
+    TaskFactory="RoslynCodeTaskFactory"
+    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <DirectoryPath ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+        try
+        {
+            if (Directory.Exists(DirectoryPath))
+            {
+                Directory.Delete(DirectoryPath, recursive: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            // Swallow all exceptions unless MSBuild wants you to fail
+            Log.LogMessage(MessageImportance.Low, $"Failed to delete directory '{DirectoryPath}': {ex.Message}");
+        }
+      ]]>
+      </Code>
+    </Task>
+  </UsingTask>
 
 </Project>
