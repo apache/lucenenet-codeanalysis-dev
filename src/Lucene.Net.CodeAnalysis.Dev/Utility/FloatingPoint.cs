@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace Lucene.Net.CodeAnalysis.Dev.Helpers
+namespace Lucene.Net.CodeAnalysis.Dev.Utility
 {
     internal static class FloatingPoint
     {

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.CodeAnalysis.Dev.Helpers;
+﻿using Lucene.Net.CodeAnalysis.Dev.Utility;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
