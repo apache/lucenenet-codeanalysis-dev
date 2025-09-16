@@ -1,4 +1,4 @@
-<?xml version='1.0'?>
+﻿<?xml version='1.0'?>
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -46,11 +46,8 @@ under the License.
       <Generator>MSBuild:Compile</Generator>
       <StronglyTypedFileName>$(IntermediateOutputPath)CodeFixResources.designer.cs</StronglyTypedFileName>
       <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
-      <StronglyTypedNamespace>Lucene.Net.CodeAnalysis.Dev</StronglyTypedNamespace>
+      <StronglyTypedNamespace>Lucene.Net.CodeAnalysis.Dev.CodeFixes</StronglyTypedNamespace>
       <StronglyTypedClassName>CodeFixResources</StronglyTypedClassName>
-      <LogicalName>Lucene.Net.CodeAnalysis.Dev.CodeFixResources.resources</LogicalName>
-      <LastGenOutput>CodeFixResources.Designer.cs</LastGenOutput>
-      <PublicClass>true</PublicClass>
     </EmbeddedResource>
   </ItemGroup>
 
