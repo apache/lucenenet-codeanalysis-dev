@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
+using Lucene.Net.CodeAnalysis.Dev.CodeFixes.Utility;
 using Lucene.Net.CodeAnalysis.Dev.Utility;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -36,7 +36,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes
     public class LuceneDev1001_FloatingPointFormattingCSCodeFixProvider : CodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds =>
-            ImmutableArray.Create(Descriptors.LuceneDev1001_FloatingPointFormatting.Id);
+            [Descriptors.LuceneDev1001_FloatingPointFormatting.Id];
 
         public override FixAllProvider GetFixAllProvider() =>
             WellKnownFixAllProviders.BatchFixer;
@@ -65,12 +65,42 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes
             if (invocation is null)
                 return;
 
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            if (semanticModel is null)
+                return;
+
+            var memberAccess = node as MemberAccessExpressionSyntax
+                ?? node.AncestorsAndSelf().OfType<MemberAccessExpressionSyntax>().FirstOrDefault();
+
+            if (memberAccess is null)
+                return;
+
+            // Determine the type name for J2N (Single or Double)
+            var typeInfo = semanticModel.GetTypeInfo(memberAccess.Expression, context.CancellationToken);
+            var type = typeInfo.Type;
+
+            string? j2nTypeName = type?.SpecialType switch
+            {
+                SpecialType.System_Single => "Single",
+                SpecialType.System_Double => "Double",
+                _ => null
+            };
+
+            if (j2nTypeName == null)
+                return;
+
+            // Build the code element string
+            string codeElement = $"J2N.Numerics.{j2nTypeName}.ToString(...)";
+
+            // Use the helper to register the code fix
             context.RegisterCodeFix(
-                CodeAction.Create(
-                    title: "Use J2N.Numerics.*.ToString(...)",
-                    createChangedDocument: c => ReplaceWithJ2NToStringAsync(context.Document, invocation, c),
-                    equivalenceKey: "UseJ2NToString"),
+                CodeActionHelper.CreateFromResource(
+                    CodeFixResources.UseX,
+                    c => ReplaceWithJ2NToStringAsync(context.Document, invocation, c),
+                    "UseJ2NToString",
+                    codeElement),
                 diagnostic);
+
         }
 
         private async Task<Document> ReplaceWithJ2NToStringAsync(
@@ -78,6 +108,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes
             InvocationExpressionSyntax invocation,
             CancellationToken cancellationToken)
         {
+
             if (invocation.Expression is not MemberAccessExpressionSyntax memberAccess)
                 return document;
 

@@ -118,4 +118,8 @@ under the License.
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="UseX" xml:space="preserve">
+    <value>Use {0}</value>
+    <comment>Title for code fix; {0} is the code element to utilize.</comment>
+  </data>
 </root>
