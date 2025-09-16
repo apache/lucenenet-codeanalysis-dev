@@ -21,18 +21,17 @@ using Microsoft.CodeAnalysis.Testing;
 using NUnit.Framework;
 using System.Threading.Tasks;
 
-namespace Lucene.Net.CodeAnalysis.Dev.Tests
+namespace Lucene.Net.CodeAnalysis.Dev
 {
-    public class TestLuceneDev1002_FloatingPointArithmeticCSCodeAnalyzer
+    public class TestLuceneDev1001_FloatingPointFormattingCSCodeAnalyzer
     {
-
         //No diagnostics expected to show up
         [Test]
         public async Task TestEmptyFile()
         {
             var testCode = @"";
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1002_FloatingPointArithmeticCSCodeAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1001_FloatingPointFormattingCSCodeAnalyzer())
             {
                 TestCode = testCode
             };
@@ -46,38 +45,31 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests
             var testCode = @"
         using System;
         using System.Collections.Generic;
+        using System.Globalization;
         using System.Linq;
         using System.Text;
-        using System.Threading.Tasks;
         using System.Diagnostics;
 
         public class MyClass
         {
             private readonly float float1 = 1f;
-            private readonly float float2 = 3.14f;
 
             public void MyMethod()
             {
-                long foo = 33;
-                var result = ((double)float1 * (double)float2) / foo;
+                string result = float1.ToString(CultureInfo.InvariantCulture);
             }
        }
        ";
 
-            var expected1 = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1002_FloatingPointArithmetic.Id)
-                .WithMessageFormat(Descriptors.LuceneDev1002_FloatingPointArithmetic.MessageFormat)
-                .WithArguments("((double)float1 * (double)float2) / foo")
-                .WithLocation("/0/Test0.cs", line: 17, column: 30);
+            var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1001_FloatingPointFormatting.Id)
+                .WithMessageFormat(Descriptors.LuceneDev1001_FloatingPointFormatting.MessageFormat)
+                .WithArguments("float1.ToString")
+                .WithLocation("/0/Test0.cs", line: 15, column: 33);
 
-            var expected2 = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1002_FloatingPointArithmetic.Id)
-                .WithMessageFormat(Descriptors.LuceneDev1002_FloatingPointArithmetic.MessageFormat)
-                .WithArguments("(double)float1 * (double)float2")
-                .WithLocation("/0/Test0.cs", line: 17, column: 31);
-
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1002_FloatingPointArithmeticCSCodeAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1001_FloatingPointFormattingCSCodeAnalyzer())
             {
                 TestCode = testCode,
-                ExpectedDiagnostics = { expected1, expected2 }
+                ExpectedDiagnostics = { expected }
             };
 
             await test.RunAsync();

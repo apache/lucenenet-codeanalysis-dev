@@ -1,4 +1,4 @@
-<?xml version='1.0'?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -25,6 +25,7 @@ under the License.
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsTestProject>true</IsTestProject>
+    <RootNamespace>Lucene.Net.CodeAnalysis.Dev.CodeFixes</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

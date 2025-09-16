@@ -21,7 +21,7 @@ using Microsoft.CodeAnalysis.Testing;
 using NUnit.Framework;
 using System.Threading.Tasks;
 
-namespace Lucene.Net.CodeAnalysis.Dev.Tests
+namespace Lucene.Net.CodeAnalysis.Dev
 {
     public class TestLuceneDev1004_ArrayMethodReturnValueCSCodeAnalyzer
     {

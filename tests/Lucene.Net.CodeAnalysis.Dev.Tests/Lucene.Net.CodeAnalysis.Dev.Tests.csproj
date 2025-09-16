@@ -24,6 +24,7 @@ under the License.
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <IsTestProject>true</IsTestProject>
+    <RootNamespace>Lucene.Net.CodeAnalysis.Dev</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
