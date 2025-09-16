@@ -22,11 +22,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
 
 namespace Lucene.Net.CodeAnalysis.Dev
 {
@@ -55,7 +51,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
 
         private static void AnalyzeNodeCS(SyntaxNodeAnalysisContext context)
         {
-            if (context.Node is Microsoft.CodeAnalysis.CSharp.Syntax.BinaryExpressionSyntax binaryExpression)
+            if (context.Node is BinaryExpressionSyntax binaryExpression)
             {
                 var leftSymbolInfo = Microsoft.CodeAnalysis.CSharp.CSharpExtensions.GetSymbolInfo(context.SemanticModel, binaryExpression.Left);
                 var rightSymbolInfo = Microsoft.CodeAnalysis.CSharp.CSharpExtensions.GetSymbolInfo(context.SemanticModel, binaryExpression.Right);
@@ -68,9 +64,9 @@ namespace Lucene.Net.CodeAnalysis.Dev
 
                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.LuceneDev1000_FloatingPointEquality, context.Node.GetLocation(), binaryExpression.ToString()));
             }
-            else if (context.Node is Microsoft.CodeAnalysis.CSharp.Syntax.MemberAccessExpressionSyntax memberAccessExpression)
+            else if (context.Node is MemberAccessExpressionSyntax memberAccessExpression)
             {
-                if (!(memberAccessExpression.Parent is Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax))
+                if (!(memberAccessExpression.Parent is InvocationExpressionSyntax))
                     return;
 
                 if (memberAccessExpression.Name.Identifier.ValueText != "Equals")

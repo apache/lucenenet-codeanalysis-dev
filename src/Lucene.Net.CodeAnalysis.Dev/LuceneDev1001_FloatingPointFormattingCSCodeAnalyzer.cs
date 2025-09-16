@@ -22,11 +22,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
 
 namespace Lucene.Net.CodeAnalysis.Dev
 {
@@ -49,9 +45,9 @@ namespace Lucene.Net.CodeAnalysis.Dev
 
         private static void AnalyzeNodeCS(SyntaxNodeAnalysisContext context)
         {
-            if (context.Node is Microsoft.CodeAnalysis.CSharp.Syntax.MemberAccessExpressionSyntax memberAccessExpression)
+            if (context.Node is MemberAccessExpressionSyntax memberAccessExpression)
             {
-                if (!(memberAccessExpression.Parent is Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax))
+                if (!(memberAccessExpression.Parent is InvocationExpressionSyntax))
                     return;
 
                 if (memberAccessExpression.Name.Identifier.ValueText != "ToString")
