@@ -7,4 +7,9 @@
     <PackageReference Include="NUnit" />
     <PackageReference Include="NUnit3TestAdapter" />
   </ItemGroup>
+
+  <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+    <IsPublishable>true</IsPublishable>
+  </PropertyGroup>
+  
 </Project>
