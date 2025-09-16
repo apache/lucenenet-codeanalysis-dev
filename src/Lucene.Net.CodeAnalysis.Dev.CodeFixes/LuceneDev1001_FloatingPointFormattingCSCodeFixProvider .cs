@@ -43,117 +43,118 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            // only handle the first diagnostic for this registration
-            var diagnostic = context.Diagnostics.FirstOrDefault();
-            if (diagnostic == null)
+            Diagnostic? diagnostic = context.Diagnostics.FirstOrDefault();
+            if (diagnostic is null)
                 return;
 
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode? root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             if (root is null)
                 return;
 
             // the diagnostic in the analyzer is reported on the member access (e.g. "x.ToString")
             // but we need the whole invocation (e.g. "x.ToString(...)").  So find the invocation
             // by walking ancestors if needed.
-            var node = root.FindNode(diagnostic.Location.SourceSpan);
+            SyntaxNode? node = root.FindNode(diagnostic.Location.SourceSpan);
             if (node is null)
                 return;
 
-            var invocation = node as InvocationExpressionSyntax
-                         ?? node.AncestorsAndSelf().OfType<InvocationExpressionSyntax>().FirstOrDefault();
-
-            if (invocation is null)
+            if (node is not ExpressionSyntax exprNode)
                 return;
 
-            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            SemanticModel? semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
             if (semanticModel is null)
                 return;
 
-            var memberAccess = node as MemberAccessExpressionSyntax
-                ?? node.AncestorsAndSelf().OfType<MemberAccessExpressionSyntax>().FirstOrDefault();
-
-            if (memberAccess is null)
+            if (!TryGetJ2NTypeAndMember(semanticModel, exprNode, out var j2nTypeName, out var memberAccess))
                 return;
 
-            // Determine the type name for J2N (Single or Double)
-            var typeInfo = semanticModel.GetTypeInfo(memberAccess.Expression, context.CancellationToken);
-            var type = typeInfo.Type;
-
-            string? j2nTypeName = type?.SpecialType switch
-            {
-                SpecialType.System_Single => "Single",
-                SpecialType.System_Double => "Double",
-                _ => null
-            };
-
-            if (j2nTypeName == null)
-                return;
-
-            // Build the code element string
             string codeElement = $"J2N.Numerics.{j2nTypeName}.ToString(...)";
 
-            // Use the helper to register the code fix
             context.RegisterCodeFix(
                 CodeActionHelper.CreateFromResource(
                     CodeFixResources.UseX,
-                    c => ReplaceWithJ2NToStringAsync(context.Document, invocation, c),
+                    c => ReplaceWithJ2NToStringAsync(context.Document, memberAccess, c),
                     "UseJ2NToString",
                     codeElement),
                 diagnostic);
-
         }
 
         private async Task<Document> ReplaceWithJ2NToStringAsync(
             Document document,
-            InvocationExpressionSyntax invocation,
+            MemberAccessExpressionSyntax memberAccess,
             CancellationToken cancellationToken)
         {
-
-            if (invocation.Expression is not MemberAccessExpressionSyntax memberAccess)
-                return document;
-
-            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            SemanticModel? semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             if (semanticModel is null)
                 return document;
 
-            var typeInfo = semanticModel.GetTypeInfo(memberAccess.Expression, cancellationToken);
-            var type = typeInfo.Type;
+            if (!TryGetJ2NTypeAndMember(semanticModel, memberAccess, out var j2nTypeName, out _))
+                return document;
 
-            string? j2nTypeName = type?.SpecialType switch
-            {
-                SpecialType.System_Single => "Single",
-                SpecialType.System_Double => "Double",
-                _ => null
-            };
+            // Build J2N.Numerics.Single/Double.ToString
+            MemberAccessExpressionSyntax j2nToStringAccess = SyntaxFactory.MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression,
+                SyntaxFactory.MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    SyntaxFactory.IdentifierName("J2N"),
+                    SyntaxFactory.IdentifierName("Numerics")),
+                SyntaxFactory.IdentifierName(j2nTypeName))
+                .WithAdditionalAnnotations(Formatter.Annotation);
 
-            if (j2nTypeName == null)
-                return document; // unsupported type
-
-            // Build J2N.Numerics.Single.ToString
-            var j2n = SyntaxFactory.IdentifierName("J2N");
-            var numerics = SyntaxFactory.IdentifierName("Numerics");
-            var single = SyntaxFactory.IdentifierName(j2nTypeName);
-            var toString = SyntaxFactory.IdentifierName("ToString");
-
-            // Build the chain: J2N.Numerics.Single.ToString
-            var j2nNumerics = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, j2n, numerics);
-            var j2nNumericsSingle = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, j2nNumerics, single);
-            var j2nToStringAccess = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, j2nNumericsSingle, toString);
-
+            MemberAccessExpressionSyntax fullAccess = SyntaxFactory.MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression,
+                j2nToStringAccess,
+                SyntaxFactory.IdentifierName("ToString"));
 
             // Build invocation: J2N.Numerics.<Single|Double>.ToString(<expr>, <original args...>)
+            if (memberAccess.Parent is not InvocationExpressionSyntax invocation)
+                return document;
+
             var newArgs = new List<ArgumentSyntax> { SyntaxFactory.Argument(memberAccess.Expression) };
             if (invocation.ArgumentList != null)
                 newArgs.AddRange(invocation.ArgumentList.Arguments);
 
-            var newInvocation = SyntaxFactory.InvocationExpression(j2nToStringAccess, SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(newArgs)))
-                                     .WithTriviaFrom(invocation)
-                                     .WithAdditionalAnnotations(Formatter.Annotation);
+            InvocationExpressionSyntax newInvocation = SyntaxFactory.InvocationExpression(
+                fullAccess,
+                SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(newArgs)))
+                .WithTriviaFrom(invocation) // safe now
+                .WithAdditionalAnnotations(Formatter.Annotation);
 
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            editor.ReplaceNode(invocation, newInvocation);
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            editor.ReplaceNode(memberAccess.Parent, newInvocation);
 
             return editor.GetChangedDocument();
+        }
+
+        private static bool TryGetJ2NTypeAndMember(
+            SemanticModel semanticModel,
+            ExpressionSyntax expr,
+            out string j2nTypeName,
+            out MemberAccessExpressionSyntax memberAccess)
+        {
+            memberAccess = expr as MemberAccessExpressionSyntax
+                ?? expr.AncestorsAndSelf().OfType<MemberAccessExpressionSyntax>().FirstOrDefault();
+
+            if (memberAccess is null)
+            {
+                j2nTypeName = null!; // we always return false when the value is null, so we can ignore it here.
+                return false;
+            }
+
+            var typeInfo = semanticModel.GetTypeInfo(memberAccess.Expression);
+            var type = typeInfo.Type;
+
+            j2nTypeName = type?.SpecialType switch
+            {
+                SpecialType.System_Single => "Single",
+                SpecialType.System_Double => "Double",
+                _ => null! // we always return false when the value is null, so we can ignore it here.
+            };
+
+            if (j2nTypeName is null)
+                return false;
+
+            return true;
         }
     }
 }
