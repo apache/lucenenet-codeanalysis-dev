@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-using Lucene.Net.CodeAnalysis.Dev.Tests.Utility;
+using Lucene.Net.CodeAnalysis.Dev.TestUtilities;
 using Lucene.Net.CodeAnalysis.Dev.Utility;
 using Microsoft.CodeAnalysis.Testing;
 using NUnit.Framework;

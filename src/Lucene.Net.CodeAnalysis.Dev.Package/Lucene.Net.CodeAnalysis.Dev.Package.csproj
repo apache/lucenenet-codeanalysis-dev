@@ -43,7 +43,7 @@ under the License.
 
   <PropertyGroup Label="NuGet Package File Paths">
     <_CodeAnalysisCSAssemblyFile>$(RepositoryRoot)src\Lucene.Net.CodeAnalysis.Dev\bin\$(Configuration)\$(TargetFramework)\Lucene.Net.CodeAnalysis.Dev.dll</_CodeAnalysisCSAssemblyFile>
-    <_CodeAnalysisCodeFixesCSAssemblyFile>$(RepositoryRoot)src\Lucene.Net.CodeAnalysis.Dev\bin\$(Configuration)\$(TargetFramework)\Lucene.Net.CodeAnalysis.Dev.CodeFixes.dll</_CodeAnalysisCodeFixesCSAssemblyFile>
+    <_CodeAnalysisCodeFixesCSAssemblyFile>$(RepositoryRoot)src\Lucene.Net.CodeAnalysis.Dev.CodeFixes\bin\$(Configuration)\$(TargetFramework)\Lucene.Net.CodeAnalysis.Dev.CodeFixes.dll</_CodeAnalysisCodeFixesCSAssemblyFile>
   </PropertyGroup>
 
   <ItemGroup Label="Localized Resources">

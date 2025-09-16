@@ -1,4 +1,3 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 # Licensed to the Apache Software Foundation (ASF) under one
@@ -63,6 +62,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		version.json = version.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.CodeAnalysis.Dev.CodeFixes", "src\Lucene.Net.CodeAnalysis.Dev.CodeFixes\Lucene.Net.CodeAnalysis.Dev.CodeFixes.csproj", "{94EE9776-30FC-4976-8C1D-AFE6A71BF8F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests", "tests\Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests\Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.csproj", "{2ADD8F4F-8360-4994-9451-B6741842AC58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.CodeAnalysis.Dev.TestUtilities", "tests\Lucene.Net.CodeAnalysis.Dev.TestUtilities\Lucene.Net.CodeAnalysis.Dev.TestUtilities.csproj", "{D7D95A33-0FB1-4F2A-A5CD-27719995026C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +106,18 @@ Global
 		{A476A043-926E-488B-A825-02EB0B410CFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A476A043-926E-488B-A825-02EB0B410CFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A476A043-926E-488B-A825-02EB0B410CFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94EE9776-30FC-4976-8C1D-AFE6A71BF8F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94EE9776-30FC-4976-8C1D-AFE6A71BF8F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94EE9776-30FC-4976-8C1D-AFE6A71BF8F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94EE9776-30FC-4976-8C1D-AFE6A71BF8F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ADD8F4F-8360-4994-9451-B6741842AC58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ADD8F4F-8360-4994-9451-B6741842AC58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ADD8F4F-8360-4994-9451-B6741842AC58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ADD8F4F-8360-4994-9451-B6741842AC58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7D95A33-0FB1-4F2A-A5CD-27719995026C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7D95A33-0FB1-4F2A-A5CD-27719995026C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7D95A33-0FB1-4F2A-A5CD-27719995026C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7D95A33-0FB1-4F2A-A5CD-27719995026C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,6 +128,9 @@ Global
 		{007DD065-3DF1-4AC1-9403-FE11E4654AF4} = {8170F744-3AE0-41EE-8986-611BA2C20425}
 		{62BE25C9-72F2-4348-96C4-7329252E9DE8} = {1A48DD8E-1D71-43AE-B15D-977A87972623}
 		{A476A043-926E-488B-A825-02EB0B410CFD} = {1A48DD8E-1D71-43AE-B15D-977A87972623}
+		{94EE9776-30FC-4976-8C1D-AFE6A71BF8F5} = {1A48DD8E-1D71-43AE-B15D-977A87972623}
+		{2ADD8F4F-8360-4994-9451-B6741842AC58} = {8170F744-3AE0-41EE-8986-611BA2C20425}
+		{D7D95A33-0FB1-4F2A-A5CD-27719995026C} = {8170F744-3AE0-41EE-8986-611BA2C20425}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B261893F-67D2-4098-B66F-9191951DB5BB}

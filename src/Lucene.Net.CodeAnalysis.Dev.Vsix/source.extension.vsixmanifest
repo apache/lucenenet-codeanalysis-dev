@@ -16,8 +16,8 @@
   <Assets>
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="Lucene.Net.CodeAnalysis.Dev" Path="|Lucene.Net.CodeAnalysis.Dev|"/>
     <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="Lucene.Net.CodeAnalysis.Dev" Path="|Lucene.Net.CodeAnalysis.Dev|"/>
-    <!--<Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="Lucene.Net.CodeAnalysis.Dev.CodeFixes" Path="|Lucene.Net.CodeAnalysis.Dev.CodeFixes|"/>
-    <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="Lucene.Net.CodeAnalysis.Dev.CodeFixes" Path="|Lucene.Net.CodeAnalysis.Dev.CodeFixes|"/>-->
+    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="Lucene.Net.CodeAnalysis.Dev.CodeFixes" Path="|Lucene.Net.CodeAnalysis.Dev.CodeFixes|"/>
+    <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="Lucene.Net.CodeAnalysis.Dev.CodeFixes" Path="|Lucene.Net.CodeAnalysis.Dev.CodeFixes|"/>
   </Assets>
   <Prerequisites>
     <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,)" DisplayName="Visual Studio core editor" />

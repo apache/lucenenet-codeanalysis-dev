@@ -18,13 +18,10 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
-namespace Lucene.Net.CodeAnalysis.Dev.Tests.Utility
+namespace Lucene.Net.CodeAnalysis.Dev.TestUtilities
 {
     public class Verifier : IVerifier
     {
@@ -45,7 +42,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.Utility
             Assert.That(collection, Is.Empty, CreateMessage($"Expected '{collectionName}' to be empty, contains '{collection?.Count()}' elements"));
         }
 
-        public virtual void Equal<T>(T expected, T actual, string message = null)
+        public virtual void Equal<T>(T expected, T actual, string? message = null)
         {
             if (message is null && Context.IsEmpty)
             {
@@ -53,11 +50,11 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.Utility
             }
             else
             {
-                Assert.That(actual, Is.EqualTo(expected), CreateMessage(message));
+                Assert.That(actual, Is.EqualTo(expected), CreateMessage(message!));
             }
         }
 
-        public virtual void True([DoesNotReturnIf(false)] bool assert, string message = null)
+        public virtual void True([DoesNotReturnIf(false)] bool assert, string? message = null)
         {
             if (message is null && Context.IsEmpty)
             {
@@ -65,11 +62,11 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.Utility
             }
             else
             {
-                Assert.That(assert, CreateMessage(message));
+                Assert.That(assert, CreateMessage(message!));
             }
         }
 
-        public virtual void False([DoesNotReturnIf(true)] bool assert, string message = null)
+        public virtual void False([DoesNotReturnIf(true)] bool assert, string? message = null)
         {
             if (message is null && Context.IsEmpty)
             {
@@ -77,12 +74,12 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.Utility
             }
             else
             {
-                Assert.That(assert, Is.False, CreateMessage(message));
+                Assert.That(assert, Is.False, CreateMessage(message!));
             }
         }
 
         [DoesNotReturn]
-        public virtual void Fail(string message = null)
+        public virtual void Fail(string? message = null)
         {
             if (message is null && Context.IsEmpty)
             {
@@ -90,7 +87,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.Utility
             }
             else
             {
-                Assert.Fail(CreateMessage(message));
+                Assert.Fail(CreateMessage(message!));
             }
 
             throw new InvalidOperationException("This program location is thought to be unreachable.");
@@ -106,13 +103,13 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.Utility
             Assert.That(collection, Is.Not.Empty, CreateMessage($"expected '{collectionName}' to be non-empty, contains"));
         }
 
-        public virtual void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> equalityComparer = null, string message = null)
+        public virtual void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T>? equalityComparer = null, string? message = null)
         {
             var comparer = new SequenceEqualEnumerableEqualityComparer<T>(equalityComparer);
             var areEqual = comparer.Equals(expected, actual);
             if (!areEqual)
             {
-                Assert.Fail(CreateMessage(message));
+                Assert.Fail(CreateMessage(message!));
             }
         }
 
@@ -122,7 +119,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.Utility
             return new Verifier(Context.Push(context));
         }
 
-        protected virtual string CreateMessage(string message)
+        protected virtual string CreateMessage(string? message)
         {
             foreach (var frame in Context)
             {
@@ -136,12 +133,12 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.Utility
         {
             private readonly IEqualityComparer<T> _itemEqualityComparer;
 
-            public SequenceEqualEnumerableEqualityComparer(IEqualityComparer<T> itemEqualityComparer)
+            public SequenceEqualEnumerableEqualityComparer(IEqualityComparer<T>? itemEqualityComparer)
             {
                 _itemEqualityComparer = itemEqualityComparer ?? EqualityComparer<T>.Default;
             }
 
-            public bool Equals(IEnumerable<T> x, IEnumerable<T> y)
+            public bool Equals(IEnumerable<T>? x, IEnumerable<T>? y)
             {
                 if (ReferenceEquals(x, y)) { return true; }
                 if (x is null || y is null) { return false; }

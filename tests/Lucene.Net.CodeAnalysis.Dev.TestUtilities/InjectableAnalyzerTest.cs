@@ -19,18 +19,16 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using System;
-using System.Collections.Generic;
 
-namespace Lucene.Net.CodeAnalysis.Dev.Tests.Utility
+namespace Lucene.Net.CodeAnalysis.Dev.TestUtilities
 {
     public class InjectableCSharpAnalyzerTest : AnalyzerTest<Verifier>
     {
-        private readonly Func<DiagnosticAnalyzer> createAnalyzer;
+        private readonly Func<DiagnosticAnalyzer> analyzerFactory;
 
-        public InjectableCSharpAnalyzerTest(Func<DiagnosticAnalyzer> createAnalyzer)
+        public InjectableCSharpAnalyzerTest(Func<DiagnosticAnalyzer> analyzerFactory)
         {
-            this.createAnalyzer = createAnalyzer ?? throw new ArgumentNullException(nameof(createAnalyzer));
+            this.analyzerFactory = analyzerFactory ?? throw new ArgumentNullException(nameof(analyzerFactory));
         }
 
         public override string Language => LanguageNames.CSharp;
@@ -49,7 +47,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.Utility
 
         protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
         {
-            return [createAnalyzer()];
+            yield return analyzerFactory();
         }
     }
 }
