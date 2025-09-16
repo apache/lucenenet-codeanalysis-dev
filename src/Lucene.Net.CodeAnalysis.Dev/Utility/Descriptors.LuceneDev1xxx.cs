@@ -25,35 +25,39 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
 {
     public static partial class Descriptors
     {
-        public static DiagnosticDescriptor LuceneDev1000_FloatingPointEquality { get; } =
+        // IMPORTANT: Do not make these into properties! The AnalyzerReleases release management
+        // analyzers do not recognize them and will report RS2002 warnings if it cannot read the
+        // DignosticDescriptor instance through a field.
+
+        public static readonly DiagnosticDescriptor LuceneDev1000_FloatingPointEquality =
             Diagnostic(
                 "LuceneDev1000",
                 Design,
                 Warning
             );
 
-        public static DiagnosticDescriptor LuceneDev1001_FloatingPointFormatting { get; } =
+        public static readonly DiagnosticDescriptor LuceneDev1001_FloatingPointFormatting =
             Diagnostic(
                 "LuceneDev1001",
                 Design,
                 Warning
             );
 
-        public static DiagnosticDescriptor LuceneDev1002_FloatingPointArithmetic { get; } =
+        public static readonly DiagnosticDescriptor LuceneDev1002_FloatingPointArithmetic =
             Diagnostic(
                 "LuceneDev1002",
                 Design,
                 Warning
             );
 
-        public static DiagnosticDescriptor LuceneDev1003_ArrayMethodParameter { get; } =
+        public static readonly DiagnosticDescriptor LuceneDev1003_ArrayMethodParameter =
             Diagnostic(
                 "LuceneDev1003",
                 Design,
                 Warning
             );
 
-        public static DiagnosticDescriptor LuceneDev1004_ArrayMethodReturnValue { get; } =
+        public static readonly DiagnosticDescriptor LuceneDev1004_ArrayMethodReturnValue =
             Diagnostic(
                 "LuceneDev1004",
                 Design,
