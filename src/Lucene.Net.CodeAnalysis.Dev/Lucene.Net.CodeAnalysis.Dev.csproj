@@ -75,11 +75,5 @@ under the License.
       <StronglyTypedClassName>Resources</StronglyTypedClassName>
     </EmbeddedResource>
   </ItemGroup>
-  
-  <!-- See: https://github.com/dotnet/roslyn-analyzers/issues/5663#issuecomment-948304565 -->
-  <ItemGroup>
-    <AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
-    <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
-  </ItemGroup>
 
 </Project>
