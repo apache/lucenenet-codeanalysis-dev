@@ -27,3 +27,11 @@
 # Git metadata
 .gitattributes text eol=lf
 .gitignore     text eol=lf
+
+# Ensure shell scripts always use LF
+*.sh            text eol=lf
+eng/git-hooks/* text eol=lf
+
+# Ensure batch scripts always use CRLF
+*.bat               eol=crlf
+*.cmd               eol=crlf
