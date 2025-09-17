@@ -23,7 +23,7 @@ under the License.
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Nullable>enable</Nullable>
-    
+
     <!-- Newer versions of VS and the SDK allow loading as 64 bit, so we need this for compatibility when loading in VS  -->
     <Prefer32Bit>false</Prefer32Bit>
 
