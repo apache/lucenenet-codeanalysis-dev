@@ -25,12 +25,16 @@
     <PackageProjectUrl>https://lucenenet.apache.org</PackageProjectUrl>
     <PackageIcon>lucene-net-icon-128x128.png</PackageIcon>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageNoticeFile>NOTICE.txt</PackageNoticeFile>
     <ReleaseNotesUrl Condition=" '$(PackageVersion)' != '' ">https://github.com/$(GitHubOrganization)/$(GitHubProject)/releases/tag/v$(PackageVersion)</ReleaseNotesUrl>
     <PackageReleaseNotes>$(ReleaseNotesUrl)</PackageReleaseNotes>
-    <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
     <None Include="$(RepositoryRoot)README.md" Pack="true" PackagePath="$(PackageReadmeFile)"/>
+    <None Include="$(RepositoryRoot)LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)"/>
+    <None Include="$(RepositoryRoot)NOTICE.txt" Pack="true" PackagePath="$(PackageNoticeFile)"/>
     <None Include="$(RepositoryRoot)branding\$(PackageIcon)" Pack="true" PackagePath="$(PackageIcon)" Visible="false"/>
   </ItemGroup>
 </Project>
