@@ -30,7 +30,7 @@
 - [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 - [nbgv tool](https://www.nuget.org/packages/nbgv/) (the version must match the one defined in [Directory.Packages.props](../Directory.Packages.props))
 - [Java 8](https://adoptium.net/temurin/releases) or higher (either a JRE or JDK)
-- Bash. If on Windows, this will automatically be installed by [Git for Windows](https://gitforwindows.org/).
+- Bash (Installed automatically with [Git for Windows](https://gitforwindows.org/) on Windows).
 
 ### Installing the NBGV Tool
 
@@ -67,6 +67,10 @@ Repeat the first command to confirm that it is set.
 
 This project uses Nerdbank.GitVersioning to assist with creating version numbers based on the current branch and commit. This tool handles making pre-release and production releases on release branches.
 
+### Release Workflow Overview
+
+![Release Workflow](images/release-workflow.svg)
+
 ### Prepare the Main Branch
 
 1. Ensure all of the features that will be included have been merged to the `main` branch.
@@ -75,18 +79,59 @@ This project uses Nerdbank.GitVersioning to assist with creating version numbers
 
 If any changes are required, it is recommended to use feature branch(es) and pull request(s) to update the `main` branch as appropriate before creating a release branch.
 
+### Decide on a Release Version
+
+The version that will be released next is controlled by the `version.json` file. We must choose the release version and commit it to the `main` branch prior to creating a release branch.
+
+> [!NOTE]
+> If you are not familiar with these terms, these are covered in the [Semantic Versioning 2.0](https://semver.org/spec/v2.0.0.html) document.
+
+For the purposes of this project:
+
+- **Major (Advanced)** - Released only when a new port of Lucene.NET is started (primarily to show a relationship between Lucene.NET and these analyzers)
+- **Minor** - A typical release with one or more new features
+- **Patch** - A release that only contains patches to existing features and/or updates to documentation
+- **Prerelease** - A release that requires stabilization or is a one-off release for a specific purpose
+
+> [!NOTE]
+> This project doesn't have any public API that users consume, so the type of release is strictly informational in nature, not functional.
+
+Now is the time to decide which of these strategies to use for the current version. For the next version (a future release version), we should always assume a patch. This is primarily so we never have to downgrade a version even if a patch is rarely done in practice.
+
+With that in mind, open `version.json` and look at the "version" property, which will determine next version that will be released.
+
+#### Example Version
+
+```json
+  "version": "2.0.0-alpha.{height}"
+```
+
+The above example shows that the next version that will be released from a release branch is 2.0.0 or 2.0.0-beta.x (where x is an auto-incrementing number). The actual version in the file (alpha) will be used only if the `main` branch is released directly (something that is rare and not covered here).
+
+If we are releasing new features and want the next Minor version (2.1.0), we need to update the `version.json` file to reflect that version.
+
+```json
+  "version": "2.1.0-alpha.{height}"
+```
+
+Or, if the next version will be a patch, then leave the file unchanged. Commit any changes to the `main` branch and push them upstream before proceeding.
+
+Prereleases should rarely need to change the `version.json` file and will later choose the [Requires Stabilization](#requires-stabilization) option when creating a release branch.
+
+> [!IMPORTANT]
+> Release version numbers must always use all 3 version components when specified in `version.json`.
+
 ## Create a Release Branch
-
-### Release Workflow Overview
-
-![Release Workflow](images/release-workflow.svg)
 
 There are 2 supported scenarios for the release workflow:
 
 1. [Ready to Release](#ready-to-release) - No additional stabilization is required
 2. [Requires Stabilization](#requires-stabilization) - A beta will be released, which will be marked as a pre-release to consumers
 
-<!-- TODO: Add Versioning Primer link here -->
+> [!NOTE]
+> In both cases, `main` is advanced to the specified `--nextVersion`. This number should always be a **patch** bump and it should always use all 3 version components (major.minor.patch).
+>
+> The release branch name is always based on the version being released (e.g., `release/v2.0.0`).
 
 ### Ready to Release
 
@@ -122,7 +167,15 @@ release/v2.0.0 branch now tracks v2.0.0-beta.{height} stabilization and release.
 main branch now tracks v2.0.1-alpha.{height} development.
 ```
 
-The tool created a release branch named `release/v2.0.0`. Every build from this branch will be given a unique pre-release version starting with 2.0.0-beta and ending in a dot followed by one or more digits.
+The tool created a release branch named `release/v2.0.0`. Every commit to this branch will be given a unique pre-release version starting with 2.0.0-beta and ending in a dot followed by one or more digits (i.e. `2.0.0-beta.123`).
+
+### Checkout the Release Branch
+
+After the release branch is created, the rest of the commits will be added to the release branch, so use the git checkout command to switch to that branch.
+
+```console
+git checkout <release-branch>
+```
 
 ---------------------------------------------
 
@@ -157,7 +210,7 @@ Roslyn analyzers use two release tracking files to manage analyzer rule metadata
 - **`AnalyzerReleases.Shipped.md`**
   Tracks analyzer rules that have been released in one or more shipped packages. This is the authoritative record of rules shipped at specific versions.
 
-Before tagging the release, you must ensure that these files are up to date. This guarantees that the release metadata reflects the rules included in the NuGet package.
+Before tagging the release, you must ensure that these files are up to date. This ensures that the release metadata exactly matches the rules shipped in the NuGet package.
 
 > [!NOTE]
 > If the release doesn't contain new or changed analyzer rules, this step can be skipped. For example, if the release only contains new code fixes and/or backward compatible patches to existing analyzers.
@@ -245,20 +298,20 @@ Tagging the commit and pushing it to the GitHub repository will start the automa
 
 #### Tag the HEAD Commit
 
-Run the following command to tag the HEAD commit.
+Run the following command to tag the HEAD commit of the release branch.
 
 ```console
 nbgv tag
 ```
 
 > [!NOTE]
-> The release build workflow always uses the HEAD commit.
+> The release build workflow always builds from the HEAD commit of the release branch.
 
 #### Push the Release Branch to the Upstream Repository
 
 The final step to begin the release build is to push the tag and any new commits to the upstream repository.
 
-```c#
+```console
 git push <remote-name> <release-branch> --follow-tags
 ```
 
@@ -284,6 +337,8 @@ There are 2 possible outcomes for the release workflow:
 Review the draft release notes and edit or regenerate them if necessary. Release notes are generated based on PR titles and categorized by their labels. If something is amiss, they can be corrected by editing the PR titles and labels, deleting the previously generated release notes, and clicking the Generate Release Notes button.
 
 ##### Labels that Apply to the Release Notes
+
+The following labels are recognized by the release notes generator.
 
 | GitHub Label                   | Action                                                   |
 |--------------------------------|----------------------------------------------------------|
@@ -353,10 +408,25 @@ Next, follow the same procedure starting at [Tag the HEAD Commit](#tag-the-head-
 
 Finally, merge the release branch back into the main branch and push the changes to the upstream repository.
 
+> [!IMPORTANT]
+> Release branches start with `release\v`.
+
 ```console
 git checkout main
 git merge <release-branch>
 git push <remote-name> main
+```
+
+### Delete the Release Branch
+
+From this point, the release will be tracked historically using the Git tag, so there is no reason to keep the release branch once it has been merged. You may wish to delay the deletion for a few days in case it is needed for some reason, but when you are ready, the commands to delete the local and remote branches are:
+
+> [!IMPORTANT]
+> Release branches start with `release\v`. Take care not to delete the tag, which starts with a `v`.
+
+```console
+git branch -d <release-branch>
+git push --delete <remote-name> <release-branch>
 ```
 
 ### Update Lucene.NET
