@@ -21,7 +21,8 @@
 
 # Making a Release
 
-This project uses Nerdbank.GitVersioning to assist with creating version numbers based on the current branch and commit. This tool handles making pre-release builds on the main branch and production releases on release branches.
+> [!NOTE]
+> All commands should be executed from the root of the repository unless otherwise stated.
 
 ## Prerequisites
 
@@ -29,46 +30,69 @@ This project uses Nerdbank.GitVersioning to assist with creating version numbers
 - [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 - [nbgv tool](https://www.nuget.org/packages/nbgv/) (the version must match the one defined in [Directory.Packages.props](../Directory.Packages.props))
 - [Java 8](https://adoptium.net/temurin/releases) or higher (either a JRE or JDK)
+- Bash. If on Windows, this will automatically be installed by [Git for Windows](https://gitforwindows.org/).
 
-### Installing NBGV Tool
+### Installing the NBGV Tool
 
 Perform a one-time install of the nbgv tool using the following dotnet CLI command:
+
+> [!NOTE]
+> The version should match the one used in [Directory.Packages.props](../Directory.Packages.props).
 
 ```console
 dotnet tool install -g nbgv --version <theActualVersion>
 ```
 
-## Run the Apache Release Audit Tool
+### Configure the Git Commit Hooks
 
-The Release Audit Tool will ensure that all non-generated text files have a license header.
+To synchronize the `AnalyzerReleases.Shipped.md` release version with the latest commit, there is a Git commit hook that ensures that the version in the HEAD commit is the same version that is committed to the file.
+
+Check whether the Git `core.hooksPath` is correctly set:
 
 ```console
-pwsh ./rat.ps1
+git config core.hooksPath
 ```
 
-The tool will apply the updates directly to the local working directory. Review and commit the changes to your local Git clone, adding exclusions to `.rat-excludes` and re-running as necessary.
+If the command outputs a path, confirm that the path is `./eng/git-hooks`. In all other cases, run the following command to set it appropriately.
 
-- Exclude files that already have license headers
-- Exclude files that are automatically generated
-- Exclude files that don't work properly with license headers included (such as test data)
+```console
+git config core.hooksPath ./eng/git-hooks
+```
 
-## Versioning Primer
+Repeat the first command to confirm that it is set.
 
-This project uses [Semantic Versioning 2.0](https://semver.org/spec/v2.0.0.html) and strictly adheres to the guidelines about bumping the major, minor and build numbers of the version number.
+---------------------------------------------
 
-The assembly version should remain the same in all cases, except when the major version changes, so that it can be used as a drop-in replacement.
+## Prior to Release
 
-## Creating a Release Branch
+This project uses Nerdbank.GitVersioning to assist with creating version numbers based on the current branch and commit. This tool handles making pre-release and production releases on release branches.
+
+### Prepare the Main Branch
+
+1. Ensure all of the features that will be included have been merged to the `main` branch.
+2. Check whether the `AnalyzerReleases.Unshipped.md` and `AnalyzerReleases.Shipped.md` are set up consistently and align with the features that have been merged since the prior release. Do not yet move any rules from `AnalyzerReleases.Unshipped.md` to `AnalyzerReleases.Shipped.md`. That task will be performed in a later step.
+3. Check whether the `README`, `LICENSE`, `NOTICE` and other documentation files are up to date.
+
+If any changes are required, it is recommended to use feature branch(es) and pull request(s) to update the `main` branch as appropriate before creating a release branch.
+
+## Create a Release Branch
 
 ### Release Workflow Overview
 
 ![Release Workflow](images/release-workflow.svg)
 
+There are 2 supported scenarios for the release workflow:
+
+1. [Ready to Release](#ready-to-release) - No additional stabilization is required
+2. [Requires Stabilization](#requires-stabilization) - A beta will be released, which will be marked as a pre-release to consumers
+
+<!-- TODO: Add Versioning Primer link here -->
+
 ### Ready to Release
 
-When the changes in the main branch are ready to release, create a release branch using the following nbgv tool command as specified in the [documentation](https://github.com/dotnet/Nerdbank.GitVersioning/blob/master/doc/nbgv-cli.md).
+When the changes in the main branch are ready to release, create a release branch using the following nbgv tool command as specified in the [documentation](https://dotnet.github.io/Nerdbank.GitVersioning/docs/nbgv-cli.html#preparing-a-release).
 
-For example, assume the `version.json` file on the main branch is currently setup as `2.0.0-alpha.{height}`. We want to go from this version to a release of `2.0.0` and set the next version on the main branch as `2.0.1-alpha.{height}`.
+For example, assume the `version.json` file on the main branch is currently set up as `2.0.0-alpha.{height}`. We want to go from this version to a release of `2.0.0` and set the next version on the main branch as `2.0.1-alpha.{height}`.
 
 ```console
 nbgv prepare-release --nextVersion 2.0.1
@@ -81,11 +105,11 @@ release/v2.0 branch now tracks v2.0.0 stabilization and release.
 main branch now tracks v2.0.1-alpha.{height} development.
 ```
 
-The tool created a release branch named `release/v2.0`. Every build from this branch (regardless of how many commits are added) will be versioned 2.0.0. 
+The tool created a release branch named `release/v2.0`. Every build from this branch will be versioned 2.0.x, but the patch version may be incremented depending on the number of additional commits that will be added.
 
 ### Requires Stabilization
 
-When creating a release that may require a few iterations to become stable, it is better to create a beta branch (more about that decision can be found [here](https://github.com/dotnet/Nerdbank.GitVersioning/blob/master/doc/nbgv-cli.md#preparing-a-release)). Starting from the same point as the [Ready to Release](#ready-to-release) scenario, we use the following command.
+When creating a release that may require a few iterations to become stable, it is better to create a beta branch (more about that decision can be found [here](https://dotnet.github.io/Nerdbank.GitVersioning/docs/nbgv-cli.html#preparing-a-release)). Starting from the same point as the [Ready to Release](#ready-to-release) scenario, run the following command.
 
 ```console
 nbgv prepare-release beta --nextVersion 2.0.1
@@ -95,42 +119,111 @@ The command should respond with:
 
 ```console
 release/v2.0 branch now tracks v2.0.0-beta.{height} stabilization and release.
-main branch now tracks v2.0.0-alpha.{height} development.
+main branch now tracks v2.0.1-alpha.{height} development.
 ```
 
 The tool created a release branch named `release/v2.0`. Every build from this branch will be given a unique pre-release version starting with 2.0.0-beta and ending in a dot followed by one or more digits.
 
-### Bumping the Version Manually
+---------------------------------------------
 
-When releasing a version that does not directly follow the current release version, manually update the `version` (and `assemblyVersion` if this is a major version bump) in `version.json` before creating the release branch. See the [version.json schema](https://raw.githubusercontent.com/AArnott/Nerdbank.GitVersioning/master/src/NerdBank.GitVersioning/version.schema.json) to determine valid options.
+## Run the Apache Release Audit Tool
 
-## Correcting the Release Version Height
+> [!IMPORTANT]
+> This command depends on Powershell and Java.
 
-Nerdbank.GitVersioning is designed in a way that it doesn't produce the same version number twice. This is done by using a "git height", which counts the number of commits since the last version update. This works great for CI, but is less than ideal when we don't want to skip over versions for the release.
-
-Since Nerdbank.GitVersioning considers each commit a new "version," the `versionHeightOffset` can be adjusted on the release branch to ensure the release uses the correct version number. This can be done by using the following command to see what version we are currently on, and then adjusting the value accordingly.
+The Release Audit Tool will ensure that all source code files and most other non-generated text files contain a license header.
 
 ```console
-nbgv get-version
+pwsh ./rat.ps1
 ```
+
+The tool will apply the updates directly to the local working directory. Review and commit the changes to your local Git clone, adding exclusions to `.rat-excludes` and re-running as necessary.
+
+- Exclude files that already include license headers
+- Exclude files that are automatically generated
+- Exclude files that cannot contain license headers (such as test data)
 
 > [!NOTE]
-> Officially, it is not recommended to use `versionHeightOffset` and in general that is true. However, using it in a narrow scope, such as on a release branch should be okay. In practice, users will not build from these branches, they will build from a release tag.
+> These extra commits will automatically bump the version number from what was specified when [Creating a Release Branch](creating-a-release-branch). It is normal and expected that we may have extra gaps between release version numbers.
 
-Then open the `version.json` file at the repository root, and set the `versionHeightOffset` using the formula `versionHeightOffset - ((versionHeight - desiredHeight) + 1)`. For example, if the current version is 2.0.1-beta.14 and we want to release 2.0.1-beta.5 (because the last version released was 2.0.1-beta.4), and the `versionHeightOffset` is set to -21:
 
-###### Calculating versionHeightOffset
+## Updating the AnalyzerReleases Files
+
+Roslyn analyzers use two release tracking files to manage analyzer rule metadata:
+
+- **`AnalyzerReleases.Unshipped.md`**
+  Tracks analyzer rules that have been added or modified since the last release but are not yet published in a shipped package.
+
+- **`AnalyzerReleases.Shipped.md`**
+  Tracks analyzer rules that have been released in one or more shipped packages. This is the authoritative record of rules shipped at specific versions.
+
+Before tagging the release, you must ensure that these files are up to date. This guarantees that the release metadata reflects the rules included in the NuGet package.
+
+> [!NOTE]
+> If the release doesn't contain new or changed analyzer rules, this step can be skipped. For example, if the release only contains new code fixes and/or backward compatible patches to existing analyzers.
+
+### Release Version Token
+
+Since Nerdbank.GitVersioning calculates the release version, the `AnalyzerReleases.Shipped.md` file is expected to include a version token when it is committed. A version token must be included in the header of the new section being added to `AnalyzerReleases.Shipped.md`.
+
+#### Release Version Token Example
+
+```markdown
+## Release {{vnext}}
 ```
--21 - ((14 - 5) + 1) = -31
+
+### Standard Workflow
+
+> [!IMPORTANT]
+> This change is expected to be the **final** commit prior to release. If there are any other changes you anticipate that need to be included in the release, they should be committed to the release branch prior to this step.
+
+> [!IMPORTANT]
+> This step depends on the NBGV tool, Bash, and the setup of the Git commit hook as described in [Prerequisites](#prerequisites).
+
+1. **Locate pending unshipped rules**  
+   Open `AnalyzerReleases.Unshipped.md`. This contains all rules added or modified since the last release.
+
+2. **Move unshipped rules into `AnalyzerReleases.Shipped.md`**  
+   - Create a new section in `AnalyzerReleases.Shipped.md` with a heading for the release version, containing the version token.
+   - Copy the rules listed under `AnalyzerReleases.Unshipped.md` into this section.
+   - Keep the table formatting consistent with previous releases.
+
+3. **Clear `AnalyzerReleases.Unshipped.md`**  
+   After the rules are copied over, `AnalyzerReleases.Unshipped.md` should either be empty or contain only rules that are not part of this release.
+
+4. **Commit the changes**  
+   Commit the modifications before tagging the release.
+
+### Example: First and Second Releases with Version Token
+
+`AnalyzerReleases.Shipped.md` evolves by appending each release as a new section. Each release is marked with a `## Release <version>` header.
+
+```markdown
+## Release 2.0.0-alpha.1
+
+### New Rules
+
+ Rule ID       | Category | Severity | Notes
+---------------|----------|----------|-----------------------------------------
+ LuceneDev1000 | Design   | Warning  | Floating point types should not be compared for exact equality
+ LuceneDev1001 | Design   | Warning  | Floating point types should be formatted with J2N methods
+
+## Release {{vnext}}
+
+### New Rules
+
+ Rule ID       | Category | Severity | Notes
+---------------|----------|----------|-----------------------------------------
+ LuceneDev1002 | Design   | Warning  | Floating point type arithmetic needs to be checked
+
+### Removed Rules
+
+ Rule ID       | Notes
+---------------|-------------------------------------------------
+ LuceneDev1001 | Replaced with LuceneDev1002 (better precision)
 ```
 
-So, we must set `versionHeightOffset` to -31 and commit the change.
-
-Note that the + 1 is because we are creating a new commit that will increment the number by 1. The change must be committed to see the change to the version number. Run the command again to check that the version will be correct.
-
-```console
-nbgv get-version
-```
+---------------------------------------------
 
 ## Creating a Release Build
 
@@ -142,32 +235,26 @@ The release process is mostly automated. However, a manual review is required on
 4. Abort the release to try again
 5. Publish the release to deploy the packages to NuGet.org
 
-## Create a Draft Release
+### Create a Draft Release
 
 Tagging the commit and pushing it to the GitHub repository will start the automated draft release. The progress of the release can be viewed in the [GitHub Actions UI](https://github.com/apache/lucenenet-codeanalysis-dev/actions). Select the run corresponding to the version tag that is pushed upstream to view the progress.
 
-### Tagging the Commit
+#### Tag the HEAD Commit
 
-If you don't already know the version that corresponds to the HEAD commit, check it now.
+Run the following command to tag the HEAD commit.
 
 ```console
-nbgv get-version
+nbgv tag
 ```
 
-The reply will show a table of version information. 
+> [!NOTE]
+> The release build workflow always uses the HEAD commit.
 
-```console
-Version:                      2.0.0
-AssemblyVersion:              2.0.0.0
-AssemblyInformationalVersion: 2.0.0-beta.5+a54c015802
-NuGetPackageVersion:          2.0.0-beta.5
-NpmPackageVersion:            2.0.0-beta.5
-```
+#### Push the Release Branch to the Upstream Repository
 
-Tag the commit with `v` followed by the NuGetPackageVersion.
+The final step to begin the release build is to push the tag and any new commits to the upstream repository.
 
-```console
-git tag -a v<package-version> <commit-hash> -m "v<package-version>"
+```c#
 git push <remote-name> <release-branch> --follow-tags
 ```
 
@@ -179,11 +266,18 @@ The push will start the automated draft release which will take a few minutes. W
 > [!NOTE]
 > If the release doesn't appear, check the [GitHub Actions UI](https://github.com/apache/lucenenet-codeanalysis-dev/actions). Select the run corresponding to the version tag that is pushed upstream to view the progress.
 
+There are 2 possible outcomes for the release workflow:
+
+1. [Successful Draft Release](#successful-draft-release) - Proceed normally
+2. [Failed Draft Release](#failed-draft-release) - Fix the problem that caused the release failure and reset the release branch for release
+
+---------------------------------------------
+
 ### Successful Draft Release
 
 #### Release Notes
 
-Review the draft release notes and edit or regenerate them if necessary. release notes are generated based on PR titles and categorized by their labels. If something is amiss, they can be corrected by editing the PR titles and labels, deleting the previously generated release notes, and clicking the Generate Release Notes button.
+Review the draft release notes and edit or regenerate them if necessary. Release notes are generated based on PR titles and categorized by their labels. If something is amiss, they can be corrected by editing the PR titles and labels, deleting the previously generated release notes, and clicking the Generate Release Notes button.
 
 ##### Labels that Apply to the Release Notes
 
@@ -205,7 +299,7 @@ Review the draft release notes and edit or regenerate them if necessary. release
 
 The release will also attach the NuGet packages that will be released to NuGet. Download the packages and run some basic checks:
 
-1. Put the `.nupkg` files into a local directory, and add a reference to the directory from Visual Studio. See [this answer](https://stackoverflow.com/a/10240180) for the steps. Check to ensure the NuGet packages can be referenced by a new project and the project will compile.
+1. Put the `.nupkg` files into a local directory, and add a reference to the directory from Visual Studio. See [this answer](https://stackoverflow.com/a/10240180) for the steps. Verify that the NuGet packages can be referenced by a new project and that the project compiles.
 2. Check the version information in [JetBrains dotPeek](https://www.jetbrains.com/decompiler/) to ensure the assembly version, file version, and informational version are consistent with what was specified in `version.json`.
 3. Open the `.nupkg` files in [NuGet Package Explorer](https://www.microsoft.com/en-us/p/nuget-package-explorer/9wzdncrdmdm3#activetab=pivot:overviewtab) and check that files in the packages are present and that the XML config is up to date.
 
@@ -218,6 +312,8 @@ Once everything is in order, the release can be published, which will deploy the
 
 At the bottom of the draft release page, click on **Publish release**.
 
+---------------------------------------------
+
 ### Failed Draft Release
 
 If the build failed in any way, the release can be restarted by deleting the tag and trying again. First check to see the reason why the build failed in the [GitHub Actions UI](https://github.com/apache/lucenenet-codeanalysis-dev/actions) and correct any problems that were reported.
@@ -226,28 +322,39 @@ If the build failed in any way, the release can be restarted by deleting the tag
 
 ##### Delete the Failed Tag
 
-Since the tag didn't make it to release, it is important to delete it to avoid a confusing release history. It is required to be removed if the next attempt will be for the same version number.
+Since the tag did not result in a release, it is important to delete it to avoid a confusing release history.
 
 ```console
 git tag -d v<package-version>
 git push --delete <remote-name> v<package-version>
 ```
 
-##### Push a New Version Tag
+##### Resetting the Version in `AnalyzerReleases.Shipped.md`
 
-> [!NOTE]
-> The same version number can be reused if there weren't any commits required to correct the release problem or if the `versionHeightOffset` is changed as described above.
+If you previously added a new section to `AnalyzerReleases.Shipped.md`, it may contain a version number that no longer corresponds to the release. Change the release header to include the replacement token, once again.
 
-Once the issues have been addressed to fix the build and reset the version (if necessary), follow the same procedure starting at [Tagging the Commit](#tagging-the-commit) to restart the draft release.
+```markdown
+## Release {{vnext}}
+```
+
+Then commit the change to the release branch.
+
+Next, follow the same procedure starting at [Tag the HEAD Commit](#tag-the-head-commit) to restart the draft release.
+
+---------------------------------------------
 
 ## Post Release Steps
 
 ### Merge the Release Branch
 
-Finally, merge the release branch back into the main branch and push the changes to GitHub.
+Finally, merge the release branch back into the main branch and push the changes to the upstream repository.
 
 ```console
-git checkout <main-branch>
+git checkout main
 git merge <release-branch>
-git push <remote-name> <main-branch>
+git push <remote-name> main
 ```
+
+### Update Lucene.NET
+
+The Lucene.NET project is the only consumer of this package. If the release was intended for general use (not just a one-off scan), update the version in `Dependencies.props` to reflect the new release and submit a pull request to [the Lucene.NET repository](https://github.com/apache/lucenenet).
