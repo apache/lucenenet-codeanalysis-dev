@@ -101,11 +101,11 @@ nbgv prepare-release --nextVersion 2.0.1
 The command should respond with:
 
 ```console
-release/v2.0 branch now tracks v2.0.0 stabilization and release.
+release/v2.0.0 branch now tracks v2.0.0 stabilization and release.
 main branch now tracks v2.0.1-alpha.{height} development.
 ```
 
-The tool created a release branch named `release/v2.0`. Every build from this branch will be versioned 2.0.x, but the patch version may be incremented depending on the number of additional commits that will be added.
+The tool created a release branch named `release/v2.0.0`. Every build from this branch will be versioned 2.0.0, regardless of how many commits are added.
 
 ### Requires Stabilization
 
@@ -118,11 +118,11 @@ nbgv prepare-release beta --nextVersion 2.0.1
 The command should respond with:
 
 ```console
-release/v2.0 branch now tracks v2.0.0-beta.{height} stabilization and release.
+release/v2.0.0 branch now tracks v2.0.0-beta.{height} stabilization and release.
 main branch now tracks v2.0.1-alpha.{height} development.
 ```
 
-The tool created a release branch named `release/v2.0`. Every build from this branch will be given a unique pre-release version starting with 2.0.0-beta and ending in a dot followed by one or more digits.
+The tool created a release branch named `release/v2.0.0`. Every build from this branch will be given a unique pre-release version starting with 2.0.0-beta and ending in a dot followed by one or more digits.
 
 ---------------------------------------------
 
@@ -234,6 +234,10 @@ The release process is mostly automated. However, a manual review is required on
 3. Manually check the release packages
 4. Abort the release to try again
 5. Publish the release to deploy the packages to NuGet.org
+
+<p align="center">
+  <img src="images/release-build-outcomes.svg" alt="Release Build Outcomes" width="40%" align="center" />
+</p>
 
 ### Create a Draft Release
 
