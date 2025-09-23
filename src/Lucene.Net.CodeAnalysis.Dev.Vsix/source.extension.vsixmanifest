@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="Lucene.Net.CodeAnalysis.Dev" Version="1.0.0" Language="en-US" Publisher="NightOwl888"/>
+    <Identity Id="Lucene.Net.CodeAnalysis.Dev" Version="1.0.0" Language="en-US" Publisher="Apache Software Foundation"/>
     <DisplayName>Lucene.Net.CodeAnalysis.Dev</DisplayName>
     <Description xml:space="preserve">This is a debugging project for Lucene.Net.CodeAnalysis.Dev analyzers and code fixes.</Description>
   </Metadata>
