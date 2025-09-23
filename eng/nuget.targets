@@ -19,6 +19,7 @@
 
 -->
 <Project>
+  
   <PropertyGroup Label="NuGet Package Properties">
     <IsPackable>true</IsPackable>
     <Authors>The Apache Software Foundation</Authors>
@@ -27,13 +28,19 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageNoticeFile>NOTICE.txt</PackageNoticeFile>
-    <ReleaseNotesUrl Condition=" '$(PackageVersion)' != '' ">https://github.com/$(GitHubOrganization)/$(GitHubProject)/releases/tag/v$(PackageVersion)</ReleaseNotesUrl>
-    <PackageReleaseNotes>$(ReleaseNotesUrl)</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="$(RepositoryRoot)README.md" Pack="true" PackagePath="$(PackageReadmeFile)"/>
     <None Include="$(RepositoryRoot)LICENSE.txt" Pack="true" PackagePath="LICENSE.txt"/>
     <None Include="$(RepositoryRoot)NOTICE.txt" Pack="true" PackagePath="$(PackageNoticeFile)"/>
-    <None Include="$(RepositoryRoot)branding\$(PackageIcon)" Pack="true" PackagePath="$(PackageIcon)" Visible="false"/>
+    <None Include="$(RepositoryRoot)branding/$(PackageIcon)" Pack="true" PackagePath="$(PackageIcon)" Visible="false"/>
   </ItemGroup>
+
+  <Target Name="SetReleaseNotesUrl" DependsOnTargets="GetBuildVersion" AfterTargets="BeforeBuild">
+    <PropertyGroup>
+      <ReleaseNotesUrl Condition="'$(PackageVersion)' != ''">https://github.com/$(GitHubOrganization)/$(GitHubProject)/releases/tag/v$([System.String]::Copy($(PackageVersion)).Trim())</ReleaseNotesUrl>
+      <PackageReleaseNotes>$(ReleaseNotesUrl)</PackageReleaseNotes>
+    </PropertyGroup>
+  </Target>
+  
 </Project>

@@ -20,7 +20,7 @@ under the License.
 
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(RepositoryRoot)eng/nuget.props" />
+  <Import Project="$(RepositoryRoot)eng/nuget.targets" />
 
   <PropertyGroup>
     <!-- Note TargetFramework or TargetFrameworks must match the output projects for the directories to be build correctly -->
