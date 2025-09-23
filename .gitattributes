@@ -1,0 +1,37 @@
+# Let Git handle line endings automatically:
+# - Checkout as CRLF on Windows, LF elsewhere
+* text=auto
+
+# Explicit overrides for certain file types
+
+# C# code and projects
+*.cs        text eol=crlf diff=csharp
+*.sln       text merge=union eol=crlf
+*.csproj    text merge=union eol=lf
+*.vbproj    text merge=union eol=lf
+*.fsproj    text merge=union eol=lf
+
+# XML-based config/resources (store as LF in repo)
+*.xml       text eol=lf
+*.resx      text eol=lf
+*.config    text eol=lf
+*.props     text eol=lf
+*.targets   text eol=lf
+
+# JSON, YAML, Markdown
+*.json      text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.md        text eol=lf
+
+# Git metadata
+.gitattributes text eol=lf
+.gitignore     text eol=lf
+
+# Ensure shell scripts always use LF
+*.sh            text eol=lf
+eng/git-hooks/* text eol=lf
+
+# Ensure batch scripts always use CRLF
+*.bat               eol=crlf
+*.cmd               eol=crlf

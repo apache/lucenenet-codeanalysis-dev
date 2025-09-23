@@ -1,0 +1,168 @@
+# EditorConfig helps developers maintain consistent coding styles across editors and IDEs
+# Docs: https://editorconfig.org/
+
+root = true
+
+# ========================================
+# XML, MSBuild files
+# ========================================
+[*.xml]
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+trim_trailing_whitespace = true
+
+[*.resx]
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+trim_trailing_whitespace = true
+
+[*.config]
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+trim_trailing_whitespace = true
+
+[*.csproj]
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+trim_trailing_whitespace = true
+
+[*.*proj]
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+trim_trailing_whitespace = true
+
+[*.props]
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+trim_trailing_whitespace = true
+
+[*.targets]
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+trim_trailing_whitespace = true
+
+# ========================================
+# JSON files
+# ========================================
+[*.json]
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+trim_trailing_whitespace = true
+
+# ========================================
+# Markdown
+# ========================================
+[*.md]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = false
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+
+# ========================================
+# YAML
+# ========================================
+[*.yml]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = false
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+
+[*.yaml]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = false
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+
+# ========================================
+# C# files
+# ========================================
+[*.cs]
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+trim_trailing_whitespace = true
+
+# ========================================
+# Solution files
+# ========================================
+[*.sln]
+indent_style = tab
+tab_width = 4
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+trim_trailing_whitespace = true
+
+# ========================================
+# Windows Batch and Command files
+# ========================================
+[*.bat]
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+trim_trailing_whitespace = false
+end_of_line = crlf
+
+[*.cmd]
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+trim_trailing_whitespace = false
+end_of_line = crlf
+
+# ========================================
+# Powershell
+# ========================================
+[*.ps1]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = false
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+
+[*.psd1]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = false
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+
+# ========================================
+# Bash
+# ========================================
+[*.sh]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = false
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+end_of_line = lf
+
+[eng/git-hooks/*]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = false
+insert_final_newline = true
+resharper_enforce_empty_line_at_end_of_file = true
+end_of_line = lf

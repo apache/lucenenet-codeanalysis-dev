@@ -1,0 +1,17 @@
+# Note: these patterns are applied to single files or directories, not full paths
+# coverage/* will ignore any coverage dir, but airflow/www/static/coverage/* will match nothing
+
+.git/*
+.rat-excludes
+.gitignore
+.gitattributes
+
+# Exclude build assets
+lib/*
+obj/*
+bin/*
+_artifacts/*
+_site/*
+
+# Exclude auto-generated designers
+.*\.Designer\.cs

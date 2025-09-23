@@ -1,11 +1,42 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
 VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = ".github", ".github\.github.folderproj", "{873A3BE7-3364-F423-9686-FFB58C0896C4}"
+EndProject
+Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "docs", "docs\docs.folderproj", "{F1CC6D09-070B-440A-BDA2-C7A8037076ED}"
+EndProject
+Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "eng", "eng\eng.folderproj", "{9A1C280A-5010-45E9-9EC8-B09F0F9517A2}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1A48DD8E-1D71-43AE-B15D-977A87972623}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8170F744-3AE0-41EE-8986-611BA2C20425}"
+	ProjectSection(SolutionItems) = preProject
+		tests\Directory.Build.props = tests\Directory.Build.props
+		tests\Directory.Build.targets = tests\Directory.Build.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.CodeAnalysis.Dev.Vsix", "src\Lucene.Net.CodeAnalysis.Dev.Vsix\Lucene.Net.CodeAnalysis.Dev.Vsix.csproj", "{B9116527-2486-4A4C-90F8-378DF26E39AF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.CodeAnalysis.Dev", "src\Lucene.Net.CodeAnalysis.Dev\Lucene.Net.CodeAnalysis.Dev.csproj", "{0611A6A8-372D-4E03-BAAF-731FF4844D6C}"
 EndProject
@@ -13,12 +44,54 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.CodeAnalysis.Dev
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.CodeAnalysis.Dev.Sample", "src\Lucene.Net.CodeAnalysis.Dev.Sample\Lucene.Net.CodeAnalysis.Dev.Sample.csproj", "{62BE25C9-72F2-4348-96C4-7329252E9DE8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.CodeAnalysis.Dev.Package", "src\Lucene.Net.CodeAnalysis.Dev.Package\Lucene.Net.CodeAnalysis.Dev.Package.csproj", "{A476A043-926E-488B-A825-02EB0B410CFD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		DiagnosticCategoryAndIdRanges.txt = DiagnosticCategoryAndIdRanges.txt
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		Directory.Packages.props = Directory.Packages.props
+		global.json = global.json
+		LICENSE.txt = LICENSE.txt
+		Lucene.Net.CodeAnalysis.Dev.ChildProcessDbgSettings = Lucene.Net.CodeAnalysis.Dev.ChildProcessDbgSettings
+		NOTICE.txt = NOTICE.txt
+		README.md = README.md
+		renovate.json = renovate.json
+		version.json = version.json
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.CodeAnalysis.Dev.CodeFixes", "src\Lucene.Net.CodeAnalysis.Dev.CodeFixes\Lucene.Net.CodeAnalysis.Dev.CodeFixes.csproj", "{94EE9776-30FC-4976-8C1D-AFE6A71BF8F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests", "tests\Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests\Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.csproj", "{2ADD8F4F-8360-4994-9451-B6741842AC58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.CodeAnalysis.Dev.TestUtilities", "tests\Lucene.Net.CodeAnalysis.Dev.TestUtilities\Lucene.Net.CodeAnalysis.Dev.TestUtilities.csproj", "{D7D95A33-0FB1-4F2A-A5CD-27719995026C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{873A3BE7-3364-F423-9686-FFB58C0896C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{873A3BE7-3364-F423-9686-FFB58C0896C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{873A3BE7-3364-F423-9686-FFB58C0896C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{873A3BE7-3364-F423-9686-FFB58C0896C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1CC6D09-070B-440A-BDA2-C7A8037076ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1CC6D09-070B-440A-BDA2-C7A8037076ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1CC6D09-070B-440A-BDA2-C7A8037076ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1CC6D09-070B-440A-BDA2-C7A8037076ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A1C280A-5010-45E9-9EC8-B09F0F9517A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A1C280A-5010-45E9-9EC8-B09F0F9517A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A1C280A-5010-45E9-9EC8-B09F0F9517A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A1C280A-5010-45E9-9EC8-B09F0F9517A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9116527-2486-4A4C-90F8-378DF26E39AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9116527-2486-4A4C-90F8-378DF26E39AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9116527-2486-4A4C-90F8-378DF26E39AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9116527-2486-4A4C-90F8-378DF26E39AF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0611A6A8-372D-4E03-BAAF-731FF4844D6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0611A6A8-372D-4E03-BAAF-731FF4844D6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0611A6A8-372D-4E03-BAAF-731FF4844D6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -31,14 +104,35 @@ Global
 		{62BE25C9-72F2-4348-96C4-7329252E9DE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62BE25C9-72F2-4348-96C4-7329252E9DE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62BE25C9-72F2-4348-96C4-7329252E9DE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A476A043-926E-488B-A825-02EB0B410CFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A476A043-926E-488B-A825-02EB0B410CFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A476A043-926E-488B-A825-02EB0B410CFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A476A043-926E-488B-A825-02EB0B410CFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94EE9776-30FC-4976-8C1D-AFE6A71BF8F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94EE9776-30FC-4976-8C1D-AFE6A71BF8F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94EE9776-30FC-4976-8C1D-AFE6A71BF8F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94EE9776-30FC-4976-8C1D-AFE6A71BF8F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ADD8F4F-8360-4994-9451-B6741842AC58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ADD8F4F-8360-4994-9451-B6741842AC58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ADD8F4F-8360-4994-9451-B6741842AC58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ADD8F4F-8360-4994-9451-B6741842AC58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7D95A33-0FB1-4F2A-A5CD-27719995026C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7D95A33-0FB1-4F2A-A5CD-27719995026C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7D95A33-0FB1-4F2A-A5CD-27719995026C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7D95A33-0FB1-4F2A-A5CD-27719995026C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{B9116527-2486-4A4C-90F8-378DF26E39AF} = {1A48DD8E-1D71-43AE-B15D-977A87972623}
 		{0611A6A8-372D-4E03-BAAF-731FF4844D6C} = {1A48DD8E-1D71-43AE-B15D-977A87972623}
 		{007DD065-3DF1-4AC1-9403-FE11E4654AF4} = {8170F744-3AE0-41EE-8986-611BA2C20425}
 		{62BE25C9-72F2-4348-96C4-7329252E9DE8} = {1A48DD8E-1D71-43AE-B15D-977A87972623}
+		{A476A043-926E-488B-A825-02EB0B410CFD} = {1A48DD8E-1D71-43AE-B15D-977A87972623}
+		{94EE9776-30FC-4976-8C1D-AFE6A71BF8F5} = {1A48DD8E-1D71-43AE-B15D-977A87972623}
+		{2ADD8F4F-8360-4994-9451-B6741842AC58} = {8170F744-3AE0-41EE-8986-611BA2C20425}
+		{D7D95A33-0FB1-4F2A-A5CD-27719995026C} = {8170F744-3AE0-41EE-8986-611BA2C20425}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B261893F-67D2-4098-B66F-9191951DB5BB}

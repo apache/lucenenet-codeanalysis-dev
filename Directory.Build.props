@@ -1,0 +1,93 @@
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+<Project>
+
+  <PropertyGroup>
+    <RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
+    <LangVersion>12.0</LangVersion>
+    <GitHubOrganization>apache</GitHubOrganization>
+    <GitHubProject>lucenenet-codeanalysis-dev</GitHubProject>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Debug Settings">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Version Settings">
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Nerdbank.GitVersioning Settings">
+    <NBGV_EmitThisAssemblyClass>false</NBGV_EmitThisAssemblyClass>
+  </PropertyGroup>
+
+  <PropertyGroup Label="NuGet Package Defaults">
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Assembly Signing">
+    <AssemblyOriginatorKeyFile>$(RepositoryRoot)eng/Lucene.Net.snk</AssemblyOriginatorKeyFile>
+    <PublicKey>002400000480000094000000060200000024000052534131000400000100010075a07ce602f88ef263c7db8cb342c58ebd49ecdcc210fac874260b0213fb929ac3dcaf4f5b39744b800f99073eca72aebfac5f7284e1d5f2c82012a804a140f06d7d043d83e830cdb606a04da2ad5374cc92c0a49508437802fb4f8fb80a05e59f80afb99f4ccd0dfe44065743543c4b053b669509d29d332cd32a0cb1e97e84</PublicKey>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Assembly Publishing">
+    <IsPublishable>false</IsPublishable>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Copyright Info">
+    <Product>Lucene.Net</Product>
+    <Company>The Apache Software Foundation</Company>
+    <CurrentYear Condition=" '$(CurrentYear)' == '' ">$([System.DateTime]::UtcNow.Year.ToString())</CurrentYear>
+    <BeginCopyrightYear>2023</BeginCopyrightYear>
+    <CopyrightYearRange>$(BeginCopyrightYear) - $(CurrentYear)</CopyrightYearRange>
+    <CopyrightYearRange Condition=" '$(BeginCopyrightYear)' == '$(CurrentYear)' ">$(CurrentYear)</CopyrightYearRange>
+    <Copyright>Copyright © $(CopyrightYearRange) $(Company)</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup Label="SourceLink Settings: https://github.com/dotnet/sourcelink/blob/main/README.md">
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(BUILD_REPOSITORY_PROVIDER)' == 'GitHub' Or '$(BUILD_REPOSITORY_PROVIDER)' == 'TfsGit' " Label="Deterministic builds: https://github.com/clairernovotny/DeterministicBuilds#readme">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Fake Folder Projects" Condition="'$(MSBuildProjectExtension)' == '.folderproj'">
+    <!-- Required, but irrelevant -->
+    <TargetFramework>netstandard2.0</TargetFramework>
+
+    <!-- Redirect output so it doesn't end up in the main folder. -->
+    <BaseOutputPath>$(MSBuildThisFileDirectory)..\_artifacts\noop\$(MSBuildProjectName)\bin\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)..\_artifacts\noop\$(MSBuildProjectName)\obj\</BaseIntermediateOutputPath>
+    <OutputPath>$(BaseOutputPath)</OutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
+
+    <!-- Do not run on solution builds -->
+    <OutputType>None</OutputType>
+    <BuildProjectReferences>false</BuildProjectReferences>
+    <SkipBuild>true</SkipBuild>
+    <SkipGitVersioning>true</SkipGitVersioning>
+  </PropertyGroup>
+
+</Project>

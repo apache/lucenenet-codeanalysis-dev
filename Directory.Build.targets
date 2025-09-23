@@ -1,0 +1,47 @@
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+<Project>
+
+  <Target Name="AddInternalsVisibleTo" BeforeTargets="BeforeCompile" Label="Adds InternalsVisibleTo Attribute and PublicKey (if supplied)">
+    <ItemGroup Condition="'@(InternalsVisibleTo->Count())' &gt; 0 ">
+      <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+        <_Parameter1>%(InternalsVisibleTo.Identity)</_Parameter1>
+        <_Parameter1 Condition=" '$(SignAssembly)' == 'true' And '$(PublicKey)' != '' ">%(InternalsVisibleTo.Identity), PublicKey=$(PublicKey)</_Parameter1>
+      </AssemblyAttribute>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="PrintTargetFrameworks" Label="Prints the value for the $(TargetFrameworks) property or 'none' if no frameworks apply. Pass TestProjectsOnly=true to get results only if this is a test project.">
+    <PropertyGroup>
+      <DoOutputTargetFrameworks Condition=" '$(TestProjectsOnly)' != 'true' Or ('$(TestProjectsOnly)' == 'true' And '$(IsTestProject)' == 'true')">true</DoOutputTargetFrameworks>
+      <OutputTargetFrameworks Condition=" '$(DoOutputTargetFrameworks)' == 'true' ">$(TargetFramework)</OutputTargetFrameworks>
+      <!-- Fallback to TargetFrameworks field if TargetFramework is empty -->
+      <OutputTargetFrameworks Condition=" '$(DoOutputTargetFrameworks)' == 'true' And '$(OutputTargetFrameworks)' == '' ">$(TargetFrameworks)</OutputTargetFrameworks>
+      <OutputTargetFrameworks Condition=" '$(OutputTargetFrameworks)' == '' ">none</OutputTargetFrameworks>
+    </PropertyGroup>
+    <Message Text="$(OutputTargetFrameworks)" Importance="high"/>
+  </Target>
+
+  <ItemGroup Condition=" '$(SkipGitVersioning.ToLower())' != 'true' ">
+    <PackageReference Include="Nerdbank.GitVersioning" PrivateAssets="All" />
+  </ItemGroup>
+
+</Project>

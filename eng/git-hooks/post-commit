@@ -1,0 +1,71 @@
+#!/bin/sh
+# eng/git-hooks/post-commit
+# Replaces {{vnext}} in "## Release {{vnext}}" with the NuGetPackageVersion
+# only if the file contains the token. Safe from infinite loops.
+
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+file="src/Lucene.Net.CodeAnalysis.Dev/AnalyzerReleases.Shipped.md"
+token="{{vnext}}"
+
+# Bail if already running to prevent infinite loop
+if [ -n "$POST_COMMIT_RUNNING" ]; then
+    exit 0
+fi
+
+# Bail if the file doesn't exist
+[ ! -f "$file" ] && exit 0
+
+# Bail if the token doesn't exist in the file
+if ! grep -q "## Release $token" "$file"; then
+    exit 0
+fi
+
+# Check if nbgv tool is installed
+if ! command -v nbgv >/dev/null 2>&1; then
+    cat <<EOF
+ERROR: The AnalyzerReleases.Shipped.md $token token replacement failed.
+The 'nbgv' tool is required but not installed.
+
+To recover manually:
+
+1. Install the nbgv tool (see the docs/make-release.md documentation)
+2. Run: nbgv get-version -v NuGetPackageVersion
+3. In $file, replace the $token token with the version returned from step 2
+4. Run: git add $file && git commit --amend --no-edit
+5. Run: nbgv get-version -v NuGetPackageVersion again to ensure the version is the same as step 2 before proceeding
+EOF
+    exit 1
+fi
+
+# Set flag to prevent recursion
+export POST_COMMIT_RUNNING=1
+
+# Get the NuGet version
+version=$(nbgv get-version -v NuGetPackageVersion)
+echo "Replacing '$token' with '$version' in '$file'"
+
+# Replace {{vnext}} only in lines starting with "## Release "
+sed -i.bak "/^## Release /s/$token/$version/g" "$file" && rm "$file.bak"
+
+# Re-stage the file and amend the commit (this triggers post-commit again, but recursion is prevented)
+git add "$file"
+git commit --amend --no-edit
+
+# Unset the flag (optional, since the script ends)
+unset POST_COMMIT_RUNNING

@@ -1,0 +1,105 @@
+﻿# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+name: Test Powershell Scripts
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'release/v*.*'       # matches release/v1.2
+      - 'release/v*.*.*'     # matches release/v1.2.3
+      - 'release-workflow*'  # special branch names for testing release workflow (this file) from a PR
+    paths:
+    - '**/*.ps1'
+    - '**/*.psm1'
+    - '**/*.ps1xml'
+    - '**/*.pssc'
+    - '**/*.cdxml'
+    - '**/*.psrc'
+    - '**/*.psc1'
+  pull_request:
+    paths:
+    - '**/*.ps1'
+    - '**/*.psm1'
+    - '**/*.ps1xml'
+    - '**/*.pssc'
+    - '**/*.cdxml'
+    - '**/*.psrc'
+    - '**/*.psc1'
+
+# De-duplicate runs
+concurrency:
+  group: test-powershell-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pester:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+
+      - name: Restore Powershell Dependencies
+        shell: pwsh
+        run: ./eng/Ensure-Powershell-Dependencies.ps1
+
+      - name: Run Pester Tests
+        shell: pwsh
+        run: |
+          # Imports
+          . (Join-Path $env:GITHUB_WORKSPACE 'eng' 'build' 'Markdown-Formatting.ps1')
+
+          $ErrorActionPreference = 'Continue'
+          try {
+              $testResults = Invoke-Pester -Output Detailed -CI -PassThru
+          } catch  {
+              Write-Warning "Invoke-Pester threw an exception: $_"
+          }
+          $ErrorActionPreference = 'Stop'
+          Set-StrictMode -Version Latest
+
+          $failed = $false
+          $results = @()
+
+          if ($testResults -and $testResults.Containers -and $testResults.Containers.Count -gt 0) {
+              foreach ($container in $testResults.Containers) {
+                  $suiteName = $container.Item.Name
+                  $passedCount = $container.PassedCount
+                  $failedCount = $container.FailedCount
+                  $skippedCount = $container.SkippedCount
+
+                  $results += [PSCustomObject]@{
+                      SuiteName     = $suiteName
+                      PassedCount   = [int]$passedCount
+                      FailedCount   = [int]$failedCount
+                      IgnoredCount  = [int]$skippedCount
+                      Crashed       = [bool]$false
+                  }
+
+                  if ($failedCount -gt 0) {
+                      $failed = $true
+                  }
+              }
+          }
+
+          # Write summary
+          Format-Test-Results $results | Add-Content $env:GITHUB_STEP_SUMMARY
+
+          if ($failed) {
+              exit 1
+          }

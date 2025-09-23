@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Nullable>enable</Nullable>
+
+    <!-- Newer versions of VS and the SDK allow loading as 64 bit, so we need this for compatibility when loading in VS  -->
+    <Prefer32Bit>false</Prefer32Bit>
+
+    <!-- This is needed so that the cross-platform C# language server can find the generated Resources.Designer.cs file -->
+    <!-- see: https://github.com/dotnet/msbuild/issues/8086 -->
+    <CoreCompileDependsOn>PrepareResources;$(CompileDependsOn)</CoreCompileDependsOn>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <PreferredUILang>en-US</PreferredUILang>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      This approach allows the Resources.designer.cs file to be generated into obj,
+      instead of checked into source control. It also fixes an issue with JetBrains Rider
+      where it doesn't generate comments on the generated properties.
+      See: https://github.com/dotnet/msbuild/issues/8086
+      and https://youtrack.jetbrains.com/issue/RIDER-74074/PublicResXFileCodeGenerator-does-not-generate-comments-and-the-order-of-properties-changes
+    -->
+    <EmbeddedResource Update="CodeFixResources.resx">
+      <Generator>MSBuild:Compile</Generator>
+      <StronglyTypedFileName>$(IntermediateOutputPath)CodeFixResources.designer.cs</StronglyTypedFileName>
+      <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+      <StronglyTypedNamespace>Lucene.Net.CodeAnalysis.Dev.CodeFixes</StronglyTypedNamespace>
+      <StronglyTypedClassName>CodeFixResources</StronglyTypedClassName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.CodeAnalysis.Dev\Lucene.Net.CodeAnalysis.Dev.csproj" />
+  </ItemGroup>
+
+</Project>
