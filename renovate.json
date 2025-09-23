@@ -167,5 +167,6 @@
   ],
   "automerge": false,
   "recreateWhen": "always",
-  "dependencyDashboard": true
+  "dependencyDashboard": false,
+  "forkProcessing": "enabled"
 }
