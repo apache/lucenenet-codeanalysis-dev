@@ -67,6 +67,29 @@ Repeat the first command to confirm that it is set.
 
 This project uses Nerdbank.GitVersioning to assist with creating version numbers based on the current branch and commit. This tool handles making pre-release and production releases on release branches.
 
+### Checking the NBGV Version
+
+At any point before or during the release the version of the HEAD commit of the current Git branch can be checked using the following command.
+
+```console
+nbgv get-version
+```
+
+The reply will show a table of version information.
+
+```console
+Version:                      2.0.0
+AssemblyVersion:              2.0.0.0
+AssemblyInformationalVersion: 2.0.0-beta.5+a54c015802
+NuGetPackageVersion:          2.0.0-beta.5
+NpmPackageVersion:            2.0.0-beta.5
+```
+
+The `NuGetPackageVersion` is the one we will be referring to in the rest of this document. Although, be aware that in some steps it should be prefixed with `v`, such as when tagging the release.
+
+> [!NOTE]
+> This version number will change for each Git commit and applies only to the current branch.
+
 ### Release Workflow Overview
 
 ![Release Workflow](images/release-workflow.svg)
