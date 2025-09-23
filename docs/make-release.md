@@ -409,7 +409,7 @@ Next, follow the same procedure starting at [Tag the HEAD Commit](#tag-the-head-
 Finally, merge the release branch back into the main branch and push the changes to the upstream repository.
 
 > [!IMPORTANT]
-> Release branches start with `release\v`.
+> Release branches start with `release/v`.
 
 ```console
 git checkout main
@@ -422,7 +422,7 @@ git push <remote-name> main
 From this point, the release will be tracked historically using the Git tag, so there is no reason to keep the release branch once it has been merged. You may wish to delay the deletion for a few days in case it is needed for some reason, but when you are ready, the commands to delete the local and remote branches are:
 
 > [!IMPORTANT]
-> Release branches start with `release\v`. Take care not to delete the tag, which starts with a `v`.
+> Release branches start with `release/v`. Take care not to delete the tag, which starts with a `v`.
 
 ```console
 git branch -d <release-branch>
