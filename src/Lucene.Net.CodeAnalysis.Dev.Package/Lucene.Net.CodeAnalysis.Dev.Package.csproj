@@ -1,4 +1,4 @@
-<?xml version='1.0'?>
+﻿<?xml version='1.0'?>
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -48,12 +48,12 @@ under the License.
 
   <ItemGroup Label="Localized Resources">
     <_CodeAnalyisisResources Include="$(RepositoryRoot)src\Lucene.Net.CodeAnalysis.Dev\bin\$(Configuration)\$(TargetFramework)\**\*.resources.dll" />
+    <_CodeAnalyisisResources Include="$(RepositoryRoot)src\Lucene.Net.CodeAnalysis.Dev.CodeFixes\bin\$(Configuration)\$(TargetFramework)\**\*.resources.dll" />
   </ItemGroup>
 
   <ItemGroup Label="NuGet Package Files">
     <None Include="$(_CodeAnalysisCSAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-
-    <None Include="$(_CodeAnalysisCodeFixesCSAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" Condition="Exists('$(_CodeAnalysisCodeFixesCSAssemblyFile)')" />
+    <None Include="$(_CodeAnalysisCodeFixesCSAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 
     <None Include="@(_CodeAnalyisisResources)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
@@ -64,7 +64,7 @@ under the License.
          in normal scenarios, but when executing an MSBuild target from a consuming project (SPDX.CodeAnalysis.Sample.csproj),
          these are required to be built first and in the order that they are listed here. -->
     <ProjectReference Include="..\Lucene.Net.CodeAnalysis.Dev\Lucene.Net.CodeAnalysis.Dev.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\Lucene.Net.CodeAnalysis.Dev\Lucene.Net.CodeAnalysis.Dev.CodeFixes.csproj" ReferenceOutputAssembly="false" Condition="Exists('..\Lucene.Net.CodeAnalysis.Dev\Lucene.Net.CodeAnalysis.Dev.CodeFixes.csproj')" />
+    <ProjectReference Include="..\Lucene.Net.CodeAnalysis.Dev.CodeFixes\Lucene.Net.CodeAnalysis.Dev.CodeFixes.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <Target Name="EnsureDependenciesBuilt" BeforeTargets="PrepareForBuild">
