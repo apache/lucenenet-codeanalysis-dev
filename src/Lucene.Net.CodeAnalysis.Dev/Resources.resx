@@ -206,7 +206,4 @@ under the License.
   <data name="LuceneDev1005_AnalyzerMessageFormat" xml:space="preserve">
     <value>{0} '{1}' should not have public accessibility in the Support namespace</value>
   </data>
-  <data name="LuceneDev1005_CodeFixTitle" xml:space="preserve">
-    <value>Make {0} internal</value>
-  </data>
 </root>
