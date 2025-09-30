@@ -284,10 +284,10 @@ Since Nerdbank.GitVersioning calculates the release version, the `AnalyzerReleas
 
 > [!NOTE]
 > Due to a limitation/bug in the Roslyn meta-analyzers, the Release header cannot contain semver pre-release labels (e.g., `-beta`, `-rc`, etc.).
-> Therefore, the version token `{{vnext}}` is used to indicate the next release version, which will be replaced with the actual version during the release process.
+> Therefore, the version token `{{vnext}}` is used to indicate the next minor release version, which will be replaced with the actual version during the git post-commit hook.
 
 ```markdown
-## Release 2.0.0
+## Release 2.0
 
 ### New Rules
 

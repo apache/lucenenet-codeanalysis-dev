@@ -45,10 +45,10 @@ The 'nbgv' tool is required but not installed.
 To recover manually:
 
 1. Install the nbgv tool (see the docs/make-release.md documentation)
-2. Run: nbgv get-version -v NuGetPackageVersion
+2. Run: nbgv get-version -v MajorMinorVersion
 3. In $file, replace the $token token with the version returned from step 2
 4. Run: git add $file && git commit --amend --no-edit
-5. Run: nbgv get-version -v NuGetPackageVersion again to ensure the version is the same as step 2 before proceeding
+5. Run: nbgv get-version -v MajorMinorVersion again to ensure the version is the same as step 2 before proceeding
 EOF
     exit 1
 fi
@@ -57,7 +57,7 @@ fi
 export POST_COMMIT_RUNNING=1
 
 # Get the NuGet version without any prerelease suffix, which is not compatible with the Roslyn meta-analyzers
-version=$(nbgv get-version -v Version)
+version=$(nbgv get-version -v MajorMinorVersion)
 echo "Replacing '$token' with '$version' in '$file'"
 
 # Replace {{vnext}} only in lines starting with "## Release "
