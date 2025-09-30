@@ -104,4 +104,152 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
 
         await test.RunAsync();
     }
+
+    [Test]
+    public async Task PublicPartialClassInSupport_FileScopedNamespace_MakeInternalFix()
+    {
+        const string testCode1 =
+            """
+            namespace Lucene.Net.Support;
+
+            public partial class MyPartialClass
+            {
+                public void Method1() { }
+            }
+            """;
+
+        const string testCode2 =
+            """
+            namespace Lucene.Net.Support;
+
+            public partial class MyPartialClass
+            {
+                public void Method2() { }
+            }
+            """;
+
+        const string fixedCode1 =
+            """
+            namespace Lucene.Net.Support;
+
+            internal partial class MyPartialClass
+            {
+                public void Method1() { }
+            }
+            """;
+
+        const string fixedCode2 =
+            """
+            namespace Lucene.Net.Support;
+
+            internal partial class MyPartialClass
+            {
+                public void Method2() { }
+            }
+            """;
+
+        var expected1 = new DiagnosticResult(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes)
+            .WithSeverity(DiagnosticSeverity.Warning)
+            .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
+            .WithArguments("Class", "MyPartialClass")
+            .WithLocation("/0/Test0.cs", line: 3, column: 1);
+
+        var expected2 = new DiagnosticResult(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes)
+            .WithSeverity(DiagnosticSeverity.Warning)
+            .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
+            .WithArguments("Class", "MyPartialClass")
+            .WithLocation("/0/Test1.cs", line: 3, column: 1);
+
+        var test = new InjectableCodeFixTest(
+            () => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeAnalyzer(),
+            () => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider())
+        {
+            ExpectedDiagnostics = { expected1, expected2 },
+            // Skip FixAll to test single fix application only
+            CodeFixTestBehaviors = CodeFixTestBehaviors.FixOne
+        };
+
+        test.TestState.Sources.Add(testCode1.ReplaceLineEndings());
+        test.TestState.Sources.Add(testCode2.ReplaceLineEndings());
+        test.FixedState.Sources.Add(fixedCode1.ReplaceLineEndings());
+        test.FixedState.Sources.Add(fixedCode2.ReplaceLineEndings());
+
+        await test.RunAsync();
+    }
+
+    [Test]
+    public async Task PublicPartialClassInSupport_BlockScopedNamespace_MakeInternalFix()
+    {
+        const string testCode1 =
+            """
+            namespace Lucene.Net.Support
+            {
+                public partial class MyPartialClass
+                {
+                    public void Method1() { }
+                }
+            }
+            """;
+
+        const string testCode2 =
+            """
+            namespace Lucene.Net.Support
+            {
+                public partial class MyPartialClass
+                {
+                    public void Method2() { }
+                }
+            }
+            """;
+
+        const string fixedCode1 =
+            """
+            namespace Lucene.Net.Support
+            {
+                internal partial class MyPartialClass
+                {
+                    public void Method1() { }
+                }
+            }
+            """;
+
+        const string fixedCode2 =
+            """
+            namespace Lucene.Net.Support
+            {
+                internal partial class MyPartialClass
+                {
+                    public void Method2() { }
+                }
+            }
+            """;
+
+        var expected1 = new DiagnosticResult(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes)
+            .WithSeverity(DiagnosticSeverity.Warning)
+            .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
+            .WithArguments("Class", "MyPartialClass")
+            .WithLocation("/0/Test0.cs", line: 3, column: 5);
+
+        var expected2 = new DiagnosticResult(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes)
+            .WithSeverity(DiagnosticSeverity.Warning)
+            .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
+            .WithArguments("Class", "MyPartialClass")
+            .WithLocation("/0/Test1.cs", line: 3, column: 5);
+
+        var test = new InjectableCodeFixTest(
+            () => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeAnalyzer(),
+            () => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider())
+        {
+            ExpectedDiagnostics = { expected1, expected2 },
+            // Skip FixAll to test single fix application only
+            CodeFixTestBehaviors = CodeFixTestBehaviors.FixOne
+        };
+
+        test.TestState.Sources.Add(testCode1.ReplaceLineEndings());
+        test.TestState.Sources.Add(testCode2.ReplaceLineEndings());
+        test.FixedState.Sources.Add(fixedCode1.ReplaceLineEndings());
+        test.FixedState.Sources.Add(fixedCode2.ReplaceLineEndings());
+
+        await test.RunAsync();
+    }
 }

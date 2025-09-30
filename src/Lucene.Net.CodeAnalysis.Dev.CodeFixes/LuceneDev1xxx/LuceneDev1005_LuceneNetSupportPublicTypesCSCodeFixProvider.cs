@@ -83,20 +83,43 @@ public class LuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider : CodeFi
         MemberDeclarationSyntax memberDeclaration,
         CancellationToken cancellationToken)
     {
-        var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-        if (syntaxRoot == null) return document.Project.Solution;
+        var solution = document.Project.Solution;
+        var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+        if (semanticModel == null) return solution;
 
-        // Remove existing accessibility modifiers
-        var newModifiers = SyntaxFactory.TokenList(
-                memberDeclaration.Modifiers
-                .Where(modifier => !modifier.IsKind(SyntaxKind.PrivateKeyword) &&
-                                   !modifier.IsKind(SyntaxKind.ProtectedKeyword) &&
-                                   !modifier.IsKind(SyntaxKind.InternalKeyword) &&
-                                   !modifier.IsKind(SyntaxKind.PublicKeyword))
-            ).Insert(0, SyntaxFactory.Token(SyntaxKind.InternalKeyword)); // Ensure 'internal' is the first modifier
+        // Get the symbol for this type declaration
+        var symbol = semanticModel.GetDeclaredSymbol(memberDeclaration, cancellationToken);
+        if (symbol == null) return solution;
 
-        var newMemberDeclaration = memberDeclaration.WithModifiers(newModifiers);
-        var newRoot = syntaxRoot.ReplaceNode(memberDeclaration, newMemberDeclaration);
-        return document.Project.Solution.WithDocumentSyntaxRoot(document.Id, newRoot);
+        // Find all partial declarations of this symbol
+        var declaringSyntaxReferences = symbol.DeclaringSyntaxReferences;
+
+        // Update all partial declarations across all documents
+        foreach (var syntaxReference in declaringSyntaxReferences)
+        {
+            var declarationSyntax = await syntaxReference.GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
+            if (declarationSyntax is not MemberDeclarationSyntax declaration) continue;
+
+            var declarationDocument = solution.GetDocument(syntaxReference.SyntaxTree);
+            if (declarationDocument == null) continue;
+
+            var syntaxRoot = await declarationDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            if (syntaxRoot == null) continue;
+
+            // Remove existing accessibility modifiers
+            var newModifiers = SyntaxFactory.TokenList(
+                    declaration.Modifiers
+                    .Where(modifier => !modifier.IsKind(SyntaxKind.PrivateKeyword) &&
+                                       !modifier.IsKind(SyntaxKind.ProtectedKeyword) &&
+                                       !modifier.IsKind(SyntaxKind.InternalKeyword) &&
+                                       !modifier.IsKind(SyntaxKind.PublicKeyword))
+                ).Insert(0, SyntaxFactory.Token(SyntaxKind.InternalKeyword)); // Ensure 'internal' is the first modifier
+
+            var newDeclaration = declaration.WithModifiers(newModifiers);
+            var newRoot = syntaxRoot.ReplaceNode(declaration, newDeclaration);
+            solution = solution.WithDocumentSyntaxRoot(declarationDocument.Id, newRoot);
+        }
+
+        return solution;
     }
 }
