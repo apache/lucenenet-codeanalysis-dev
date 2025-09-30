@@ -30,7 +30,7 @@
     directory as this script) as the target directory.
 
 .PARAMETER Version
-    The version of Apache RAT to use (default: 0.13).
+    The version of Apache RAT to use (default: 0.16.1).
 
 .PARAMETER ExcludeFileName
     Name of an exclude file containing path patterns that RAT should ignore.
@@ -43,19 +43,19 @@
 .EXAMPLE
     pwsh ./rat.ps1
 
-    Runs Apache RAT (default version 0.13) with exclusions from `rat-exclude.txt`.
+    Runs Apache RAT (default version 0.16.1) with exclusions from `rat-exclude.txt`.
 
 .EXAMPLE
-    pwsh ./rat.ps1 -Version 0.13 -ExcludeFileName custom-exclude.txt
+    pwsh ./rat.ps1 -Version 0.16.1 -ExcludeFileName custom-exclude.txt
 
-    Runs Apache RAT version 0.13 using the specified exclude file.
+    Runs Apache RAT version 0.16.1 using the specified exclude file.
 
 .NOTES
     This script is intended for use by release managers when preparing official
     ASF releases. It is not normally required for day-to-day development.
 #>
 param(
-    [string]$Version = "0.13",
+    [string]$Version = "0.16.1",
     [string]$ExcludeFileName = ".rat-excludes"
 )
 
@@ -90,13 +90,13 @@ if (-not (Test-Path $ratExcludeFile)) {
 
 $argsList = @(
     "-jar", $ratJar,
-    "--dir", "`"$scriptDir`"",
+    "--dir", "$scriptDir",
     "--addLicense",
     "--force"
 )
 
 if ($useExclude) {
-    $argsList += @("--exclude-file", "`"$ratExcludeFile`"")
+    $argsList += @("--exclude-file", "$ratExcludeFile")
 }
 
 # Call java with argument list. Use & to invoke program.
@@ -104,4 +104,32 @@ if ($useExclude) {
 
 if ($LASTEXITCODE -ne 0) {
     throw "RAT exited with code $LASTEXITCODE"
+}
+
+# Remove trailing whitespace from files modified by RAT
+Write-Host "Removing trailing whitespace from modified files..."
+
+# Get list of modified files from git
+$modifiedFiles = git diff --name-only --diff-filter=M
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Warning: Could not get modified files list from git."
+} else {
+    foreach ($file in $modifiedFiles) {
+        if ([string]::IsNullOrWhiteSpace($file)) { continue }
+
+        $filePath = Join-Path $scriptDir $file
+        if (-not (Test-Path $filePath)) { continue }
+
+        try {
+            # Read all lines, trim trailing whitespace, and write back
+            $lines = Get-Content -Path $filePath
+            if ($null -ne $lines) {
+                $trimmedLines = $lines | ForEach-Object { $_.TrimEnd() }
+                $trimmedLines | Set-Content -Path $filePath -NoNewline:$false
+                Write-Host "  Cleaned: $file"
+            }
+        } catch {
+            Write-Host "  Warning: Could not process $file : $_"
+        }
+    }
 }
