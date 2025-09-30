@@ -31,8 +31,8 @@ using SyntaxKind = Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 
 namespace Lucene.Net.CodeAnalysis.Dev;
 
-[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LuceneDev1005_LuceneNetSupportPublicTypesCsCodeFixProvider)), Shared]
-public class LuceneDev1005_LuceneNetSupportPublicTypesCsCodeFixProvider : CodeFixProvider
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider)), Shared]
+public class LuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider : CodeFixProvider
 {
     // Specify the diagnostic IDs of analyzers that are expected to be linked.
     public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } =
@@ -79,7 +79,7 @@ public class LuceneDev1005_LuceneNetSupportPublicTypesCsCodeFixProvider : CodeFi
         }
     }
 
-    private async Task<Solution> MakeDeclarationInternal(Document document,
+    private static async Task<Solution> MakeDeclarationInternal(Document document,
         MemberDeclarationSyntax memberDeclaration,
         CancellationToken cancellationToken)
     {

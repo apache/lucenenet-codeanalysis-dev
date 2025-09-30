@@ -54,7 +54,7 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
 
         var test = new InjectableCodeFixTest(
             () => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeAnalyzer(),
-            () => new LuceneDev1005_LuceneNetSupportPublicTypesCsCodeFixProvider())
+            () => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider())
         {
             TestCode = testCode.ReplaceLineEndings(),
             FixedCode = fixedCode.ReplaceLineEndings(),
@@ -95,7 +95,7 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
 
         var test = new InjectableCodeFixTest(
             () => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeAnalyzer(),
-            () => new LuceneDev1005_LuceneNetSupportPublicTypesCsCodeFixProvider())
+            () => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider())
         {
             TestCode = testCode.ReplaceLineEndings(),
             FixedCode = fixedCode.ReplaceLineEndings(),
