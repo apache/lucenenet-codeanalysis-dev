@@ -282,8 +282,12 @@ Since Nerdbank.GitVersioning calculates the release version, the `AnalyzerReleas
 
 `AnalyzerReleases.Shipped.md` evolves by appending each release as a new section. Each release is marked with a `## Release <version>` header.
 
+> [!NOTE]
+> Due to a limitation/bug in the Roslyn meta-analyzers, the Release header cannot contain semver pre-release labels (e.g., `-beta`, `-rc`, etc.).
+> Therefore, the version token `{{vnext}}` is used to indicate the next release version, which will be replaced with the actual version during the release process.
+
 ```markdown
-## Release 2.0.0-alpha.1
+## Release 2.0.0
 
 ### New Rules
 

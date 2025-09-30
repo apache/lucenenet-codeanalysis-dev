@@ -56,8 +56,8 @@ fi
 # Set flag to prevent recursion
 export POST_COMMIT_RUNNING=1
 
-# Get the NuGet version
-version=$(nbgv get-version -v NuGetPackageVersion)
+# Get the NuGet version without any prerelease suffix, which is not compatible with the Roslyn meta-analyzers
+version=$(nbgv get-version -v Version)
 echo "Replacing '$token' with '$version' in '$file'"
 
 # Replace {{vnext}} only in lines starting with "## Release "

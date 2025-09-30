@@ -21,5 +21,6 @@ _site/*
 release-build-outcomes\.svg
 release-workflow\.svg
 
-# Exclude markdown files
-.*\.md
+# Exclude analyzer releases markdown files
+AnalyzerReleases\..*\.md
+

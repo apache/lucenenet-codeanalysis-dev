@@ -1,4 +1,4 @@
-## Release 1.0.0-alpha.6
+## Release 1.0.0
 
 ### New Rules
 
