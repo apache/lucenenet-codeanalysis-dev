@@ -13,7 +13,7 @@
 # In the event of conflict in step 3, make sure you discard your changes, pull latest, and try again.
 # DO NOT remove ID ranges already defined or merge this file in git.  
 #
-Design: LuceneDev1000-LuceneDev1004
+Design: LuceneDev1000-LuceneDev1006
 Globalization:
 Mobility:
 Performance:
