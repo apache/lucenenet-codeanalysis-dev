@@ -206,4 +206,16 @@ under the License.
   <data name="LuceneDev1005_AnalyzerMessageFormat" xml:space="preserve">
     <value>{0} '{1}' should not have public accessibility in the Support namespace</value>
   </data>
+  <data name="LuceneDev1006_AnalyzerTitle" xml:space="preserve">
+    <value>Floating point values embedded in strings should use J2N Numerics formatting</value>
+    <comment>The title of the diagnostic.</comment>
+  </data>
+  <data name="LuceneDev1006_AnalyzerDescription" xml:space="preserve">
+    <value>Floating point values should be formatted with J2N.Numerics.Single.ToString() or J2N.Numerics.Double.ToString() before being embedded into strings to ensure consistent behavior across runtimes.</value>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
+  </data>
+  <data name="LuceneDev1006_AnalyzerMessageFormat" xml:space="preserve">
+    <value>'{0}' may fail due to floating point precision issues on .NET Framework and .NET Core prior to version 3.0. Floating point values should be formatted with J2N.Numerics.Single.ToString() or J2N.Numerics.Double.ToString() before being embedded into strings.</value>
+    <comment>The format-able message the diagnostic displays.</comment>
+  </data>
 </root>

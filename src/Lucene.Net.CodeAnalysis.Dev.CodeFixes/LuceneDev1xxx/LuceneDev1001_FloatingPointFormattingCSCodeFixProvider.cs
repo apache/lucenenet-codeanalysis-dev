@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,36 +36,51 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes
     public class LuceneDev1001_FloatingPointFormattingCSCodeFixProvider : CodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds =>
-            [Descriptors.LuceneDev1001_FloatingPointFormatting.Id];
+        [
+            Descriptors.LuceneDev1001_FloatingPointFormatting.Id,
+            Descriptors.LuceneDev1006_FloatingPointFormatting.Id
+        ];
 
         public override FixAllProvider GetFixAllProvider() =>
             WellKnownFixAllProviders.BatchFixer;
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            Diagnostic? diagnostic = context.Diagnostics.FirstOrDefault();
-            if (diagnostic is null)
-                return;
-
             SyntaxNode? root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             if (root is null)
-                return;
-
-            // the diagnostic in the analyzer is reported on the member access (e.g. "x.ToString")
-            // but we need the whole invocation (e.g. "x.ToString(...)").  So find the invocation
-            // by walking ancestors if needed.
-            SyntaxNode? node = root.FindNode(diagnostic.Location.SourceSpan);
-            if (node is null)
-                return;
-
-            if (node is not ExpressionSyntax exprNode)
                 return;
 
             SemanticModel? semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
             if (semanticModel is null)
                 return;
 
-            if (!TryGetJ2NTypeAndMember(semanticModel, exprNode, out var j2nTypeName, out var memberAccess))
+            foreach (Diagnostic diagnostic in context.Diagnostics)
+            {
+                SyntaxNode? node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
+                if (node is null)
+                    continue;
+
+                if (diagnostic.Id == Descriptors.LuceneDev1001_FloatingPointFormatting.Id)
+                {
+                    RegisterExplicitToStringFix(context, semanticModel, diagnostic, node);
+                }
+                else if (diagnostic.Id == Descriptors.LuceneDev1006_FloatingPointFormatting.Id)
+                {
+                    RegisterStringEmbeddingFix(context, semanticModel, diagnostic, node);
+                }
+            }
+        }
+
+        private void RegisterExplicitToStringFix(
+            CodeFixContext context,
+            SemanticModel semanticModel,
+            Diagnostic diagnostic,
+            SyntaxNode node)
+        {
+            if (node is not ExpressionSyntax expression)
+                return;
+
+            if (!TryGetJ2NTypeAndMember(semanticModel, expression, out var j2nTypeName, out var memberAccess))
                 return;
 
             string codeElement = $"J2N.Numerics.{j2nTypeName}.ToString(...)";
@@ -73,57 +88,181 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes
             context.RegisterCodeFix(
                 CodeActionHelper.CreateFromResource(
                     CodeFixResources.UseX,
-                    c => ReplaceWithJ2NToStringAsync(context.Document, memberAccess, c),
+                    c => ReplaceExplicitToStringAsync(context.Document, memberAccess, j2nTypeName, c),
                     "UseJ2NToString",
                     codeElement),
                 diagnostic);
         }
 
-        private async Task<Document> ReplaceWithJ2NToStringAsync(
+        private void RegisterStringEmbeddingFix(
+            CodeFixContext context,
+            SemanticModel semanticModel,
+            Diagnostic diagnostic,
+            SyntaxNode node)
+        {
+            ExpressionSyntax? expression = node as ExpressionSyntax ?? node.AncestorsAndSelf().OfType<ExpressionSyntax>().FirstOrDefault();
+            if (expression is null)
+                return;
+
+            if (!TryGetFloatingPointTypeName(semanticModel.GetTypeInfo(expression, context.CancellationToken), out var j2nTypeName))
+                return;
+
+            string codeElement = $"J2N.Numerics.{j2nTypeName}.ToString(...)";
+
+            InterpolationSyntax? interpolation = expression.AncestorsAndSelf().OfType<InterpolationSyntax>().FirstOrDefault();
+            if (interpolation is not null)
+            {
+                context.RegisterCodeFix(
+                    CodeActionHelper.CreateFromResource(
+                        CodeFixResources.UseX,
+                        c => ReplaceInterpolationExpressionAsync(context.Document, interpolation, expression, j2nTypeName, c),
+                        "UseJ2NToString",
+                        codeElement),
+                    diagnostic);
+
+                return;
+            }
+
+            context.RegisterCodeFix(
+                CodeActionHelper.CreateFromResource(
+                    CodeFixResources.UseX,
+                    c => ReplaceConcatenationExpressionAsync(context.Document, expression, j2nTypeName, c),
+                    "UseJ2NToString",
+                    codeElement),
+                diagnostic);
+        }
+
+        private async Task<Document> ReplaceExplicitToStringAsync(
             Document document,
             MemberAccessExpressionSyntax memberAccess,
+            string j2nTypeName,
             CancellationToken cancellationToken)
         {
-            SemanticModel? semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            if (semanticModel is null)
+            if (memberAccess.Parent is not InvocationExpressionSyntax invocation)
                 return document;
 
-            if (!TryGetJ2NTypeAndMember(semanticModel, memberAccess, out var j2nTypeName, out _))
-                return document;
+            var newArguments = new List<ArgumentSyntax>
+            {
+                SyntaxFactory.Argument(memberAccess.Expression.WithoutTrivia())
+            };
 
-            // Build J2N.Numerics.Single/Double.ToString
-            MemberAccessExpressionSyntax j2nToStringAccess = SyntaxFactory.MemberAccessExpression(
+            if (invocation.ArgumentList is not null)
+                newArguments.AddRange(invocation.ArgumentList.Arguments);
+
+            InvocationExpressionSyntax replacement = CreateJ2NToStringInvocation(j2nTypeName, newArguments)
+                .WithTriviaFrom(invocation);
+
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            editor.ReplaceNode(invocation, replacement);
+
+            return editor.GetChangedDocument();
+        }
+
+        private async Task<Document> ReplaceConcatenationExpressionAsync(
+            Document document,
+            ExpressionSyntax expression,
+            string j2nTypeName,
+            CancellationToken cancellationToken)
+        {
+            var arguments = new List<ArgumentSyntax>
+            {
+                SyntaxFactory.Argument(expression.WithoutTrivia())
+            };
+
+            InvocationExpressionSyntax replacement = CreateJ2NToStringInvocation(j2nTypeName, arguments)
+                .WithLeadingTrivia(expression.GetLeadingTrivia())
+                .WithTrailingTrivia(expression.GetTrailingTrivia());
+
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            editor.ReplaceNode(expression, replacement);
+
+            return editor.GetChangedDocument();
+        }
+
+        private async Task<Document> ReplaceInterpolationExpressionAsync(
+            Document document,
+            InterpolationSyntax interpolation,
+            ExpressionSyntax expression,
+            string j2nTypeName,
+            CancellationToken cancellationToken)
+        {
+            var arguments = new List<ArgumentSyntax>
+            {
+                SyntaxFactory.Argument(expression.WithoutTrivia())
+            };
+
+            var updatedInterpolation = interpolation;
+
+            if (interpolation.FormatClause is not null)
+            {
+                var formatToken = interpolation.FormatClause.FormatStringToken;
+                var formatLiteral = SyntaxFactory.LiteralExpression(
+                    SyntaxKind.StringLiteralExpression,
+                    SyntaxFactory.Literal(formatToken.ValueText));
+                arguments.Add(SyntaxFactory.Argument(formatLiteral));
+                updatedInterpolation = updatedInterpolation.WithFormatClause(null);
+            }
+
+            InvocationExpressionSyntax replacementExpression = CreateJ2NToStringInvocation(j2nTypeName, arguments)
+                .WithLeadingTrivia(expression.GetLeadingTrivia())
+                .WithTrailingTrivia(expression.GetTrailingTrivia());
+
+            updatedInterpolation = updatedInterpolation
+                .WithExpression(replacementExpression)
+                .WithAdditionalAnnotations(Formatter.Annotation);
+
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            editor.ReplaceNode(interpolation, updatedInterpolation);
+
+            return editor.GetChangedDocument();
+        }
+
+        private static InvocationExpressionSyntax CreateJ2NToStringInvocation(
+            string j2nTypeName,
+            IEnumerable<ArgumentSyntax> arguments)
+        {
+            MemberAccessExpressionSyntax j2nTypeAccess = SyntaxFactory.MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
                 SyntaxFactory.MemberAccessExpression(
                     SyntaxKind.SimpleMemberAccessExpression,
                     SyntaxFactory.IdentifierName("J2N"),
                     SyntaxFactory.IdentifierName("Numerics")),
-                SyntaxFactory.IdentifierName(j2nTypeName))
-                .WithAdditionalAnnotations(Formatter.Annotation);
+                SyntaxFactory.IdentifierName(j2nTypeName));
 
-            MemberAccessExpressionSyntax fullAccess = SyntaxFactory.MemberAccessExpression(
+            MemberAccessExpressionSyntax toStringAccess = SyntaxFactory.MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
-                j2nToStringAccess,
+                j2nTypeAccess,
                 SyntaxFactory.IdentifierName("ToString"));
 
-            // Build invocation: J2N.Numerics.<Single|Double>.ToString(<expr>, <original args...>)
-            if (memberAccess.Parent is not InvocationExpressionSyntax invocation)
-                return document;
-
-            var newArgs = new List<ArgumentSyntax> { SyntaxFactory.Argument(memberAccess.Expression) };
-            if (invocation.ArgumentList != null)
-                newArgs.AddRange(invocation.ArgumentList.Arguments);
-
-            InvocationExpressionSyntax newInvocation = SyntaxFactory.InvocationExpression(
-                fullAccess,
-                SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(newArgs)))
-                .WithTriviaFrom(invocation) // safe now
+            return SyntaxFactory.InvocationExpression(
+                toStringAccess,
+                SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(arguments)))
                 .WithAdditionalAnnotations(Formatter.Annotation);
+        }
 
-            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            editor.ReplaceNode(memberAccess.Parent, newInvocation);
 
-            return editor.GetChangedDocument();
+        private static bool TryGetFloatingPointTypeName(TypeInfo typeInfo, out string typeName)
+        {
+            if (TryGetFloatingPointTypeName(typeInfo.Type, out typeName))
+                return true;
+
+            if (TryGetFloatingPointTypeName(typeInfo.ConvertedType, out typeName))
+                return true;
+
+            typeName = null!;
+            return false;
+        }
+
+        private static bool TryGetFloatingPointTypeName(ITypeSymbol? typeSymbol, out string typeName)
+        {
+            typeName = typeSymbol?.SpecialType switch
+            {
+                SpecialType.System_Single => "Single",
+                SpecialType.System_Double => "Double",
+                _ => null!
+            };
+
+            return typeName is not null;
         }
 
         private static bool TryGetJ2NTypeAndMember(
@@ -137,21 +276,11 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes
 
             if (memberAccess is null)
             {
-                j2nTypeName = null!; // we always return false when the value is null, so we can ignore it here.
+                j2nTypeName = null!;
                 return false;
             }
 
-            var typeInfo = semanticModel.GetTypeInfo(memberAccess.Expression);
-            var type = typeInfo.Type;
-
-            j2nTypeName = type?.SpecialType switch
-            {
-                SpecialType.System_Single => "Single",
-                SpecialType.System_Double => "Double",
-                _ => null! // we always return false when the value is null, so we can ignore it here.
-            };
-
-            if (j2nTypeName is null)
+            if (!TryGetFloatingPointTypeName(semanticModel.GetTypeInfo(memberAccess.Expression), out j2nTypeName))
                 return false;
 
             return true;

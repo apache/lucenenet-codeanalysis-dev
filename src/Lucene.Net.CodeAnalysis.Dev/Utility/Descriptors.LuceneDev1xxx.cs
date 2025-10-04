@@ -70,5 +70,12 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
                 Design,
                 Warning
             );
+
+        public static readonly DiagnosticDescriptor LuceneDev1006_FloatingPointFormatting =
+            Diagnostic(
+                "LuceneDev1006",
+                Design,
+                Warning
+            );
     }
 }

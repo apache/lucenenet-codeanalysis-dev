@@ -39,6 +39,50 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
             return false;
         }
 
+
+        public static bool IsFloatingPointType(TypeInfo typeInfo)
+        {
+            if (IsFloatingPointType(typeInfo.Type))
+                return true;
+
+            if (IsFloatingPointType(typeInfo.ConvertedType))
+                return true;
+
+            return false;
+        }
+
+        public static bool IsFloatingPointType(ITypeSymbol? typeSymbol)
+        {
+            if (typeSymbol is null)
+                return false;
+
+            return IsSpecialTypeFloatingPoint(typeSymbol.SpecialType);
+        }
+
+        public static bool TryGetFloatingPointTypeName(TypeInfo typeInfo, out string typeName)
+        {
+            if (TryGetFloatingPointTypeName(typeInfo.Type, out typeName))
+                return true;
+
+            if (TryGetFloatingPointTypeName(typeInfo.ConvertedType, out typeName))
+                return true;
+
+            typeName = null!;
+            return false;
+        }
+
+        public static bool TryGetFloatingPointTypeName(ITypeSymbol? typeSymbol, out string typeName)
+        {
+            typeName = typeSymbol?.SpecialType switch
+            {
+                SpecialType.System_Single => "Single",
+                SpecialType.System_Double => "Double",
+                _ => null!
+            };
+
+            return typeName is not null;
+        }
+
         private static bool IsSpecialTypeFloatingPoint(SpecialType specialType)
         {
             return specialType == SpecialType.System_Single || specialType == SpecialType.System_Double;
