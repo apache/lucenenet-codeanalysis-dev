@@ -106,6 +106,19 @@ public class LuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider : CodeFi
             var syntaxRoot = await declarationDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             if (syntaxRoot == null) continue;
 
+            // Get leading trivia from the first modifier (which contains license headers/comments)
+            var leadingTrivia = declaration.Modifiers.Count > 0
+                ? declaration.Modifiers[0].LeadingTrivia
+                : SyntaxTriviaList.Empty;
+
+            // Get trailing trivia from the accessibility modifier we're removing (typically whitespace)
+            var accessibilityModifier = declaration.Modifiers
+                .FirstOrDefault(m => m.IsKind(SyntaxKind.PublicKeyword) ||
+                                    m.IsKind(SyntaxKind.InternalKeyword) ||
+                                    m.IsKind(SyntaxKind.ProtectedKeyword) ||
+                                    m.IsKind(SyntaxKind.PrivateKeyword));
+            var trailingTrivia = accessibilityModifier.TrailingTrivia;
+
             // Remove existing accessibility modifiers
             var newModifiers = SyntaxFactory.TokenList(
                     declaration.Modifiers
@@ -113,7 +126,7 @@ public class LuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider : CodeFi
                                        !modifier.IsKind(SyntaxKind.ProtectedKeyword) &&
                                        !modifier.IsKind(SyntaxKind.InternalKeyword) &&
                                        !modifier.IsKind(SyntaxKind.PublicKeyword))
-                ).Insert(0, SyntaxFactory.Token(SyntaxKind.InternalKeyword)); // Ensure 'internal' is the first modifier
+                ).Insert(0, SyntaxFactory.Token(leadingTrivia, SyntaxKind.InternalKeyword, trailingTrivia)); // Ensure 'internal' is the first modifier with preserved trivia
 
             var newDeclaration = declaration.WithModifiers(newModifiers);
             var newRoot = syntaxRoot.ReplaceNode(declaration, newDeclaration);
