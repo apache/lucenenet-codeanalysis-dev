@@ -94,6 +94,37 @@ public class C
         }
 
         [Test]
+        public async Task TestDiagnostic_WithAlignmentAndFormatClause()
+        {
+            var testCode = @"
+public class C
+{
+    private float levelBottom = 1f;
+
+    private string Message(string value) => value;
+
+    public void M()
+    {
+        Message($""  level {levelBottom,5:F2}"");
+    }
+}
+";
+
+            var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1006_FloatingPointFormatting.Id)
+                .WithMessageFormat(Descriptors.LuceneDev1006_FloatingPointFormatting.MessageFormat)
+                .WithArguments("levelBottom")
+                .WithLocation("/0/Test0.cs", line: 10, column: 28);
+
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1006_FloatingPointFormattingConcatenationCSCodeAnalyzer())
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { expected }
+            };
+
+            await test.RunAsync();
+        }
+
+        [Test]
         public async Task TestNoDiagnostic_WhenValuesAlreadyFormatted()
         {
             var testCode = @"

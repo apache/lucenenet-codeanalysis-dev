@@ -87,6 +87,68 @@ public class C
             await test.RunAsync();
         }
 
+
+        [Test]
+        public async Task TestFix_WithAlignmentAndFormatClause()
+        {
+            var testCode = @"namespace J2N.Numerics
+{
+    public static class Single
+    {
+        public static string ToString(float value) => value.ToString();
+        public static string ToString(float value, string format) => value.ToString(format);
+    }
+}
+
+public class C
+{
+    private float levelBottom = 1f;
+
+    public string Message()
+    {
+        return $""  level {levelBottom,5:F2}"";
+    }
+}
+";
+
+            var fixedCode = @"namespace J2N.Numerics
+{
+    public static class Single
+    {
+        public static string ToString(float value) => value.ToString();
+        public static string ToString(float value, string format) => value.ToString(format);
+    }
+}
+
+public class C
+{
+    private float levelBottom = 1f;
+
+    public string Message()
+    {
+        return $""  level {J2N.Numerics.Single.ToString(levelBottom, ""F2""),5}"";
+    }
+}
+";
+
+            var expected = new DiagnosticResult(Descriptors.LuceneDev1006_FloatingPointFormatting)
+                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithMessageFormat(Descriptors.LuceneDev1006_FloatingPointFormatting.MessageFormat)
+                .WithArguments("levelBottom")
+                .WithLocation("/0/Test0.cs", line: 16, column: 27);
+
+            var test = new InjectableCodeFixTest(
+                () => new LuceneDev1006_FloatingPointFormattingConcatenationCSCodeAnalyzer(),
+                () => new LuceneDev1001_FloatingPointFormattingCSCodeFixProvider())
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics = { expected }
+            };
+
+            await test.RunAsync();
+        }
+
         [Test]
         public async Task TestFix_WithFormatClause()
         {
