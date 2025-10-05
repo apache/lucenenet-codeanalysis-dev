@@ -192,6 +192,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes
             };
 
             var updatedInterpolation = interpolation;
+            var alignmentClause = interpolation.AlignmentClause;
 
             if (interpolation.FormatClause is not null)
             {
@@ -207,9 +208,14 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes
                 .WithLeadingTrivia(expression.GetLeadingTrivia())
                 .WithTrailingTrivia(expression.GetTrailingTrivia());
 
-            updatedInterpolation = updatedInterpolation
-                .WithExpression(replacementExpression)
-                .WithAdditionalAnnotations(Formatter.Annotation);
+            updatedInterpolation = updatedInterpolation.WithExpression(replacementExpression);
+
+            if (alignmentClause is not null)
+            {
+                updatedInterpolation = updatedInterpolation.WithAlignmentClause(alignmentClause);
+            }
+
+            updatedInterpolation = updatedInterpolation.WithAdditionalAnnotations(Formatter.Annotation);
 
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             editor.ReplaceNode(interpolation, updatedInterpolation);

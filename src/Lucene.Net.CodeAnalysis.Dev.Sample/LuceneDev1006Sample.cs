@@ -26,11 +26,11 @@ public class LuceneDev1006Sample
 
     public string DescribeConcatenation()
     {
-        return ""  level "" + levelBottom + "" to "" + maxLevel;
+        return "  level " + levelBottom + " to " + maxLevel;
     }
 
     public string DescribeInterpolation()
     {
-        return $""  level {levelBottom} to {maxLevel}"";
+        return $"  level {levelBottom} to {maxLevel}";
     }
 }
