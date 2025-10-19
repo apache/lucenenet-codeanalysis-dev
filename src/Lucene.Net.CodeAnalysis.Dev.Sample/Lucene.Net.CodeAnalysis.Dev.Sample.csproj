@@ -1,4 +1,4 @@
-<?xml version='1.0'?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -50,7 +50,7 @@ under the License.
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
   </PropertyGroup>
 
-  <Import Project="$(_PackageVersionPropsFilePath)" Condition="Exists('$(_PackageVersionPropsFilePath)')"/>
+  <Import Project="$(_PackageVersionPropsFilePath)" Condition="Exists('$(_PackageVersionPropsFilePath)')" />
 
   <ItemGroup Condition="Exists('$(_PackageVersionPropsFilePath)')">
     <PackageReference Include="Lucene.Net.CodeAnalysis.Dev" VersionOverride="$(_CodeAnalysisPackageVersion)" />
@@ -61,31 +61,21 @@ under the License.
     <Message Importance="high" Text="Running NuGet Package Build..." />
 
     <!-- Build the project that produces the NuGet package -->
-    <MSBuild
-      Projects="..\Lucene.Net.CodeAnalysis.Dev.Package\Lucene.Net.CodeAnalysis.Dev.Package.csproj"
-      Targets="Restore;PrepareForBuild;Build"
-      Properties="Configuration=$(Configuration)"
-    />
+    <MSBuild Projects="..\Lucene.Net.CodeAnalysis.Dev.Package\Lucene.Net.CodeAnalysis.Dev.Package.csproj" Targets="Restore;PrepareForBuild;Build" Properties="Configuration=$(Configuration)" />
 
     <!-- Since we may be continually using the last build number (unless a commit occured),
           we need to clear the project local NuGet cache. -->
     <ForceDeleteDirectory DirectoryPath="$(_RestorePackagesPath)" />
 
     <!-- Restore again, now that the .nupkg should exist -->
-    <MSBuild
-      Projects="$(MSBuildProjectFullPath)"
-      Targets="Restore"
-      Properties="Configuration=$(Configuration)" />
+    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Restore" Properties="Configuration=$(Configuration)" />
   </Target>
 
   <Target Name="CleanRestorePackagesPath" AfterTargets="Clean" Condition="'$(DesignTimeBuild)' != 'true'">
     <ForceDeleteDirectory DirectoryPath="$(_RestorePackagesPath)" />
   </Target>
 
-  <UsingTask
-    TaskName="ForceDeleteDirectory"
-    TaskFactory="RoslynCodeTaskFactory"
-    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+  <UsingTask TaskName="ForceDeleteDirectory" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
       <DirectoryPath ParameterType="System.String" Required="true" />
     </ParameterGroup>
