@@ -75,10 +75,10 @@ public class Sample
             await test.RunAsync();
         }
 
-       [Test]
-public async Task Fix_EscapedCharacter_StringLiteral()
-{
-    var testCode = @"
+        [Test]
+        public async Task Fix_EscapedCharacter_StringLiteral()
+        {
+            var testCode = @"
 using System;
 
 public class Sample
@@ -90,7 +90,7 @@ public class Sample
     }
 }";
 
-    var fixedCode = @"
+            var fixedCode = @"
 using System;
 
 public class Sample
@@ -102,23 +102,23 @@ public class Sample
     }
 }";
 
-    var expected = new DiagnosticResult(Descriptors.LuceneDev6003_SingleCharStringAnalyzer)
-        .WithSeverity(DiagnosticSeverity.Info)
-        .WithArguments("IndexOf", "\"\\\"\"")
-        .WithSpan(10, 39, 10, 43);
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6003_SingleCharStringAnalyzer)
+                .WithSeverity(DiagnosticSeverity.Info)
+                .WithArguments("IndexOf", "\"\\\"\"")
+                .WithSpan(10, 39, 10, 43);
 
-    var test = new InjectableCodeFixTest(
-        () => new LuceneDev6003_SingleCharStringAnalyzer(),
-        () => new LuceneDev6003_SingleCharStringCodeFixProvider())
-    {
-        TestCode = testCode,
-        FixedCode = fixedCode,
-        ExpectedDiagnostics = { expected },
-        CodeActionIndex = 0
-    };
+            var test = new InjectableCodeFixTest(
+                () => new LuceneDev6003_SingleCharStringAnalyzer(),
+                () => new LuceneDev6003_SingleCharStringCodeFixProvider())
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics = { expected },
+                CodeActionIndex = 0
+            };
 
-    await test.RunAsync();
-}
+            await test.RunAsync();
+        }
 
         [Test]
         public async Task FixAll_SingleCharacterStringLiterals()
@@ -168,6 +168,78 @@ public class Sample
                 TestCode = testCode,
                 FixedCode = fixedCode,
                 ExpectedDiagnostics = { expected1, expected2 },
+                CodeActionIndex = 0
+            };
+
+            await test.RunAsync();
+        }
+        [Test]
+        public async Task Fix_Span_IndexOf_SingleCharacter()
+        {
+            var testCode = @"
+using System;
+
+public class Sample
+{
+    public void M(ReadOnlySpan<char> span)
+    {
+        int index = span.IndexOf(""X"");
+    }
+}";
+
+            var fixedCode = @"
+using System;
+
+public class Sample
+{
+    public void M(ReadOnlySpan<char> span)
+    {
+        int index = span.IndexOf('X');
+    }
+}";
+
+            // "X" starts at column 30 and ends at column 33 (3 chars wide)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6003_SingleCharStringAnalyzer)
+                .WithSeverity(DiagnosticSeverity.Info)
+                .WithArguments("IndexOf", "\"X\"")
+                .WithSpan(9, 30, 9, 33);
+
+            var test = new InjectableCodeFixTest(
+                () => new LuceneDev6003_SingleCharStringAnalyzer(),
+                () => new LuceneDev6003_SingleCharStringCodeFixProvider())
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics = { expected },
+                CodeActionIndex = 0
+            };
+
+            await test.RunAsync();
+        }
+
+        [Test]
+        public async Task NoFix_Span_StartsWith_SingleCharacter()
+        {
+            var testCode = @"
+using System;
+
+public class Sample
+{
+    public void M(ReadOnlySpan<char> span)
+    {
+        bool starts = span.StartsWith(""X"");
+    }
+}";
+
+            // This test expects NO diagnostic, ensuring the Analyzer correctly skips
+            // ReadOnlySpan.StartsWith/EndsWith calls when the argument is a single-character string literal.
+            var test = new InjectableCodeFixTest(
+                () => new LuceneDev6003_SingleCharStringAnalyzer(),
+                () => new LuceneDev6003_SingleCharStringCodeFixProvider())
+            {
+                TestCode = testCode,
+                FixedCode = testCode, // Fixed code is the same as test code
+                ExpectedDiagnostics = { },
                 CodeActionIndex = 0
             };
 

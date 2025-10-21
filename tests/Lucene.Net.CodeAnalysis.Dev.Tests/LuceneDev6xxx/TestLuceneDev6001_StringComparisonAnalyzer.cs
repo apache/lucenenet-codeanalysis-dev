@@ -29,6 +29,56 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
     public class TestLuceneDev6001_StringComparisonAnalyzer
     {
         [Test]
+        public async Task Skips_SingleCharStringLiteral_Alone()
+        {
+            var testCode = @"
+using System;
+
+public class Sample
+{
+    public void M()
+    {
+        string text = ""Hello"";
+        int index = text.IndexOf(""H""); // Single-character string
+    }
+}";
+
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            {
+                TestCode = testCode,
+                // Expect no diagnostics because 6001 should skip single-character string literal alone
+                ExpectedDiagnostics = { } // No diagnostics expected
+            };
+
+            await test.RunAsync();
+        }
+
+        [Test]
+        public async Task NoDiagnostic_For_SingleCharString_MissingComparison()
+        {
+            var testCode = @"
+using System;
+
+public class Sample
+{
+    public void M()
+    {
+        string text = ""Hello"";
+        int index = text.IndexOf(""H"", 0, 5); // Single-character string with startIndex/count
+    }
+}";
+
+            // Change the test to use InjectableAnalyzerTest (no CodeFix)
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { } // Asserting NO diagnostics are expected
+            };
+
+            await test.RunAsync();
+        }
+
+        [Test]
         public async Task Detects_IndexOf_MissingStringComparison()
         {
             var testCode = @"
@@ -224,7 +274,7 @@ public class Sample
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
-                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
                 .WithArguments("IndexOf")
                 .WithLocation("/0/Test0.cs", line: 9, column: 43);
@@ -254,7 +304,7 @@ public class Sample
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
-                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
                 .WithArguments("StartsWith")
                 .WithLocation("/0/Test0.cs", line: 9, column: 48);
@@ -284,7 +334,7 @@ public class Sample
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
-                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
                 .WithArguments("EndsWith")
                 .WithLocation("/0/Test0.cs", line: 9, column: 44);
@@ -314,7 +364,7 @@ public class Sample
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
-                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
                 .WithArguments("LastIndexOf")
                 .WithLocation("/0/Test0.cs", line: 9, column: 47);
@@ -329,7 +379,7 @@ public class Sample
         }
 
         [Test]
-        public async Task NoWarning_WithOrdinal()
+        public async Task NoError_WithOrdinal()
         {
             var testCode = @"
 using System;
@@ -356,7 +406,7 @@ public class Sample
         }
 
         [Test]
-        public async Task NoWarning_WithOrdinalIgnoreCase()
+        public async Task NoError_WithOrdinalIgnoreCase()
         {
             var testCode = @"
 using System;
@@ -407,7 +457,7 @@ public class Sample
                 .WithLocation("/0/Test0.cs", line: 9, column: 27);
 
             var expected2 = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
-                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
                 .WithArguments("IndexOf")
                 .WithLocation("/0/Test0.cs", line: 10, column: 44);

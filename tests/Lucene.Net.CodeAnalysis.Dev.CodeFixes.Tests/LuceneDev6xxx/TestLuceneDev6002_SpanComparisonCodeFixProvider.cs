@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -73,50 +73,102 @@ public class Sample
             await test.RunAsync();
         }
 
-//         [Test]
-//         public async Task TestFix_ReplaceInvalidWithOrdinal()
-//         {
-//             var testCode = @"
-// using System;
+        [Test]
+        public async Task TestFix_InvalidToOptimalRemoval_CaseSensitive()
+        {
+            var testCode = @"
+using System;
 
-// public class Sample
-// {
-//     public void M()
-//     {
-//         ReadOnlySpan<char> span = ""Hello"".AsSpan();
-//         int index = span.IndexOf(""test"", StringComparison.CurrentCulture);
-//     }
-// }";
+public class Sample
+{
+    public void M()
+    {
+        ReadOnlySpan<char> span = ""Hello"".AsSpan();
+        int index = span.IndexOf(""test"", StringComparison.CurrentCulture);
+    }
+}";
 
-//             var fixedCode = @"
-// using System;
+            var fixedCode = @"
+using System;
 
-// public class Sample
-// {
-//     public void M()
-//     {
-//         ReadOnlySpan<char> span = ""Hello"".AsSpan();
-//         int index = span.IndexOf(""test"", StringComparison.Ordinal);
-//     }
-// }";
+public class Sample
+{
+    public void M()
+    {
+        ReadOnlySpan<char> span = ""Hello"".AsSpan();
+        int index = span.IndexOf(""test"");
+    }
+}";
 
-//             var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidComparison)
-//                 .WithSeverity(DiagnosticSeverity.Error)
-//                 .WithSpan(9, 42, 9, 73)
-//                 .WithArguments("IndexOf", "CurrentCulture");
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidComparison)
+                .WithSeverity(DiagnosticSeverity.Error)
+                .WithSpan(9, 42, 9, 73)
+                .WithArguments("IndexOf", "CurrentCulture");
 
-//             var test = new InjectableCodeFixTest(
-//                 () => new LuceneDev6002_SpanComparisonAnalyzer(),
-//                 () => new LuceneDev6002_SpanComparisonCodeFixProvider())
-//             {
-//                 TestCode = testCode,
-//                 FixedCode = fixedCode,
-//                 ExpectedDiagnostics = { expected },
-//                 CodeActionIndex = 0
-//             };
+            var test = new InjectableCodeFixTest(
+                () => new LuceneDev6002_SpanComparisonAnalyzer(),
+                () => new LuceneDev6002_SpanComparisonCodeFixProvider())
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics = { expected },
+                // The new logic offers "Optimize to default Ordinal" as CodeActionIndex = 0
+                CodeActionIndex = 0,
+                // CRITICAL FIX: The smarter fix takes only 1 iteration now.
+                NumberOfFixAllIterations = 1
+            };
 
-//             await test.RunAsync();
-//         }
+            await test.RunAsync();
+        }
+
+        [Test]
+        public async Task TestFix_InvalidToOptimalOrdinalIgnoreCase_CaseInsensitive()
+        {
+            var testCode = @"
+using System;
+
+public class Sample
+{
+    public void M()
+    {
+        ReadOnlySpan<char> span = ""Hello"".AsSpan();
+        int index = span.IndexOf(""test"", StringComparison.CurrentCultureIgnoreCase);
+    }
+}";
+
+            var fixedCode = @"
+using System;
+
+public class Sample
+{
+    public void M()
+    {
+        ReadOnlySpan<char> span = ""Hello"".AsSpan();
+        int index = span.IndexOf(""test"", StringComparison.OrdinalIgnoreCase);
+    }
+}";
+
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidComparison)
+                .WithSeverity(DiagnosticSeverity.Error)
+                .WithSpan(9, 42, 9, 83)
+                .WithArguments("IndexOf", "CurrentCultureIgnoreCase");
+
+            var test = new InjectableCodeFixTest(
+                () => new LuceneDev6002_SpanComparisonAnalyzer(),
+                () => new LuceneDev6002_SpanComparisonCodeFixProvider())
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics = { expected },
+                // The new logic should offer "OrdinalIgnoreCase" as CodeActionIndex = 0 for case-insensitive inputs
+                CodeActionIndex = 0,
+                // The fixed code does not trigger RedundantOrdinal, so 1 iteration is sufficient.
+                NumberOfFixAllIterations = 1
+            };
+
+            await test.RunAsync();
+        }
+
         [Test]
         public async Task TestFix_RemoveRedundantOrdinal_Simple()
         {

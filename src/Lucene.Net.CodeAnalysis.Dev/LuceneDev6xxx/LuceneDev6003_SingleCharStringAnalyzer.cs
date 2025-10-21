@@ -84,10 +84,6 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
                 return;
 
             // Get the actual character value (handles escape sequences automatically)
-            // token.ValueText gives us the UNESCAPED string value
-            // For example: "\"" -> ValueText = '"' (length 1)
-            //              "\n" -> ValueText = '\n' (length 1)
-            //              "\x0020" -> ValueText = ' ' (length 1)
             var token = literal.Token;
             var valueText = token.ValueText; // This is the unescaped string value
 
@@ -104,20 +100,41 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
             var receiverType = semantic.GetTypeInfo(memberAccess.Expression).Type;
 
             // Check if this is a valid target type (String, Span, or custom span-like)
-            bool isValidType = IsValidTargetType(receiverType);
+            bool isSpanLike = IsSpanLikeReceiver(receiverType);
+            bool isValidTarget = IsValidTargetType(receiverType)
+                                    || (methodSymbol != null && IsValidTargetType(methodSymbol.ContainingType))
+                                    || candidateSymbols.Any(c => IsValidTargetType(c.ContainingType));
 
-            if (!isValidType && methodSymbol != null)
-            {
-                isValidType = IsValidTargetType(methodSymbol.ContainingType);
-            }
-
-            if (!isValidType && candidateSymbols.Length > 0)
-            {
-                isValidType = candidateSymbols.Any(c => IsValidTargetType(c.ContainingType));
-            }
-
-            if (!isValidType)
+            if (!isValidTarget)
                 return;
+
+            // 🌟 CRITICAL FIX: Handle Span/ReadOnlySpan differences
+            // For Span<char> and ReadOnlySpan<char>:
+            // 1. StartsWith/EndsWith only take ReadOnlySpan<char>, NOT a single char, so we must skip the diagnostic.
+            // 2. IndexOf/LastIndexOf only have single-argument overloads for the 'char' (or 'value span') overload.
+            if (isSpanLike)
+            {
+                if (methodName == "StartsWith" || methodName == "EndsWith")
+                {
+                    // Span/ReadOnlySpan do not have 'char' overloads for StartsWith/EndsWith.
+                    // The string literal "a" is correctly resolved to the ReadOnlySpan<char> overload.
+                    return;
+                }
+
+                // For IndexOf/LastIndexOf on spans, if the invocation has more than 1 argument,
+                // it's likely a custom extension method or an invalid call, and it won't resolve
+                // to the simple `IndexOf(char value)` or `IndexOf(ReadOnlySpan<char> value)` methods.
+                // We only target the simplest case for replacement.
+                if (invocation.ArgumentList.Arguments.Count != 1)
+                    return;
+            }
+            else
+            {
+                // For System.String and custom types, we allow multiple arguments (e.g., IndexOf("a", 5))
+                // because the char overloads like IndexOf('a', 5) exist.
+                // We rely on the `HasCharOverload` check below to validate that the char overload exists.
+            }
+            // -----------------------------------------------------
 
             // Check if a char overload exists
             bool hasCharOverload = HasCharOverload(methodSymbol, candidateSymbols, receiverType, methodName);
@@ -168,6 +185,21 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
             var fullname = type.ToDisplayString();
             return fullname == "J2N.Text.OpenStringBuilder" ||
                    fullname == "Lucene.Net.Text.ValueStringBuilder";
+        }
+
+        /// <summary>
+        /// Determines if the receiver type is Span&lt;char&gt; or ReadOnlySpan&lt;char&gt;.
+        /// </summary>
+        private static bool IsSpanLikeReceiver(ITypeSymbol? type)
+        {
+            if (type is INamedTypeSymbol namedType && namedType.IsGenericType)
+            {
+                var constructedFrom = namedType.ConstructedFrom.ToDisplayString();
+                if ((constructedFrom == "System.Span<T>" || constructedFrom == "System.ReadOnlySpan<T>") &&
+                    namedType.TypeArguments.FirstOrDefault()?.SpecialType == SpecialType.System_Char)
+                    return true;
+            }
+            return false;
         }
 
         /// <summary>

@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,8 +34,16 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
     public sealed class LuceneDev6002_SpanComparisonCodeFixProvider : CodeFixProvider
     {
         private const string TitleRemoveOrdinal = "Remove redundant StringComparison.Ordinal";
-        private const string TitleReplaceWithOrdinal = "Replace with StringComparison.Ordinal";
-        private const string TitleReplaceWithOrdinalIgnoreCase = "Replace with StringComparison.OrdinalIgnoreCase";
+        private const string TitleOptimizeToDefaultOrdinal = "Optimize to default Ordinal comparison (remove argument)";
+        private const string TitleReplaceWithOrdinalIgnoreCase = "Use StringComparison.OrdinalIgnoreCase";
+
+        // Integer values for StringComparison Enum members (used for semantic analysis)
+        private const int CurrentCulture = 0;
+        private const int CurrentCultureIgnoreCase = 1;
+        private const int InvariantCulture = 2;
+        private const int InvariantCultureIgnoreCase = 3;
+        private const int Ordinal = 4;
+        private const int OrdinalIgnoreCase = 5;
 
         public override ImmutableArray<string> FixableDiagnosticIds =>
             ImmutableArray.Create(
@@ -56,39 +64,136 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
             if (invocation == null)
                 return;
 
+            //Double check to Skip char literals and single-character string literals when safe ---
+            var firstArgExpr = invocation.ArgumentList.Arguments.FirstOrDefault()?.Expression;
+
+            if (firstArgExpr is LiteralExpressionSyntax lit)
+
+            {
+
+                if (lit.IsKind(SyntaxKind.CharacterLiteralExpression))
+
+                    return; // already char overload; skip 6002 fix
+
+
+
+                if (lit.IsKind(SyntaxKind.StringLiteralExpression) && lit.Token.ValueText.Length == 1)
+
+                {
+
+                    // Check if a StringComparison argument is present
+
+                    var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+
+                    if (semanticModel == null)
+
+                        return;
+
+
+
+                    bool hasStringComparisonArgForLiteral = invocation.ArgumentList.Arguments.Any(arg =>
+
+                        semanticModel.GetTypeInfo(arg.Expression).Type is INamedTypeSymbol t &&
+
+                        t.ToDisplayString() == "System.StringComparison"
+
+                        || (semanticModel.GetSymbolInfo(arg.Expression).Symbol is IFieldSymbol f &&
+
+                            f.ContainingType?.ToDisplayString() == "System.StringComparison"));
+
+
+
+                    if (!hasStringComparisonArgForLiteral)
+
+                    {
+
+                        // safe to convert to char (6003), skip 6002 fix
+
+                        return;
+
+                    }
+
+                    // else: has StringComparison -> let the codefix continue
+
+                }
+
+            }
             switch (diagnostic.Id)
             {
                 case var id when id == Descriptors.LuceneDev6002_RedundantOrdinal.Id:
                     context.RegisterCodeFix(
                         CodeAction.Create(
-                            title: "Remove redundant StringComparison.Ordinal",
+                            title: TitleRemoveOrdinal,
                             createChangedDocument: c => RemoveStringComparisonArgumentAsync(context.Document, invocation, c),
                             equivalenceKey: "RemoveRedundantOrdinal"),
                         diagnostic);
                     break;
 
                 case var id when id == Descriptors.LuceneDev6002_InvalidComparison.Id:
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
-                            title: "Use StringComparison.Ordinal",
-                           createChangedDocument: c => ReplaceWithStringComparisonAsync(context.Document, invocation, "Ordinal", c),
-                            equivalenceKey: "ReplaceWithOrdinal"),
-                        diagnostic);
+                    var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+                    if (semanticModel == null)
+                        return;
 
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
-                            title: "Use StringComparison.OrdinalIgnoreCase",
-                            createChangedDocument: c => ReplaceWithStringComparisonAsync(context.Document, invocation, "OrdinalIgnoreCase", c),
-                            equivalenceKey: "ReplaceWithOrdinalIgnoreCase"),
-                        diagnostic);
+                    var comparisonArg = invocation.ArgumentList.Arguments.FirstOrDefault(arg =>
+                        semanticModel.GetTypeInfo(arg.Expression).Type?.ToDisplayString() == "System.StringComparison");
+
+                    if (comparisonArg == null)
+                        return;
+
+                    var originalComparisonValue = semanticModel.GetConstantValue(comparisonArg.Expression);
+
+                    if (originalComparisonValue.HasValue && originalComparisonValue.Value is int intValue)
+                    {
+                        // Check if the original comparison was case-insensitive
+                        bool wasCaseInsensitive = intValue == CurrentCultureIgnoreCase ||
+                                                  intValue == InvariantCultureIgnoreCase;
+
+                        if (wasCaseInsensitive)
+                        {
+                            // Fix 1: Case-Insensitive Invalid -> OrdinalIgnoreCase (Single, targeted fix)
+                            context.RegisterCodeFix(
+                                CodeAction.Create(
+                                    title: TitleReplaceWithOrdinalIgnoreCase,
+                                    createChangedDocument: c => ReplaceWithStringComparisonAsync(context.Document, invocation, "OrdinalIgnoreCase", c),
+                                    equivalenceKey: "ReplaceWithOrdinalIgnoreCase"),
+                                diagnostic);
+
+                            // Optionally, still offer the case-sensitive fix for completeness
+                            context.RegisterCodeFix(
+                                CodeAction.Create(
+                                    title: "Use StringComparison.Ordinal", // Offer Ordinal as second choice
+                                    createChangedDocument: c => ReplaceWithStringComparisonAsync(context.Document, invocation, "Ordinal", c),
+                                    equivalenceKey: "ReplaceWithOrdinal"),
+                                diagnostic);
+                        }
+                        else
+                        {
+                            // Fix 1: Case-Sensitive Invalid (CurrentCulture/InvariantCulture) -> Optimal Default (Remove argument)
+                            // This skips the redundant intermediate step (Ordinal)
+                            context.RegisterCodeFix(
+                                CodeAction.Create(
+                                    title: TitleOptimizeToDefaultOrdinal,
+                                    createChangedDocument: c => RemoveStringComparisonArgumentAsync(context.Document, invocation, c),
+                                    equivalenceKey: "OptimizeToDefaultOrdinal"),
+                                diagnostic);
+
+                            // Optionally, still offer the case-insensitive fix for completeness
+                            context.RegisterCodeFix(
+                                CodeAction.Create(
+                                    title: TitleReplaceWithOrdinalIgnoreCase,
+                                    createChangedDocument: c => ReplaceWithStringComparisonAsync(context.Document, invocation, "OrdinalIgnoreCase", c),
+                                    equivalenceKey: "ReplaceWithOrdinalIgnoreCase"),
+                                diagnostic);
+                        }
+                    }
                     break;
             }
         }
 
         private static async Task<Document> RemoveStringComparisonArgumentAsync(
-     Document document,
-     InvocationExpressionSyntax invocation,
-     CancellationToken cancellationToken)
+            Document document,
+            InvocationExpressionSyntax invocation,
+            CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             if (root == null)
@@ -128,12 +233,13 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
             if (argumentToRemove == null)
                 return document;
 
-            // Remove the argument and normalize formatting
+            // Remove the argument
             var newArguments = invocation.ArgumentList.Arguments.Remove(argumentToRemove);
             var newArgumentList = invocation.ArgumentList.WithArguments(newArguments);
+
+            // CRITICAL FIX: Removed NormalizeWhitespace() which causes test instability
             var newInvocation = invocation.WithArgumentList(newArgumentList)
-                                          .WithTriviaFrom(invocation)                // preserve trivia
-                                          .NormalizeWhitespace();                    // clean formatting
+                                            .WithTriviaFrom(invocation); // Preserving trivia on the outer node is usually fine
 
             var newRoot = root.ReplaceNode(invocation, newInvocation);
             return document.WithSyntaxRoot(newRoot);
@@ -188,11 +294,11 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
 
             // Create new StringComparison expression
             var baseExpression = isFullyQualified
-    ? (ExpressionSyntax)SyntaxFactory.MemberAccessExpression(
-        SyntaxKind.SimpleMemberAccessExpression,
-        SyntaxFactory.IdentifierName("System"),
-        SyntaxFactory.IdentifierName("StringComparison"))
-    : SyntaxFactory.IdentifierName("StringComparison");
+                ? (ExpressionSyntax)SyntaxFactory.MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    SyntaxFactory.IdentifierName("System"),
+                    SyntaxFactory.IdentifierName("StringComparison"))
+                : SyntaxFactory.IdentifierName("StringComparison");
 
             var newExpression = SyntaxFactory.MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
@@ -201,9 +307,9 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
 
 
             var newArgument = argumentToReplace.WithExpression(newExpression);
-            var newInvocation = invocation.ReplaceNode(argumentToReplace, newArgument)
-                                          .WithTriviaFrom(invocation)
-                                          .NormalizeWhitespace();
+
+            // CRITICAL FIX: Removed WithTriviaFrom(invocation) and NormalizeWhitespace() which cause test instability
+            var newInvocation = invocation.ReplaceNode(argumentToReplace, newArgument);
 
             var newRoot = root;
             if (!isFullyQualified)
@@ -214,6 +320,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
             return document.WithSyntaxRoot(newRoot);
         }
 
+        // EnsureSystemUsing remains unchanged as it looks correct for adding a using directive
         private static SyntaxNode EnsureSystemUsing(SyntaxNode root)
         {
             if (root is CompilationUnitSyntax compilationUnit)

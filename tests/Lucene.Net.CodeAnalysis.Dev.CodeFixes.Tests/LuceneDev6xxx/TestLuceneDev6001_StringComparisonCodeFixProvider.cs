@@ -327,7 +327,7 @@ public class MyClass
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
-                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
                 .WithArguments("IndexOf")
                 .WithLocation("/0/Test0.cs", line: 9, column: 43);
@@ -372,7 +372,7 @@ public class MyClass
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
-                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
                 .WithArguments("StartsWith")
                 .WithLocation("/0/Test0.cs", line: 9, column: 48);
@@ -412,12 +412,12 @@ public class MyClass
     public void MyMethod()
     {
         string text = ""Hello World"";
-        bool ends = text.EndsWith(""WORLD"", StringComparison.Ordinal);
+        bool ends = text.EndsWith(""WORLD"", StringComparison.OrdinalIgnoreCase);
     }
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
-                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
                 .WithArguments("EndsWith")
                 .WithLocation("/0/Test0.cs", line: 9, column: 44);
@@ -435,7 +435,7 @@ public class MyClass
         }
 
         [Test]
-        public async Task TestNoWarning_WithOrdinal()
+        public async Task TestNoError_WithOrdinal()
         {
             var testCode = @"
 using System;
@@ -465,7 +465,7 @@ public class MyClass
         }
 
         [Test]
-        public async Task TestNoWarning_WithOrdinalIgnoreCase()
+        public async Task TestNoError_WithOrdinalIgnoreCase()
         {
             var testCode = @"
 using System;

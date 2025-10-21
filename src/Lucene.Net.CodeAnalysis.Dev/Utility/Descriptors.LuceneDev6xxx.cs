@@ -42,7 +42,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
             Diagnostic(
                 "LuceneDev6001_2",
                 Usage,
-                Warning
+                Error
             );
 
         // 6002: Redundant Ordinal (StringComparison.Ordinal on span-like)

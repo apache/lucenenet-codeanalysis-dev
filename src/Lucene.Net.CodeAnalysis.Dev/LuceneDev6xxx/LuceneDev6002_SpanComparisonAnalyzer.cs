@@ -100,6 +100,32 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
             if (candidateSymbols.Length > 0 && candidateSymbols.All(c => IsCharOverload(c)))
                 return;
 
+            // Skip char literals and single-character string literals when safe ---
+            var firstArgExpr = invocation.ArgumentList.Arguments.FirstOrDefault()?.Expression;
+            if (firstArgExpr is LiteralExpressionSyntax lit)
+            {
+                if (lit.IsKind(SyntaxKind.CharacterLiteralExpression))
+                    return; // already char overload; no diagnostic
+
+                if (lit.IsKind(SyntaxKind.StringLiteralExpression) && lit.Token.ValueText.Length == 1)
+                {
+                    // Check if a StringComparison argument is present
+                    bool hasStringComparisonArgForLiteral  = invocation.ArgumentList.Arguments.Any(arg =>
+                        semantic.GetTypeInfo(arg.Expression).Type is INamedTypeSymbol t &&
+                        t.ToDisplayString() == "System.StringComparison"
+                        || (semantic.GetSymbolInfo(arg.Expression).Symbol is IFieldSymbol f &&
+                            f.ContainingType?.ToDisplayString() == "System.StringComparison"));
+
+                    if (!hasStringComparisonArgForLiteral )
+                    {
+                        // safe to convert to char (6003), so skip 6001 reporting
+                        return;
+                    }
+                    // else: has StringComparison -> do not skip; let 6001/6002 validate or codefix handle it
+                }
+            }
+
+
             // Check for StringComparison argument
             var (hasComparison, comparisonValue, argLocation) =
                 CheckStringComparisonArgument(invocation, semantic, stringComparisonType);
