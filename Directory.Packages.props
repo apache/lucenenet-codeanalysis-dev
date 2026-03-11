@@ -25,7 +25,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Shared NuGet Package Reference Versions">
-    <RoslynAnalyzerPackageVersion>4.14.0</RoslynAnalyzerPackageVersion>
+    <RoslynAnalyzerPackageVersion>5.3.0</RoslynAnalyzerPackageVersion>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Package Reference Versions">
