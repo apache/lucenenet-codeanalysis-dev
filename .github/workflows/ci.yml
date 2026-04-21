@@ -46,7 +46,7 @@ jobs:
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
     steps:
       - name: Checkout Source
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -57,7 +57,7 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Cache NuGet Packages
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         with:
           # '**/*.*proj' includes .csproj, .vbproj, .fsproj, msbuildproj, etc.
           # '**/*.props' includes Directory.Packages.props and Directory.Build.props
@@ -97,13 +97,13 @@ jobs:
           }
 
       - name: Upload NuGet packages
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: nuget-packages
           path: ${{ env.DIST_DIR }}/nuget
 
       - name: Upload Test Assemblies
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: test-assemblies
           path: ${{ env.DIST_DIR }}/testBinaries
@@ -131,7 +131,7 @@ jobs:
 
     steps:
       - name: Checkout Source
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       # Set up working directories/paths consistently
       - name: Set Paths (Windows)
@@ -177,7 +177,7 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Download Test Binaries
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           name: test-assemblies
           path: ${{ env.WORKPATH }}
@@ -277,7 +277,7 @@ jobs:
 
       - name: Upload Test Results
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: test-results-${{ matrix.os }}-${{ matrix.arch }}
           path: ${{ env.TEST_RESULTS_ROOT_DIR }}
@@ -288,7 +288,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download all test result artifacts
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           pattern: test-results-*
           path: all-results
@@ -325,7 +325,7 @@ jobs:
           }
 
       - name: Upload Aggregate Coverage HTML
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: coverage-aggregate-html
           path: coverage/aggregate
@@ -339,7 +339,7 @@ jobs:
     - test
     steps:
       - name: Checkout Source
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -363,7 +363,7 @@ jobs:
           Add-Content $env:GITHUB_OUTPUT "version=$nugetVersion"
 
       - name: Download NuGet Packages
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           name: nuget-packages
           path: dist/nuget
@@ -384,7 +384,7 @@ jobs:
               }
           }
       - name: Create Draft GitHub Release
-        uses: softprops/action-gh-release@6da8fa9354ddfdc4aeace5fc48d7f679b5214090 # v2
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3
         with:
           draft: true
           prerelease: ${{ steps.tagversion.outputs.prerelease }}
@@ -398,7 +398,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Release Assets
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
         with:
           script: |
             const fs = require("fs");
