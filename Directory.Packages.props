@@ -43,7 +43,7 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.VisualBasic.Features" Version="$(RoslynAnalyzerPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="$(RoslynAnalyzerPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="$(RoslynAnalyzerPackageVersion)" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.5.0" />
     <PackageVersion Include="Microsoft.VSSDK.BuildTools" Version="17.14.2094" />
   </ItemGroup>
 </Project>
