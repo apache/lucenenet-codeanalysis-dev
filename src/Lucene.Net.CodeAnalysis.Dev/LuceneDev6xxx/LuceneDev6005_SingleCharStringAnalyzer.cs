@@ -27,26 +27,22 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
 {
     /// <summary>
-    /// Analyzer to detect single-character string literals (including escaped characters)
-    /// that should use char overload instead for better performance.
-    /// Applies to String, Span, and custom span-like types.
-    ///
-    /// Examples of violations:
-    /// - text.IndexOf("H") -> should use text.IndexOf('H')
-    /// - text.IndexOf("\n") -> should use text.IndexOf('\n')  // Escaped newline
-    /// - text.IndexOf("\"") -> should use text.IndexOf('\"')  // Escaped quote
-    /// - span.StartsWith("a") -> should use span.StartsWith('a')
-    ///
-    /// Severity: Info (suggestion only, not enforced)
+    /// Detects single-character string literals (including escaped characters) passed to
+    /// StartsWith/EndsWith/IndexOf/LastIndexOf where a char overload is available and
+    /// would avoid the unnecessary string allocation.
+    /// Applies to System.String, Span&lt;char&gt;, ReadOnlySpan&lt;char&gt;, and custom span-like
+    /// types. Note that Span&lt;char&gt;/ReadOnlySpan&lt;char&gt; only have char overloads for
+    /// IndexOf/LastIndexOf, not StartsWith/EndsWith.
+    /// Severity: Info.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class LuceneDev6003_SingleCharStringAnalyzer : DiagnosticAnalyzer
+    public sealed class LuceneDev6005_SingleCharStringAnalyzer : DiagnosticAnalyzer
     {
         private static readonly ImmutableHashSet<string> TargetMethodNames =
             ImmutableHashSet.Create("StartsWith", "EndsWith", "IndexOf", "LastIndexOf");
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-            => ImmutableArray.Create(Descriptors.LuceneDev6003_SingleCharStringAnalyzer);
+            => ImmutableArray.Create(Descriptors.LuceneDev6005_SingleCharString);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -147,7 +143,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
             // For example: "\"" shows as "\""
             //              "\n" shows as "\n"
             var diag = Diagnostic.Create(
-                Descriptors.LuceneDev6003_SingleCharStringAnalyzer,
+                Descriptors.LuceneDev6005_SingleCharString,
                 literal.GetLocation(),
                 methodName,
                 literal.Token.Text); // Show the original escaped text in the message

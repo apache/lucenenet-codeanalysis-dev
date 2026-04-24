@@ -18,8 +18,8 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LuceneDev6001_StringComparisonCodeFixProvider)), Shared]
-    public sealed class LuceneDev6001_StringComparisonCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LuceneDev6001_6002_StringComparisonCodeFixProvider)), Shared]
+    public sealed class LuceneDev6001_6002_StringComparisonCodeFixProvider : CodeFixProvider
     {
         private const string Ordinal = "Ordinal";
         private const string OrdinalIgnoreCase = "OrdinalIgnoreCase";
@@ -29,7 +29,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
         public override ImmutableArray<string> FixableDiagnosticIds =>
             ImmutableArray.Create(
                 Descriptors.LuceneDev6001_MissingStringComparison.Id,
-                Descriptors.LuceneDev6001_InvalidStringComparison.Id);
+                Descriptors.LuceneDev6002_InvalidStringComparison.Id);
 
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
@@ -54,7 +54,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
                 var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
                 if (semanticModel == null) continue;
 
-                // Skip char literals and single-character string literals when safe (covered by 6003 instead).
+                // Skip char literals and single-character string literals when safe (LuceneDev6005 handles conversion).
                 var firstArgExpr = invocation.ArgumentList.Arguments.FirstOrDefault()?.Expression;
                 if (firstArgExpr is LiteralExpressionSyntax lit)
                 {
@@ -81,7 +81,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
                     // Case 1: Argument is missing. Only offer Ordinal as the safe, conservative default.
                     RegisterFix(context, invocation, Ordinal, TitleOrdinal, diagnostic);
                 }
-                else if (diagnostic.Id == Descriptors.LuceneDev6001_InvalidStringComparison.Id)
+                else if (diagnostic.Id == Descriptors.LuceneDev6002_InvalidStringComparison.Id)
                 {
                     // Case 2: Invalid argument is present. Determine the best replacement.
                     if (TryDetermineReplacement(invocation, semanticModel, out string? targetComparison))

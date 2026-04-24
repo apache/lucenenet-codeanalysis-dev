@@ -21,19 +21,19 @@ using System;
 
 namespace Lucene.Net.CodeAnalysis.Dev.Sample.LuceneDev6xxx;
 
-public class LuceneDev6002_SpanComparisonSample
+public class LuceneDev6003_6004_SpanComparisonSample
 {
     public void MyMethod()
     {
         ReadOnlySpan<char> span = "Hello World".AsSpan();
 
-        // Redundant StringComparison.Ordinal on span: triggers LuceneDev6002_1 (Warning).
+        // Redundant StringComparison.Ordinal on span: triggers LuceneDev6003 (Warning).
         int index1 = span.IndexOf("Hello".AsSpan(), StringComparison.Ordinal);
         int lastIndex1 = span.LastIndexOf("World".AsSpan(), StringComparison.Ordinal);
         bool starts1 = span.StartsWith("Hello".AsSpan(), StringComparison.Ordinal);
         bool ends1 = span.EndsWith("World".AsSpan(), StringComparison.Ordinal);
 
-        // Invalid comparison on span: triggers LuceneDev6002_2 (Error).
+        // Invalid comparison on span: triggers LuceneDev6004 (Error).
         int index2 = span.IndexOf("Hello".AsSpan(), StringComparison.CurrentCulture);
         int lastIndex2 = span.LastIndexOf("World".AsSpan(), StringComparison.CurrentCultureIgnoreCase);
         bool starts2 = span.StartsWith("Hello".AsSpan(), StringComparison.InvariantCulture);

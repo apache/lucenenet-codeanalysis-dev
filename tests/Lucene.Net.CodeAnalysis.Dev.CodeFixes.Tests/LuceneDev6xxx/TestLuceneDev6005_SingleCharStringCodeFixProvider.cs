@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
 {
     [TestFixture]
-    public class TestLuceneDev6003_SingleCharStringCodeFixProvider
+    public class TestLuceneDev6005_SingleCharStringCodeFixProvider
     {
         [Test]
         public async Task Fix_SingleCharacter_StringLiteral()
@@ -56,14 +56,14 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6003_SingleCharStringAnalyzer)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6005_SingleCharString)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("IndexOf", "\"H\"")
                 .WithSpan(9, 34, 9, 37);
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6003_SingleCharStringAnalyzer(),
-                () => new LuceneDev6003_SingleCharStringCodeFixProvider())
+                () => new LuceneDev6005_SingleCharStringAnalyzer(),
+                () => new LuceneDev6005_SingleCharStringCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -101,14 +101,14 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6003_SingleCharStringAnalyzer)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6005_SingleCharString)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("IndexOf", "\"\\\"\"")
                 .WithSpan(9, 34, 9, 38);
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6003_SingleCharStringAnalyzer(),
-                () => new LuceneDev6003_SingleCharStringCodeFixProvider())
+                () => new LuceneDev6005_SingleCharStringAnalyzer(),
+                () => new LuceneDev6005_SingleCharStringCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -148,19 +148,19 @@ public class Sample
     }
 }";
 
-            var expected1 = new DiagnosticResult(Descriptors.LuceneDev6003_SingleCharStringAnalyzer)
+            var expected1 = new DiagnosticResult(Descriptors.LuceneDev6005_SingleCharString)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("IndexOf", "\"H\"")
                 .WithSpan(9, 31, 9, 34);
 
-            var expected2 = new DiagnosticResult(Descriptors.LuceneDev6003_SingleCharStringAnalyzer)
+            var expected2 = new DiagnosticResult(Descriptors.LuceneDev6005_SingleCharString)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("IndexOf", "\"\\n\"")
                 .WithSpan(10, 31, 10, 35);
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6003_SingleCharStringAnalyzer(),
-                () => new LuceneDev6003_SingleCharStringCodeFixProvider())
+                () => new LuceneDev6005_SingleCharStringAnalyzer(),
+                () => new LuceneDev6005_SingleCharStringCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -195,14 +195,14 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6003_SingleCharStringAnalyzer)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6005_SingleCharString)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("IndexOf", "\"X\"")
                 .WithSpan(8, 34, 8, 37);
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6003_SingleCharStringAnalyzer(),
-                () => new LuceneDev6003_SingleCharStringCodeFixProvider())
+                () => new LuceneDev6005_SingleCharStringAnalyzer(),
+                () => new LuceneDev6005_SingleCharStringCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -230,8 +230,8 @@ public class Sample
             // This test expects NO diagnostic, ensuring the Analyzer correctly skips
             // ReadOnlySpan.StartsWith/EndsWith calls when the argument is a single-character string literal.
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6003_SingleCharStringAnalyzer(),
-                () => new LuceneDev6003_SingleCharStringCodeFixProvider())
+                () => new LuceneDev6005_SingleCharStringAnalyzer(),
+                () => new LuceneDev6005_SingleCharStringCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = testCode, // Fixed code is the same as test code

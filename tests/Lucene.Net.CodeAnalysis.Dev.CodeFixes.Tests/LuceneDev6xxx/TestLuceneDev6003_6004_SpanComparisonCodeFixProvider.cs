@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev6xxx
 {
     [TestFixture]
-    public class TestLuceneDev6002_SpanComparisonCodeFixProvider
+    public class TestLuceneDev6003_6004_SpanComparisonCodeFixProvider
     {
         [Test]
         public async Task TestFix_RemoveRedundantOrdinal()
@@ -56,14 +56,14 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_RedundantOrdinal)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6003_RedundantOrdinal)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithSpan(9, 42, 9, 66)
                 .WithArguments("IndexOf");
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6002_SpanComparisonAnalyzer(),
-                () => new LuceneDev6002_SpanComparisonCodeFixProvider())
+                () => new LuceneDev6003_6004_SpanComparisonAnalyzer(),
+                () => new LuceneDev6003_6004_SpanComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -100,14 +100,14 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidComparison)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6004_InvalidComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithSpan(9, 42, 9, 73)
                 .WithArguments("IndexOf", "CurrentCulture");
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6002_SpanComparisonAnalyzer(),
-                () => new LuceneDev6002_SpanComparisonCodeFixProvider())
+                () => new LuceneDev6003_6004_SpanComparisonAnalyzer(),
+                () => new LuceneDev6003_6004_SpanComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -148,14 +148,14 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidComparison)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6004_InvalidComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithSpan(9, 42, 9, 83)
                 .WithArguments("IndexOf", "CurrentCultureIgnoreCase");
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6002_SpanComparisonAnalyzer(),
-                () => new LuceneDev6002_SpanComparisonCodeFixProvider())
+                () => new LuceneDev6003_6004_SpanComparisonAnalyzer(),
+                () => new LuceneDev6003_6004_SpanComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -196,14 +196,14 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_RedundantOrdinal)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6003_RedundantOrdinal)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithSpan(9, 39, 9, 63)
                 .WithArguments("IndexOf");
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6002_SpanComparisonAnalyzer(),
-                () => new LuceneDev6002_SpanComparisonCodeFixProvider())
+                () => new LuceneDev6003_6004_SpanComparisonAnalyzer(),
+                () => new LuceneDev6003_6004_SpanComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -229,8 +229,8 @@ public class Sample
 }";
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6002_SpanComparisonAnalyzer(),
-                () => new LuceneDev6002_SpanComparisonCodeFixProvider())
+                () => new LuceneDev6003_6004_SpanComparisonAnalyzer(),
+                () => new LuceneDev6003_6004_SpanComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = testCode,

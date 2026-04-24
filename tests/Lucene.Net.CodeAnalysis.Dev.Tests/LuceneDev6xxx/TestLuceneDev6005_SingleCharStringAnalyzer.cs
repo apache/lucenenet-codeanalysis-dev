@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
 {
     [TestFixture]
-    public class TestLuceneDev6003_SingleCharStringAnalyzer
+    public class TestLuceneDev6005_SingleCharStringAnalyzer
     {
         [Test]
         public async Task Detects_SingleCharacter_StringLiteral()
@@ -43,12 +43,12 @@ public class Sample
         int index = text.IndexOf(""H"");
     }
 }";
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6003_SingleCharStringAnalyzer)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6005_SingleCharString)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithSpan(9, 34, 9, 37)
                 .WithArguments("IndexOf", "\"H\"");
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_SingleCharStringAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6005_SingleCharStringAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -71,12 +71,12 @@ public class Sample
         int index = text.IndexOf(""\"""");  // Added missing semicolon
     }
 }";
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6003_SingleCharStringAnalyzer)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6005_SingleCharString)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithSpan(9, 34, 9, 38)
                 .WithArguments("IndexOf", "\"\\\"\"");
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_SingleCharStringAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6005_SingleCharStringAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -100,7 +100,7 @@ public class Sample
     }
 }";
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_SingleCharStringAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6005_SingleCharStringAnalyzer())
             {
                 TestCode = testCode
             };

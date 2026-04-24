@@ -27,7 +27,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class LuceneDev6001_StringComparisonAnalyzer : DiagnosticAnalyzer
+    public sealed class LuceneDev6001_6002_StringComparisonAnalyzer : DiagnosticAnalyzer
     {
         private static readonly ImmutableHashSet<string> TargetMethodNames =
             ImmutableHashSet.Create("StartsWith", "EndsWith", "IndexOf", "LastIndexOf");
@@ -35,7 +35,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             => ImmutableArray.Create(
                 Descriptors.LuceneDev6001_MissingStringComparison,
-                Descriptors.LuceneDev6001_InvalidStringComparison);
+                Descriptors.LuceneDev6002_InvalidStringComparison);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -82,10 +82,10 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
 
                     if (!hasStringComparisonArgForLiteral)
                     {
-                        // safe to convert to char (6003), so skip 6001 reporting
+                        // Safe to convert to char (LuceneDev6005 handles it); skip 6001/6002 here.
                         return;
                     }
-                    // else: has StringComparison -> do not skip; let 6001/6002 validate or codefix handle it
+                    // Has StringComparison -> do not skip; 6001/6002 validation continues.
                 }
             }
 
@@ -134,7 +134,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
                     if (!isValidValue)
                     {
                         var diag = Diagnostic.Create(
-                            Descriptors.LuceneDev6001_InvalidStringComparison,
+                            Descriptors.LuceneDev6002_InvalidStringComparison,
                             invalidArgLocation ?? memberAccess.Name.GetLocation(),
                             methodName,
                             comparisonValueName ?? "non-ordinal comparison");
@@ -174,7 +174,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
                     if (!isValidValue)
                     {
                         var diag = Diagnostic.Create(
-                            Descriptors.LuceneDev6001_InvalidStringComparison,
+                            Descriptors.LuceneDev6002_InvalidStringComparison,
                             invalidArgLocation ?? memberAccess.Name.GetLocation(),
                             methodName,
                             comparisonValueName ?? "non-ordinal comparison");

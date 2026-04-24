@@ -2,6 +2,6 @@
 # so contributors can see the diagnostics live in their IDE. Downgrade Error-severity
 # rules to Warning here so the project still compiles.
 [*.cs]
-dotnet_diagnostic.LuceneDev6001_1.severity = warning
-dotnet_diagnostic.LuceneDev6001_2.severity = warning
-dotnet_diagnostic.LuceneDev6002_2.severity = warning
+dotnet_diagnostic.LuceneDev6001.severity = warning
+dotnet_diagnostic.LuceneDev6002.severity = warning
+dotnet_diagnostic.LuceneDev6004.severity = warning

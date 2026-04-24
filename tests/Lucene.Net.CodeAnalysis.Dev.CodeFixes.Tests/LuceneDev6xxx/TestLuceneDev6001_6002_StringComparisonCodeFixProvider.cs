@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev6xxx
 {
     [TestFixture]
-    public class TestLuceneDev6001_StringComparisonCodeFixProvider
+    public class TestLuceneDev6001_6002_StringComparisonCodeFixProvider
     {
         [Test]
         public async Task TestFix_IndexOf_MissingStringComparison()
@@ -63,8 +63,8 @@ public class MyClass
                 .WithLocation("/0/Test0.cs", line: 9, column: 26);
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6001_StringComparisonAnalyzer(),
-                () => new LuceneDev6001_StringComparisonCodeFixProvider())
+                () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
+                () => new LuceneDev6001_6002_StringComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -108,8 +108,8 @@ public class MyClass
                 .WithLocation("/0/Test0.cs", line: 9, column: 28);
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6001_StringComparisonAnalyzer(),
-                () => new LuceneDev6001_StringComparisonCodeFixProvider())
+                () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
+                () => new LuceneDev6001_6002_StringComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -153,8 +153,8 @@ public class MyClass
                 .WithLocation("/0/Test0.cs", line: 9, column: 26);
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6001_StringComparisonAnalyzer(),
-                () => new LuceneDev6001_StringComparisonCodeFixProvider())
+                () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
+                () => new LuceneDev6001_6002_StringComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -198,8 +198,8 @@ public class MyClass
                 .WithLocation("/0/Test0.cs", line: 9, column: 26);
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6001_StringComparisonAnalyzer(),
-                () => new LuceneDev6001_StringComparisonCodeFixProvider())
+                () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
+                () => new LuceneDev6001_6002_StringComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -243,8 +243,8 @@ public class MyClass
                 .WithLocation("/0/Test0.cs", line: 9, column: 26);
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6001_StringComparisonAnalyzer(),
-                () => new LuceneDev6001_StringComparisonCodeFixProvider())
+                () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
+                () => new LuceneDev6001_6002_StringComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -288,8 +288,8 @@ public class MyClass
                 .WithLocation("/0/Test0.cs", line: 9, column: 26);
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6001_StringComparisonAnalyzer(),
-                () => new LuceneDev6001_StringComparisonCodeFixProvider())
+                () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
+                () => new LuceneDev6001_6002_StringComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -326,15 +326,15 @@ public class MyClass
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
-                .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
+                .WithMessageFormat(Descriptors.LuceneDev6002_InvalidStringComparison.MessageFormat)
                 .WithArguments("IndexOf", "CurrentCulture")
                 .WithLocation("/0/Test0.cs", line: 9, column: 43);
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6001_StringComparisonAnalyzer(),
-                () => new LuceneDev6001_StringComparisonCodeFixProvider())
+                () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
+                () => new LuceneDev6001_6002_StringComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -371,15 +371,15 @@ public class MyClass
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
-                .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
+                .WithMessageFormat(Descriptors.LuceneDev6002_InvalidStringComparison.MessageFormat)
                 .WithArguments("StartsWith", "InvariantCulture")
                 .WithLocation("/0/Test0.cs", line: 9, column: 48);
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6001_StringComparisonAnalyzer(),
-                () => new LuceneDev6001_StringComparisonCodeFixProvider())
+                () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
+                () => new LuceneDev6001_6002_StringComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -416,15 +416,15 @@ public class MyClass
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
-                .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
+                .WithMessageFormat(Descriptors.LuceneDev6002_InvalidStringComparison.MessageFormat)
                 .WithArguments("EndsWith", "CurrentCultureIgnoreCase")
                 .WithLocation("/0/Test0.cs", line: 9, column: 44);
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6001_StringComparisonAnalyzer(),
-                () => new LuceneDev6001_StringComparisonCodeFixProvider())
+                () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
+                () => new LuceneDev6001_6002_StringComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -453,8 +453,8 @@ public class MyClass
 }";
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6001_StringComparisonAnalyzer(),
-                () => new LuceneDev6001_StringComparisonCodeFixProvider())
+                () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
+                () => new LuceneDev6001_6002_StringComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = testCode,
@@ -483,8 +483,8 @@ public class MyClass
 }";
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6001_StringComparisonAnalyzer(),
-                () => new LuceneDev6001_StringComparisonCodeFixProvider())
+                () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
+                () => new LuceneDev6001_6002_StringComparisonCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = testCode,

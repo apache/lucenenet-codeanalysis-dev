@@ -19,26 +19,24 @@
 
 using System;
 
-namespace Lucene.Net.CodeAnalysis.Dev.Sample.LuceneDev6xxx;
+namespace Lucene.Net.CodeAnalysis.Dev.Sample;
 
-public class LuceneDev6003_SingleCharStringSample
+public class LuceneDev6001_6002_StringComparisonSample
 {
     public void MyMethod()
     {
         string text = "Hello World";
 
-        // Single-character string literal: triggers LuceneDev6003 (Info).
-        int index1 = text.IndexOf("H", StringComparison.Ordinal);
-        int lastIndex1 = text.LastIndexOf("d", StringComparison.Ordinal);
-        bool starts1 = text.StartsWith("H", StringComparison.Ordinal);
-        bool ends1 = text.EndsWith("d", StringComparison.Ordinal);
+        // Missing StringComparison argument: triggers LuceneDev6001 (Error).
+        int index1 = text.IndexOf("Hello");
+        bool starts1 = text.StartsWith("Hello");
+        bool ends1 = text.EndsWith("World");
+        int lastIndex1 = text.LastIndexOf("World");
 
-        // Escaped single-character string literal: also triggers LuceneDev6003.
-        int newlineIndex = text.IndexOf("\n", StringComparison.Ordinal);
-
-        // IndexOf/LastIndexOf have a char overload on ReadOnlySpan<char>: triggers LuceneDev6003.
-        ReadOnlySpan<char> span = text.AsSpan();
-        int index2 = span.IndexOf("H");
-        int lastIndex2 = span.LastIndexOf("d");
+        // Invalid StringComparison value: triggers LuceneDev6002 (Error).
+        int index2 = text.IndexOf("Hello", StringComparison.CurrentCulture);
+        bool starts2 = text.StartsWith("hello", StringComparison.CurrentCultureIgnoreCase);
+        bool ends2 = text.EndsWith("World", StringComparison.InvariantCulture);
+        int lastIndex2 = text.LastIndexOf("world", StringComparison.InvariantCultureIgnoreCase);
     }
 }

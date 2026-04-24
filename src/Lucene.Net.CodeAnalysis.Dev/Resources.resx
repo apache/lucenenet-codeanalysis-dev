@@ -219,58 +219,58 @@ under the License.
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
 
-    <!-- 6001: Missing StringComparison -->
-  <data name="LuceneDev6001_1_AnalyzerTitle" xml:space="preserve">
+  <!-- 6001: Missing StringComparison -->
+  <data name="LuceneDev6001_AnalyzerTitle" xml:space="preserve">
     <value>Missing StringComparison argument</value>
   </data>
-  <data name="LuceneDev6001_1_AnalyzerDescription" xml:space="preserve">
+  <data name="LuceneDev6001_AnalyzerDescription" xml:space="preserve">
     <value>Calls to string comparison methods like StartsWith, EndsWith, IndexOf, and LastIndexOf must explicitly specify a StringComparison to enforce culture-invariant and consistent behavior.</value>
   </data>
-  <data name="LuceneDev6001_1_AnalyzerMessageFormat" xml:space="preserve">
+  <data name="LuceneDev6001_AnalyzerMessageFormat" xml:space="preserve">
     <value>Call to '{0}' must specify a StringComparison argument. Use StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase.</value>
   </data>
 
-  <!-- 6001: Invalid StringComparison -->
-  <data name="LuceneDev6001_2_AnalyzerTitle" xml:space="preserve">
+  <!-- 6002: Invalid StringComparison -->
+  <data name="LuceneDev6002_AnalyzerTitle" xml:space="preserve">
     <value>Invalid StringComparison argument</value>
   </data>
-  <data name="LuceneDev6001_2_AnalyzerDescription" xml:space="preserve">
+  <data name="LuceneDev6002_AnalyzerDescription" xml:space="preserve">
     <value>Only StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase are allowed to ensure predictable and high-performance string comparisons.</value>
   </data>
-  <data name="LuceneDev6001_2_AnalyzerMessageFormat" xml:space="preserve">
+  <data name="LuceneDev6002_AnalyzerMessageFormat" xml:space="preserve">
     <value>Call to '{0}' uses invalid StringComparison value '{1}'. Only Ordinal or OrdinalIgnoreCase are allowed.</value>
   </data>
 
-  <!-- 6002: Redundant Ordinal -->
-  <data name="LuceneDev6002_1_AnalyzerTitle" xml:space="preserve">
+  <!-- 6003: Redundant Ordinal on span -->
+  <data name="LuceneDev6003_AnalyzerTitle" xml:space="preserve">
     <value>Redundant StringComparison.Ordinal argument</value>
   </data>
-  <data name="LuceneDev6002_1_AnalyzerDescription" xml:space="preserve">
+  <data name="LuceneDev6003_AnalyzerDescription" xml:space="preserve">
     <value>Span-based overloads already perform ordinal comparison by default. Removing redundant arguments simplifies the code and improves clarity.</value>
   </data>
-  <data name="LuceneDev6002_1_AnalyzerMessageFormat" xml:space="preserve">
+  <data name="LuceneDev6003_AnalyzerMessageFormat" xml:space="preserve">
     <value>Call to '{0}' on span overload already uses ordinal comparison. Remove the redundant StringComparison.Ordinal argument.</value>
   </data>
 
-  <!-- 6002: Invalid comparison on span -->
-  <data name="LuceneDev6002_2_AnalyzerTitle" xml:space="preserve">
+  <!-- 6004: Invalid comparison on span -->
+  <data name="LuceneDev6004_AnalyzerTitle" xml:space="preserve">
     <value>Invalid StringComparison argument for span overload</value>
   </data>
-  <data name="LuceneDev6002_2_AnalyzerDescription" xml:space="preserve">
+  <data name="LuceneDev6004_AnalyzerDescription" xml:space="preserve">
     <value>Span-based methods only support StringComparison.Ordinal and StringComparison.OrdinalIgnoreCase. Other values are not valid and should be removed or corrected.</value>
   </data>
-  <data name="LuceneDev6002_2_AnalyzerMessageFormat" xml:space="preserve">
+  <data name="LuceneDev6004_AnalyzerMessageFormat" xml:space="preserve">
     <value>Call to '{0}' uses invalid StringComparison value '{1}'. Span overloads only support Ordinal or OrdinalIgnoreCase.</value>
   </data>
 
-  <!-- 6003: Single-character string optimization -->
-  <data name="LuceneDev6003_AnalyzerTitle" xml:space="preserve">
+  <!-- 6005: Single-character string optimization -->
+  <data name="LuceneDev6005_AnalyzerTitle" xml:space="preserve">
     <value>Single-character string argument should use char overload</value>
   </data>
-  <data name="LuceneDev6003_AnalyzerDescription" xml:space="preserve">
+  <data name="LuceneDev6005_AnalyzerDescription" xml:space="preserve">
     <value>Using char overloads instead of single-character string literals avoids unnecessary string allocations and improves performance.</value>
   </data>
-  <data name="LuceneDev6003_AnalyzerMessageFormat" xml:space="preserve">
+  <data name="LuceneDev6005_AnalyzerMessageFormat" xml:space="preserve">
     <value>Call to '{0}' uses a single-character string literal. Use the char overload instead (e.g., 'x' instead of "x").</value>
   </data>
 

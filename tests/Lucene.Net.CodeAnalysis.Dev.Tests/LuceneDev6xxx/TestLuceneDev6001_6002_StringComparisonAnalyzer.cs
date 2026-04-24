@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
 {
     [TestFixture]
-    public class TestLuceneDev6001_StringComparisonAnalyzer
+    public class TestLuceneDev6001_6002_StringComparisonAnalyzer
     {
         [Test]
         public async Task Skips_SingleCharStringLiteral_Alone()
@@ -43,7 +43,7 @@ public class Sample
     }
 }";
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 // Expect no diagnostics because 6001 should skip single-character string literal alone
@@ -69,7 +69,7 @@ public class Sample
 }";
 
             // Change the test to use InjectableAnalyzerTest (no CodeFix)
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { } // Asserting NO diagnostics are expected
@@ -99,7 +99,7 @@ public class Sample
                 .WithArguments("IndexOf")
                 .WithLocation("/0/Test0.cs", line: 9, column: 26);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -129,7 +129,7 @@ public class Sample
                 .WithArguments("StartsWith")
                 .WithLocation("/0/Test0.cs", line: 9, column: 28);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -159,7 +159,7 @@ public class Sample
                 .WithArguments("EndsWith")
                 .WithLocation("/0/Test0.cs", line: 9, column: 26);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -189,7 +189,7 @@ public class Sample
                 .WithArguments("LastIndexOf")
                 .WithLocation("/0/Test0.cs", line: 9, column: 26);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -219,7 +219,7 @@ public class Sample
                 .WithArguments("IndexOf")
                 .WithLocation("/0/Test0.cs", line: 9, column: 26);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -249,7 +249,7 @@ public class Sample
                 .WithArguments("IndexOf")
                 .WithLocation("/0/Test0.cs", line: 9, column: 26);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -273,13 +273,13 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
-                .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
+                .WithMessageFormat(Descriptors.LuceneDev6002_InvalidStringComparison.MessageFormat)
                 .WithArguments("IndexOf", "CurrentCulture")
                 .WithLocation("/0/Test0.cs", line: 9, column: 43);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -303,13 +303,13 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
-                .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
+                .WithMessageFormat(Descriptors.LuceneDev6002_InvalidStringComparison.MessageFormat)
                 .WithArguments("StartsWith", "CurrentCultureIgnoreCase")
                 .WithLocation("/0/Test0.cs", line: 9, column: 48);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -333,13 +333,13 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
-                .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
+                .WithMessageFormat(Descriptors.LuceneDev6002_InvalidStringComparison.MessageFormat)
                 .WithArguments("EndsWith", "InvariantCulture")
                 .WithLocation("/0/Test0.cs", line: 9, column: 44);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -363,13 +363,13 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
-                .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
+                .WithMessageFormat(Descriptors.LuceneDev6002_InvalidStringComparison.MessageFormat)
                 .WithArguments("LastIndexOf", "InvariantCultureIgnoreCase")
                 .WithLocation("/0/Test0.cs", line: 9, column: 47);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -396,7 +396,7 @@ public class Sample
     }
 }";
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { } // No diagnostics expected
@@ -423,7 +423,7 @@ public class Sample
     }
 }";
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { } // No diagnostics expected
@@ -456,9 +456,9 @@ public class Sample
                 .WithArguments("IndexOf")
                 .WithLocation("/0/Test0.cs", line: 9, column: 27);
 
-            var expected2 = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
+            var expected2 = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
-                .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
+                .WithMessageFormat(Descriptors.LuceneDev6002_InvalidStringComparison.MessageFormat)
                 .WithArguments("IndexOf", "CurrentCulture")
                 .WithLocation("/0/Test0.cs", line: 10, column: 44);
 
@@ -468,7 +468,7 @@ public class Sample
                 .WithArguments("StartsWith")
                 .WithLocation("/0/Test0.cs", line: 11, column: 28);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected1, expected2, expected3 }
@@ -499,7 +499,7 @@ public class Sample
     }
 }";
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { } // No diagnostics expected - not on System.String

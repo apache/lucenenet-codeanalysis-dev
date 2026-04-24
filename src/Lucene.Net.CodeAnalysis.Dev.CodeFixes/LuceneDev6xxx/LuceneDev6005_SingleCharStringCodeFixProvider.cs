@@ -31,12 +31,12 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LuceneDev6003_SingleCharStringCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LuceneDev6005_SingleCharStringCodeFixProvider))]
     [Shared]
-    public sealed class LuceneDev6003_SingleCharStringCodeFixProvider : CodeFixProvider
+    public sealed class LuceneDev6005_SingleCharStringCodeFixProvider : CodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds
-            => ImmutableArray.Create(Descriptors.LuceneDev6003_SingleCharStringAnalyzer.Id);
+            => ImmutableArray.Create(Descriptors.LuceneDev6005_SingleCharString.Id);
 
         public override FixAllProvider GetFixAllProvider()
             => WellKnownFixAllProviders.BatchFixer;
@@ -60,7 +60,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
                     CodeAction.Create(
                         "Use char literal",
                         c => ReplaceWithCharLiteralAsync(context.Document, literal, c),
-                        nameof(LuceneDev6003_SingleCharStringCodeFixProvider)),
+                        nameof(LuceneDev6005_SingleCharStringCodeFixProvider)),
                     diagnostic);
             }
         }

@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -29,40 +29,42 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
         // and will report RS2002 warnings if it cannot read the DiagnosticDescriptor
         // instance through a field.
 
-        // 6001: Missing StringComparison argument
+        // 6001: Missing StringComparison argument on String overload
         public static readonly DiagnosticDescriptor LuceneDev6001_MissingStringComparison =
             Diagnostic(
-                "LuceneDev6001_1",
+                "LuceneDev6001",
                 Usage,
                 Error
             );
 
-        // 6001: Invalid StringComparison value (not Ordinal or OrdinalIgnoreCase)
-        public static readonly DiagnosticDescriptor LuceneDev6001_InvalidStringComparison =
+        // 6002: Invalid StringComparison value on String overload (not Ordinal or OrdinalIgnoreCase)
+        public static readonly DiagnosticDescriptor LuceneDev6002_InvalidStringComparison =
             Diagnostic(
-                "LuceneDev6001_2",
+                "LuceneDev6002",
                 Usage,
                 Error
             );
 
-        // 6002: Redundant Ordinal (StringComparison.Ordinal on span-like)
-        public static readonly DiagnosticDescriptor LuceneDev6002_RedundantOrdinal =
+        // 6003: Redundant StringComparison.Ordinal on span-like overload
+        public static readonly DiagnosticDescriptor LuceneDev6003_RedundantOrdinal =
             Diagnostic(
-                "LuceneDev6002_1",
+                "LuceneDev6003",
                 Usage,
                 Warning
             );
 
-        // 6002: Invalid comparison on span (e.g., CurrentCulture, InvariantCulture)
-        public static readonly DiagnosticDescriptor LuceneDev6002_InvalidComparison =
+        // 6004: Invalid StringComparison value on span-like overload
+        public static readonly DiagnosticDescriptor LuceneDev6004_InvalidComparison =
             Diagnostic(
-                "LuceneDev6002_2",
+                "LuceneDev6004",
                 Usage,
                 Error
             );
-        public static readonly DiagnosticDescriptor LuceneDev6003_SingleCharStringAnalyzer =
+
+        // 6005: Single-character string argument should use the char overload
+        public static readonly DiagnosticDescriptor LuceneDev6005_SingleCharString =
             Diagnostic(
-                "LuceneDev6003",
+                "LuceneDev6005",
                 Usage,
                 Info
             );

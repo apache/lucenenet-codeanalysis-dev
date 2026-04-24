@@ -27,15 +27,15 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class LuceneDev6002_SpanComparisonAnalyzer : DiagnosticAnalyzer
+    public sealed class LuceneDev6003_6004_SpanComparisonAnalyzer : DiagnosticAnalyzer
     {
         private static readonly ImmutableHashSet<string> TargetMethodNames =
             ImmutableHashSet.Create("StartsWith", "EndsWith", "IndexOf", "LastIndexOf");
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             => ImmutableArray.Create(
-                Descriptors.LuceneDev6002_RedundantOrdinal,
-                Descriptors.LuceneDev6002_InvalidComparison);
+                Descriptors.LuceneDev6003_RedundantOrdinal,
+                Descriptors.LuceneDev6004_InvalidComparison);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -118,10 +118,10 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
 
                     if (!hasStringComparisonArgForLiteral)
                     {
-                        // safe to convert to char (6003), so skip 6001 reporting
+                        // Safe to convert to char (LuceneDev6005 handles it); skip 6003/6004 here.
                         return;
                     }
-                    // else: has StringComparison -> do not skip; let 6001/6002 validate or codefix handle it
+                    // Has StringComparison -> do not skip; 6003/6004 validation continues.
                 }
             }
 
@@ -141,7 +141,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
             {
                 // Redundant - suggest removal (Warning)
                 var diag = Diagnostic.Create(
-                    Descriptors.LuceneDev6002_RedundantOrdinal,
+                    Descriptors.LuceneDev6003_RedundantOrdinal,
                     argLocation ?? memberAccess.Name.GetLocation(),
                     methodName);
                 ctx.ReportDiagnostic(diag);
@@ -155,7 +155,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
             {
                 // Invalid comparison (CurrentCulture, InvariantCulture, etc.) - Error
                 var diag = Diagnostic.Create(
-                    Descriptors.LuceneDev6002_InvalidComparison,
+                    Descriptors.LuceneDev6004_InvalidComparison,
                     argLocation ?? memberAccess.Name.GetLocation(),
                     methodName,
                     comparisonValue ?? "non-ordinal comparison");

@@ -30,8 +30,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LuceneDev6002_SpanComparisonCodeFixProvider)), Shared]
-    public sealed class LuceneDev6002_SpanComparisonCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LuceneDev6003_6004_SpanComparisonCodeFixProvider)), Shared]
+    public sealed class LuceneDev6003_6004_SpanComparisonCodeFixProvider : CodeFixProvider
     {
         private const string TitleRemoveOrdinal = "Remove redundant StringComparison.Ordinal";
         private const string TitleOptimizeToDefaultOrdinal = "Optimize to default Ordinal comparison (remove argument)";
@@ -47,8 +47,8 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
 
         public override ImmutableArray<string> FixableDiagnosticIds =>
             ImmutableArray.Create(
-                Descriptors.LuceneDev6002_RedundantOrdinal.Id,
-                Descriptors.LuceneDev6002_InvalidComparison.Id);
+                Descriptors.LuceneDev6003_RedundantOrdinal.Id,
+                Descriptors.LuceneDev6004_InvalidComparison.Id);
 
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
@@ -64,7 +64,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
             if (invocation == null)
                 return;
 
-            // Skip char literals and single-character string literals when safe (covered by 6003 instead).
+            // Skip char literals and single-character string literals when safe (LuceneDev6005 handles conversion).
             var firstArgExpr = invocation.ArgumentList.Arguments.FirstOrDefault()?.Expression;
             if (firstArgExpr is LiteralExpressionSyntax lit)
             {
@@ -89,7 +89,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
             }
             switch (diagnostic.Id)
             {
-                case var id when id == Descriptors.LuceneDev6002_RedundantOrdinal.Id:
+                case var id when id == Descriptors.LuceneDev6003_RedundantOrdinal.Id:
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             title: TitleRemoveOrdinal,
@@ -98,7 +98,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
                         diagnostic);
                     break;
 
-                case var id when id == Descriptors.LuceneDev6002_InvalidComparison.Id:
+                case var id when id == Descriptors.LuceneDev6004_InvalidComparison.Id:
                     var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
                     if (semanticModel == null)
                         return;

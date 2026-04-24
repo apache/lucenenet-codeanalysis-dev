@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
 {
     [TestFixture]
-    public class TestLuceneDev6002_SpanComparisonAnalyzer
+    public class TestLuceneDev6003_6004_SpanComparisonAnalyzer
     {
         [Test]
         public async Task Detects_RedundantOrdinal_OnReadOnlySpan_IndexOf()
@@ -43,12 +43,12 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_RedundantOrdinal)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6003_RedundantOrdinal)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("IndexOf")
                 .WithSpan(9, 42, 9, 66);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6002_SpanComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -72,12 +72,12 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_RedundantOrdinal)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6003_RedundantOrdinal)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("StartsWith")
                 .WithSpan(9, 47, 9, 71);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6002_SpanComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -102,12 +102,12 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidComparison)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6004_InvalidComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithArguments("IndexOf", "CurrentCulture")
                 .WithSpan(9, 42, 9, 73);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6002_SpanComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -131,12 +131,12 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidComparison)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6004_InvalidComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithArguments("LastIndexOf", "CurrentCultureIgnoreCase")
                 .WithSpan(9, 46, 9, 87);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6002_SpanComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -160,12 +160,12 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidComparison)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6004_InvalidComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithArguments("EndsWith", "InvariantCulture")
                 .WithSpan(9, 43, 9, 76);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6002_SpanComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -189,12 +189,12 @@ public class Sample
     }
 }";
 
-            var expected = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidComparison)
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6004_InvalidComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithArguments("EndsWith", "InvariantCultureIgnoreCase")
                 .WithSpan(9, 43, 9, 86);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6002_SpanComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected }
@@ -221,7 +221,7 @@ public class Sample
     }
 }";
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6002_SpanComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
                 TestCode = testCode
             };
@@ -245,7 +245,7 @@ public class Sample
     }
 }";
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6002_SpanComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
                 TestCode = testCode
             };
@@ -269,7 +269,7 @@ public class Sample
     }
 }";
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6002_SpanComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
                 TestCode = testCode
             };
@@ -292,7 +292,7 @@ public class Sample
     }
 }";
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6002_SpanComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { } // No diagnostics
@@ -317,17 +317,17 @@ public class Sample
     }
 }";
 
-            var expected1 = new DiagnosticResult(Descriptors.LuceneDev6002_RedundantOrdinal)
+            var expected1 = new DiagnosticResult(Descriptors.LuceneDev6003_RedundantOrdinal)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("IndexOf")
                 .WithSpan(9, 43, 9, 67);
 
-            var expected2 = new DiagnosticResult(Descriptors.LuceneDev6002_InvalidComparison)
+            var expected2 = new DiagnosticResult(Descriptors.LuceneDev6004_InvalidComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithArguments("LastIndexOf", "CurrentCulture")
                 .WithSpan(10, 47, 10, 78);
 
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6002_SpanComparisonAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected1, expected2 }
