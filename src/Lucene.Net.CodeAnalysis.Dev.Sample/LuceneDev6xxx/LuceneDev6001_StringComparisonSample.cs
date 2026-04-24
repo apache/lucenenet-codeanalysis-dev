@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -17,37 +17,26 @@
  * under the License.
  */
 
+using System;
+
 namespace Lucene.Net.CodeAnalysis.Dev.Sample;
 
 public class LuceneDev6001_StringComparisonSample
 {
-    // public void BadExample_MissingStringComparison()
-    // {
-    //     string text = "Hello World";
-
-    //     //Missing StringComparison parameter
-    //     int index = text.IndexOf("Hello");
-    //     bool starts = text.StartsWith("Hello");
-    //     bool ends = text.EndsWith("World");
-    // }
-
-    public void GoodExample_Ordinal()
+    public void MyMethod()
     {
         string text = "Hello World";
 
-        //Correct usage with StringComparison.Ordinal
-        int index = text.IndexOf("Hello", System.StringComparison.Ordinal);
-        bool starts = text.StartsWith("Hello", System.StringComparison.Ordinal);
-        bool ends = text.EndsWith("World", System.StringComparison.Ordinal);
-    }
+        // Missing StringComparison argument: triggers LuceneDev6001_1 (Error).
+        int index1 = text.IndexOf("Hello");
+        bool starts1 = text.StartsWith("Hello");
+        bool ends1 = text.EndsWith("World");
+        int lastIndex1 = text.LastIndexOf("World");
 
-    public void GoodExample_OrdinalIgnoreCase()
-    {
-        string text = "Hello World";
-
-        // Correct usage with StringComparison.OrdinalIgnoreCase
-        int index = text.IndexOf("hello", System.StringComparison.OrdinalIgnoreCase);
-        bool starts = text.StartsWith("HELLO", System.StringComparison.OrdinalIgnoreCase);
-        bool ends = text.EndsWith("world", System.StringComparison.OrdinalIgnoreCase);
+        // Invalid StringComparison value: triggers LuceneDev6001_2 (Error).
+        int index2 = text.IndexOf("Hello", StringComparison.CurrentCulture);
+        bool starts2 = text.StartsWith("hello", StringComparison.CurrentCultureIgnoreCase);
+        bool ends2 = text.EndsWith("World", StringComparison.InvariantCulture);
+        int lastIndex2 = text.LastIndexOf("world", StringComparison.InvariantCultureIgnoreCase);
     }
 }

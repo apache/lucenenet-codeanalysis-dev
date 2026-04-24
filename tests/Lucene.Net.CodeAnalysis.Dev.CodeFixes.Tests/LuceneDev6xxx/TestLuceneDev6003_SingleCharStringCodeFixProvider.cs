@@ -56,11 +56,10 @@ public class Sample
     }
 }";
 
-            // "H" starts at column 39 and ends at column 42 (3 chars wide)
             var expected = new DiagnosticResult(Descriptors.LuceneDev6003_SingleCharStringAnalyzer)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("IndexOf", "\"H\"")
-                .WithSpan(10, 39, 10, 42);
+                .WithSpan(9, 34, 9, 37);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6003_SingleCharStringAnalyzer(),
@@ -105,7 +104,7 @@ public class Sample
             var expected = new DiagnosticResult(Descriptors.LuceneDev6003_SingleCharStringAnalyzer)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("IndexOf", "\"\\\"\"")
-                .WithSpan(10, 39, 10, 43);
+                .WithSpan(9, 34, 9, 38);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6003_SingleCharStringAnalyzer(),
@@ -149,17 +148,15 @@ public class Sample
     }
 }";
 
-            // First: "H" (line 10, columns 38–41 → 3 chars)
             var expected1 = new DiagnosticResult(Descriptors.LuceneDev6003_SingleCharStringAnalyzer)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("IndexOf", "\"H\"")
-                .WithSpan(10, 38, 10, 41);
+                .WithSpan(9, 31, 9, 34);
 
-            // Second: "\n" (line 11, columns 38–42 → 4 chars)
             var expected2 = new DiagnosticResult(Descriptors.LuceneDev6003_SingleCharStringAnalyzer)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("IndexOf", "\"\\n\"")
-                .WithSpan(11, 38, 11, 42);
+                .WithSpan(10, 31, 10, 35);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6003_SingleCharStringAnalyzer(),
@@ -198,11 +195,10 @@ public class Sample
     }
 }";
 
-            // "X" starts at column 30 and ends at column 33 (3 chars wide)
             var expected = new DiagnosticResult(Descriptors.LuceneDev6003_SingleCharStringAnalyzer)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("IndexOf", "\"X\"")
-                .WithSpan(9, 30, 9, 33);
+                .WithSpan(8, 34, 8, 37);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6003_SingleCharStringAnalyzer(),

@@ -212,44 +212,32 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
             ITypeSymbol? receiverType,
             string methodName)
         {
-            ImmutableArray<IMethodSymbol> methodsToCheck = ImmutableArray<IMethodSymbol>.Empty;
+            // Span<char>/ReadOnlySpan<char>: IndexOf(char) and LastIndexOf(char) exist as generic
+            // MemoryExtensions extension methods with signature IndexOf<T>(this ReadOnlySpan<T>, T).
+            // StartsWith/EndsWith have no char overload on spans.
+            if (IsSpanLikeReceiver(receiverType))
+                return methodName == "IndexOf" || methodName == "LastIndexOf";
 
-            // Strategy 1: Get all methods with the same name from the resolved method's containing type
-            if (methodSymbol != null && methodSymbol.ContainingType != null)
+            // For strings and other types: search the containing/receiver types for an overload
+            // whose first non-receiver parameter is System.Char.
+            var methodsToCheck = ImmutableArray.CreateBuilder<IMethodSymbol>();
+            if (receiverType != null)
+                methodsToCheck.AddRange(receiverType.GetMembers(methodName).OfType<IMethodSymbol>());
+            if (methodSymbol?.ContainingType != null)
+                methodsToCheck.AddRange(methodSymbol.ContainingType.GetMembers(methodName).OfType<IMethodSymbol>());
+            if (candidateSymbols.Length > 0)
             {
-                methodsToCheck = methodSymbol.ContainingType
-                    .GetMembers(methodName)
-                    .OfType<IMethodSymbol>()
-                    .ToImmutableArray();
-            }
-            // Strategy 2: Use candidate symbols if method couldn't be resolved
-            else if (candidateSymbols.Length > 0)
-            {
-                methodsToCheck = candidateSymbols;
-
-                // Also try to get more methods from the first candidate's containing type
-                var containingType = candidateSymbols.FirstOrDefault()?.ContainingType;
+                methodsToCheck.AddRange(candidateSymbols);
+                var containingType = candidateSymbols[0].ContainingType;
                 if (containingType != null)
-                {
-                    var additionalMethods = containingType.GetMembers(methodName).OfType<IMethodSymbol>();
-                    methodsToCheck = methodsToCheck.Concat(additionalMethods).ToImmutableArray();
-                }
-            }
-            // Strategy 3: Use receiver type if nothing else worked
-            else if (receiverType != null)
-            {
-                methodsToCheck = receiverType
-                    .GetMembers(methodName)
-                    .OfType<IMethodSymbol>()
-                    .ToImmutableArray();
+                    methodsToCheck.AddRange(containingType.GetMembers(methodName).OfType<IMethodSymbol>());
             }
 
-            // Look for a char overload
-            // The char overload should have System.Char as the first parameter (the value parameter)
             foreach (var method in methodsToCheck)
             {
-                if (method.Parameters.Length > 0 &&
-                    method.Parameters[0].Type.SpecialType == SpecialType.System_Char)
+                var valueParamIndex = method.IsExtensionMethod && method.ReducedFrom == null ? 1 : 0;
+                if (method.Parameters.Length > valueParamIndex &&
+                    method.Parameters[valueParamIndex].Type.SpecialType == SpecialType.System_Char)
                 {
                     return true;
                 }

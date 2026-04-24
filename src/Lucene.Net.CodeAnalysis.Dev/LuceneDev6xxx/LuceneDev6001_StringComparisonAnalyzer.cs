@@ -74,13 +74,13 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
                 if (lit.IsKind(SyntaxKind.StringLiteralExpression) && lit.Token.ValueText.Length == 1)
                 {
                     // Check if a StringComparison argument is present
-                    bool hasStringComparisonArgForLiteral  = invocation.ArgumentList.Arguments.Any(arg =>
+                    bool hasStringComparisonArgForLiteral = invocation.ArgumentList.Arguments.Any(arg =>
                         semantic.GetTypeInfo(arg.Expression).Type is INamedTypeSymbol t &&
                         t.ToDisplayString() == "System.StringComparison"
                         || (semantic.GetSymbolInfo(arg.Expression).Symbol is IFieldSymbol f &&
                             f.ContainingType?.ToDisplayString() == "System.StringComparison"));
 
-                    if (!hasStringComparisonArgForLiteral )
+                    if (!hasStringComparisonArgForLiteral)
                     {
                         // safe to convert to char (6003), so skip 6001 reporting
                         return;
@@ -115,7 +115,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
             }
 
             // Check if invocation has StringComparison argument and validate it
-            var (hasStringComparisonArg, isValidValue, invalidArgLocation) =
+            var (hasStringComparisonArg, isValidValue, invalidArgLocation, comparisonValueName) =
                 CheckStringComparisonArgument(invocation, semantic, stringComparisonType);
 
             // If resolved symbol available
@@ -136,7 +136,8 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
                         var diag = Diagnostic.Create(
                             Descriptors.LuceneDev6001_InvalidStringComparison,
                             invalidArgLocation ?? memberAccess.Name.GetLocation(),
-                            methodName);
+                            methodName,
+                            comparisonValueName ?? "non-ordinal comparison");
                         ctx.ReportDiagnostic(diag);
                     }
                     return;
@@ -175,7 +176,8 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
                         var diag = Diagnostic.Create(
                             Descriptors.LuceneDev6001_InvalidStringComparison,
                             invalidArgLocation ?? memberAccess.Name.GetLocation(),
-                            methodName);
+                            methodName,
+                            comparisonValueName ?? "non-ordinal comparison");
                         ctx.ReportDiagnostic(diag);
                     }
                     return;
@@ -197,7 +199,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
             }
         }
 
-        private static (bool hasArgument, bool isValid, Location? location) CheckStringComparisonArgument(
+        private static (bool hasArgument, bool isValid, Location? location, string? valueName) CheckStringComparisonArgument(
             InvocationExpressionSyntax invocation,
             SemanticModel semantic,
             INamedTypeSymbol stringComparisonType)
@@ -206,23 +208,38 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
             {
                 var argType = semantic.GetTypeInfo(arg.Expression).Type;
 
-                // Check if argument type is StringComparison
-                if (argType != null && SymbolEqualityComparer.Default.Equals(argType, stringComparisonType))
-                {
-                    bool isValid = IsValidStringComparisonValue(semantic, arg.Expression, stringComparisonType);
-                    return (true, isValid, arg.Expression.GetLocation());
-                }
-
-                // Also check for enum member access (e.g., StringComparison.Ordinal)
+                bool typeMatches = argType != null && SymbolEqualityComparer.Default.Equals(argType, stringComparisonType);
                 var argSymbol = semantic.GetSymbolInfo(arg.Expression).Symbol as IFieldSymbol;
-                if (argSymbol != null && SymbolEqualityComparer.Default.Equals(argSymbol.ContainingType, stringComparisonType))
+                bool symbolMatches = argSymbol != null && SymbolEqualityComparer.Default.Equals(argSymbol.ContainingType, stringComparisonType);
+
+                if (typeMatches || symbolMatches)
                 {
                     bool isValid = IsValidStringComparisonValue(semantic, arg.Expression, stringComparisonType);
-                    return (true, isValid, arg.Expression.GetLocation());
+                    string? name = argSymbol?.Name ?? GetStringComparisonNameFromConstant(semantic, arg.Expression);
+                    return (true, isValid, arg.Expression.GetLocation(), name);
                 }
             }
 
-            return (false, true, null);
+            return (false, true, null, null);
+        }
+
+        private static string? GetStringComparisonNameFromConstant(SemanticModel semantic, ExpressionSyntax expression)
+        {
+            var constantValue = semantic.GetConstantValue(expression);
+            if (constantValue.HasValue && constantValue.Value is int intValue)
+            {
+                return intValue switch
+                {
+                    0 => "CurrentCulture",
+                    1 => "CurrentCultureIgnoreCase",
+                    2 => "InvariantCulture",
+                    3 => "InvariantCultureIgnoreCase",
+                    4 => "Ordinal",
+                    5 => "OrdinalIgnoreCase",
+                    _ => null
+                };
+            }
+            return null;
         }
 
         private static bool IsValidStringComparisonValue(

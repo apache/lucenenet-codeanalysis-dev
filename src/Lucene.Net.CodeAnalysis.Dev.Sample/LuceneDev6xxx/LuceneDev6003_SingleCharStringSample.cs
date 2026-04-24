@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -19,40 +19,26 @@
 
 using System;
 
-namespace Lucene.Net.CodeAnalysis.Dev.Sample.LuceneDev6xxx
+namespace Lucene.Net.CodeAnalysis.Dev.Sample.LuceneDev6xxx;
+
+public class LuceneDev6003_SingleCharStringSample
 {
-    /// <summary>
-    /// Sample code for LuceneDev6003: Suggest using char overloads instead of single-character string literals.
-    /// </summary>
-    public class LuceneDev6003_SingleCharStringSample
+    public void MyMethod()
     {
-        public void Example()
-        {
-            string input = "Hello";
+        string text = "Hello World";
 
-            // BAD: Using string.Equals with single-character string literal
-            // if (string.Equals(input[0].ToString(), "H"))
-            // {
-            //     Console.WriteLine("Starts with H");
-            // }
+        // Single-character string literal: triggers LuceneDev6003 (Info).
+        int index1 = text.IndexOf("H", StringComparison.Ordinal);
+        int lastIndex1 = text.LastIndexOf("d", StringComparison.Ordinal);
+        bool starts1 = text.StartsWith("H", StringComparison.Ordinal);
+        bool ends1 = text.EndsWith("d", StringComparison.Ordinal);
 
-            // BAD: Using Equals instance method
-            // if (input[0].ToString().Equals("H"))
-            // {
-            //     Console.WriteLine("Starts with H");
-            // }
+        // Escaped single-character string literal: also triggers LuceneDev6003.
+        int newlineIndex = text.IndexOf("\n", StringComparison.Ordinal);
 
-            // GOOD: Using char comparison instead of string
-            if (input[0] == 'H')
-            {
-                Console.WriteLine("Starts with H");
-            }
-
-            //GOOD: Using Char.Equals
-            if (char.Equals(input[0], 'H'))
-            {
-                Console.WriteLine("Starts with H");
-            }
-        }
+        // IndexOf/LastIndexOf have a char overload on ReadOnlySpan<char>: triggers LuceneDev6003.
+        ReadOnlySpan<char> span = text.AsSpan();
+        int index2 = span.IndexOf("H");
+        int lastIndex2 = span.LastIndexOf("d");
     }
 }

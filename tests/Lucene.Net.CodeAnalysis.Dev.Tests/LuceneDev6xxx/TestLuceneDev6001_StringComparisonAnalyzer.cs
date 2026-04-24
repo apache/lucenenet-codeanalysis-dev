@@ -276,7 +276,7 @@ public class Sample
             var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
-                .WithArguments("IndexOf")
+                .WithArguments("IndexOf", "CurrentCulture")
                 .WithLocation("/0/Test0.cs", line: 9, column: 43);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
@@ -306,7 +306,7 @@ public class Sample
             var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
-                .WithArguments("StartsWith")
+                .WithArguments("StartsWith", "CurrentCultureIgnoreCase")
                 .WithLocation("/0/Test0.cs", line: 9, column: 48);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
@@ -336,7 +336,7 @@ public class Sample
             var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
-                .WithArguments("EndsWith")
+                .WithArguments("EndsWith", "InvariantCulture")
                 .WithLocation("/0/Test0.cs", line: 9, column: 44);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
@@ -366,7 +366,7 @@ public class Sample
             var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
-                .WithArguments("LastIndexOf")
+                .WithArguments("LastIndexOf", "InvariantCultureIgnoreCase")
                 .WithLocation("/0/Test0.cs", line: 9, column: 47);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_StringComparisonAnalyzer())
@@ -459,7 +459,7 @@ public class Sample
             var expected2 = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
-                .WithArguments("IndexOf")
+                .WithArguments("IndexOf", "CurrentCulture")
                 .WithLocation("/0/Test0.cs", line: 10, column: 44);
 
             var expected3 = new DiagnosticResult(Descriptors.LuceneDev6001_MissingStringComparison)

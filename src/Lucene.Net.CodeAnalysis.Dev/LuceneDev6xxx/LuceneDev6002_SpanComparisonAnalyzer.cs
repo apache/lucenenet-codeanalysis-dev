@@ -110,13 +110,13 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
                 if (lit.IsKind(SyntaxKind.StringLiteralExpression) && lit.Token.ValueText.Length == 1)
                 {
                     // Check if a StringComparison argument is present
-                    bool hasStringComparisonArgForLiteral  = invocation.ArgumentList.Arguments.Any(arg =>
+                    bool hasStringComparisonArgForLiteral = invocation.ArgumentList.Arguments.Any(arg =>
                         semantic.GetTypeInfo(arg.Expression).Type is INamedTypeSymbol t &&
                         t.ToDisplayString() == "System.StringComparison"
                         || (semantic.GetSymbolInfo(arg.Expression).Symbol is IFieldSymbol f &&
                             f.ContainingType?.ToDisplayString() == "System.StringComparison"));
 
-                    if (!hasStringComparisonArgForLiteral )
+                    if (!hasStringComparisonArgForLiteral)
                     {
                         // safe to convert to char (6003), so skip 6001 reporting
                         return;

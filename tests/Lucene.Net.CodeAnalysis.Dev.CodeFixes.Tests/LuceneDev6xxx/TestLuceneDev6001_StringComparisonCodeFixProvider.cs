@@ -329,7 +329,7 @@ public class MyClass
             var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
-                .WithArguments("IndexOf")
+                .WithArguments("IndexOf", "CurrentCulture")
                 .WithLocation("/0/Test0.cs", line: 9, column: 43);
 
             var test = new InjectableCodeFixTest(
@@ -374,7 +374,7 @@ public class MyClass
             var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
-                .WithArguments("StartsWith")
+                .WithArguments("StartsWith", "InvariantCulture")
                 .WithLocation("/0/Test0.cs", line: 9, column: 48);
 
             var test = new InjectableCodeFixTest(
@@ -419,7 +419,7 @@ public class MyClass
             var expected = new DiagnosticResult(Descriptors.LuceneDev6001_InvalidStringComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_InvalidStringComparison.MessageFormat)
-                .WithArguments("EndsWith")
+                .WithArguments("EndsWith", "CurrentCultureIgnoreCase")
                 .WithLocation("/0/Test0.cs", line: 9, column: 44);
 
             var test = new InjectableCodeFixTest(

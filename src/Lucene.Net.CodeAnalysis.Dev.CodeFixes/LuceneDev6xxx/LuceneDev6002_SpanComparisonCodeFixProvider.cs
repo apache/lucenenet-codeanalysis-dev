@@ -64,59 +64,28 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev6xxx
             if (invocation == null)
                 return;
 
-            //Double check to Skip char literals and single-character string literals when safe ---
+            // Skip char literals and single-character string literals when safe (covered by 6003 instead).
             var firstArgExpr = invocation.ArgumentList.Arguments.FirstOrDefault()?.Expression;
-
             if (firstArgExpr is LiteralExpressionSyntax lit)
-
             {
-
                 if (lit.IsKind(SyntaxKind.CharacterLiteralExpression))
-
-                    return; // already char overload; skip 6002 fix
-
-
+                    return;
 
                 if (lit.IsKind(SyntaxKind.StringLiteralExpression) && lit.Token.ValueText.Length == 1)
-
                 {
-
-                    // Check if a StringComparison argument is present
-
                     var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-
                     if (semanticModel == null)
-
                         return;
 
-
-
-                    bool hasStringComparisonArgForLiteral = invocation.ArgumentList.Arguments.Any(arg =>
-
-                        semanticModel.GetTypeInfo(arg.Expression).Type is INamedTypeSymbol t &&
-
-                        t.ToDisplayString() == "System.StringComparison"
-
+                    bool hasStringComparisonArg = invocation.ArgumentList.Arguments.Any(arg =>
+                        (semanticModel.GetTypeInfo(arg.Expression).Type is INamedTypeSymbol t &&
+                            t.ToDisplayString() == "System.StringComparison")
                         || (semanticModel.GetSymbolInfo(arg.Expression).Symbol is IFieldSymbol f &&
-
                             f.ContainingType?.ToDisplayString() == "System.StringComparison"));
 
-
-
-                    if (!hasStringComparisonArgForLiteral)
-
-                    {
-
-                        // safe to convert to char (6003), skip 6002 fix
-
+                    if (!hasStringComparisonArg)
                         return;
-
-                    }
-
-                    // else: has StringComparison -> let the codefix continue
-
                 }
-
             }
             switch (diagnostic.Id)
             {

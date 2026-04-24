@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Lucene.Net.CodeAnalysis.Dev.Utility;
@@ -49,9 +49,12 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
                 return;
 
             var diagnosticSpan = diagnostic.Location.SourceSpan;
-            var node = root.FindNode(diagnosticSpan);
+            var node = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 
-            if (node is LiteralExpressionSyntax literal && literal.IsKind(SyntaxKind.StringLiteralExpression))
+            var literal = node as LiteralExpressionSyntax
+                ?? node.DescendantNodesAndSelf().OfType<LiteralExpressionSyntax>().FirstOrDefault(l => l.Span == diagnosticSpan);
+
+            if (literal != null && literal.IsKind(SyntaxKind.StringLiteralExpression))
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(
