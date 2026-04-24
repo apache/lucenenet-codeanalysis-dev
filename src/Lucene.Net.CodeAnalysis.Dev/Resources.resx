@@ -219,6 +219,39 @@ under the License.
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
 
+  <!-- 1007: Generic Dictionary indexer with value-type value -->
+  <data name="LuceneDev1007_AnalyzerTitle" xml:space="preserve">
+    <value>Generic Dictionary indexer should not be used to retrieve values (value type)</value>
+  </data>
+  <data name="LuceneDev1007_AnalyzerDescription" xml:space="preserve">
+    <value>Reading values from IDictionary&lt;TKey, TValue&gt; or IReadOnlyDictionary&lt;TKey, TValue&gt; via the indexer throws KeyNotFoundException when the key is missing. Use TryGetValue instead.</value>
+  </data>
+  <data name="LuceneDev1007_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Generic Dictionary indexer '{0}' may throw KeyNotFoundException. Use TryGetValue instead.</value>
+  </data>
+
+  <!-- 1008: Generic Dictionary indexer with reference-type value -->
+  <data name="LuceneDev1008_AnalyzerTitle" xml:space="preserve">
+    <value>Generic Dictionary indexer should not be used to retrieve values (reference type)</value>
+  </data>
+  <data name="LuceneDev1008_AnalyzerDescription" xml:space="preserve">
+    <value>Reading values from IDictionary&lt;TKey, TValue&gt; or IReadOnlyDictionary&lt;TKey, TValue&gt; via the indexer throws KeyNotFoundException when the key is missing. Use TryGetValue instead, and check the out value for null before using it.</value>
+  </data>
+  <data name="LuceneDev1008_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Generic Dictionary indexer '{0}' may throw KeyNotFoundException. Use TryGetValue and check the value for null.</value>
+  </data>
+
+  <!-- 6000: Non-generic IDictionary indexer usage -->
+  <data name="LuceneDev6000_AnalyzerTitle" xml:space="preserve">
+    <value>Non-generic IDictionary indexer may return null</value>
+  </data>
+  <data name="LuceneDev6000_AnalyzerDescription" xml:space="preserve">
+    <value>The non-generic IDictionary indexer returns null for missing keys rather than throwing. Review these usages to ensure the value is checked for null before use.</value>
+  </data>
+  <data name="LuceneDev6000_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Non-generic IDictionary indexer '{0}' may return null for missing keys. Verify the value is checked for null before use.</value>
+  </data>
+
   <!-- 6001: Missing StringComparison -->
   <data name="LuceneDev6001_AnalyzerTitle" xml:space="preserve">
     <value>Missing StringComparison argument</value>

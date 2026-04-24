@@ -29,6 +29,14 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
         // and will report RS2002 warnings if it cannot read the DiagnosticDescriptor
         // instance through a field.
 
+        // 6000: Non-generic IDictionary indexer usage — may return null for missing keys
+        public static readonly DiagnosticDescriptor LuceneDev6000_NonGenericDictionaryIndexer =
+            Diagnostic(
+                "LuceneDev6000",
+                Usage,
+                Info
+            );
+
         // 6001: Missing StringComparison argument on String overload
         public static readonly DiagnosticDescriptor LuceneDev6001_MissingStringComparison =
             Diagnostic(

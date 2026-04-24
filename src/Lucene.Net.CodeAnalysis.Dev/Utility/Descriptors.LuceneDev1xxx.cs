@@ -77,5 +77,19 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
                 Design,
                 Warning
             );
+
+        public static readonly DiagnosticDescriptor LuceneDev1007_GenericDictionaryIndexerValueType =
+            Diagnostic(
+                "LuceneDev1007",
+                Design,
+                Warning
+            );
+
+        public static readonly DiagnosticDescriptor LuceneDev1008_GenericDictionaryIndexerReferenceType =
+            Diagnostic(
+                "LuceneDev1008",
+                Design,
+                Warning
+            );
     }
 }
