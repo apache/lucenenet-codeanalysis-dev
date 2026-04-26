@@ -112,5 +112,58 @@ public class Sample
 
             await test.RunAsync();
         }
+
+        [Test]
+        public async Task TestFix_Return_PicksUniqueLocalName_WhenValueIsInScope()
+        {
+            var testCode = @"
+using System.Collections.Generic;
+
+public class Sample
+{
+    public int M(IDictionary<string, int> dict, string key)
+    {
+        int value = 42;
+        if (value > 0)
+        {
+            return dict[key];
+        }
+        return value;
+    }
+}";
+
+            var fixedCode = @"
+using System.Collections.Generic;
+
+public class Sample
+{
+    public int M(IDictionary<string, int> dict, string key)
+    {
+        int value = 42;
+        if (value > 0)
+        {
+            return dict.TryGetValue(key, out var value1) ? value1 : default;
+        }
+        return value;
+    }
+}";
+
+            var expected = new DiagnosticResult(Descriptors.LuceneDev1007_GenericDictionaryIndexerValueType)
+                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithMessageFormat(Descriptors.LuceneDev1007_GenericDictionaryIndexerValueType.MessageFormat)
+                .WithArguments("dict[key]")
+                .WithLocation("/0/Test0.cs", line: 11, column: 20);
+
+            var test = new InjectableCodeFixTest(
+                () => new LuceneDev1007_1008_DictionaryIndexerAnalyzer(),
+                () => new LuceneDev1007_1008_DictionaryIndexerCodeFixProvider())
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics = { expected }
+            };
+
+            await test.RunAsync();
+        }
     }
 }

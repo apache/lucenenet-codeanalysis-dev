@@ -36,7 +36,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
         {
             valueType = null;
 
-            // Must take a single non-object key parameter. (The IDictionary.this[object] variant is handled elsewhere.)
+            // Must take a single key parameter. (The non-generic IDictionary.this[object] variant is handled elsewhere.)
             if (indexer.Parameters.Length != 1)
                 return false;
 

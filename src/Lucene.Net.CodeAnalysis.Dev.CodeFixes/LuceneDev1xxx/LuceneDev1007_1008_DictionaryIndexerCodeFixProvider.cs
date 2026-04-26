@@ -49,6 +49,9 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev1xxx
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             if (root == null) return;
 
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            if (semanticModel == null) return;
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 var elementAccess = root.FindToken(diagnostic.Location.SourceSpan.Start)
@@ -66,6 +69,11 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev1xxx
                     continue;
                 }
 
+                // If the receiver type doesn't expose an accessible TryGetValue method
+                // (e.g. only via explicit interface implementation), skip — the rewrite would not compile.
+                if (!HasAccessibleTryGetValue(semanticModel, elementAccess))
+                    continue;
+
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         title: TitleReturn,
@@ -73,6 +81,30 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev1xxx
                         equivalenceKey: TitleReturn),
                     diagnostic);
             }
+        }
+
+        private static bool HasAccessibleTryGetValue(SemanticModel semanticModel, ElementAccessExpressionSyntax elementAccess)
+        {
+            var receiverType = semanticModel.GetTypeInfo(elementAccess.Expression).Type;
+            if (receiverType == null)
+                return false;
+
+            foreach (var member in receiverType.GetMembers("TryGetValue"))
+            {
+                if (member is not IMethodSymbol method)
+                    continue;
+                if (method.IsStatic)
+                    continue;
+                if (method.DeclaredAccessibility != Accessibility.Public)
+                    continue;
+                if (method.Parameters.Length != 2)
+                    continue;
+                if (method.Parameters[1].RefKind != RefKind.Out)
+                    continue;
+                return true;
+            }
+
+            return false;
         }
 
         private static async Task<Document> ConvertReturnAsync(
