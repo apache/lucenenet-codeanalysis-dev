@@ -100,5 +100,44 @@ public class Sample
             };
             await test.RunAsync();
         }
+
+        [Test]
+        public async Task DoubleTryParse_InsertsInvariantCultureBeforeOutArg()
+        {
+            // Regression: TryParse signature is (string, IFormatProvider, out T) — the provider
+            // must be inserted BEFORE the trailing `out` parameter, not appended at the end.
+            var testCode = @"
+public class Sample
+{
+    public bool M() => double.TryParse(""1.5"", out _);
+}";
+
+            var fixedCode = @"using System.Globalization;
+
+public class Sample
+{
+    public bool M() => double.TryParse(""1.5"", CultureInfo.InvariantCulture, out _);
+}";
+
+            var expected = new DiagnosticResult(Descriptors.LuceneDev2000_BclNumericParseMissingFormatProvider)
+                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithMessageFormat(Descriptors.LuceneDev2000_BclNumericParseMissingFormatProvider.MessageFormat)
+                .WithArguments("TryParse", "Double")
+                .WithLocation("/0/Test0.cs", line: 4, column: 31);
+
+            var test = new InjectableCodeFixTest(
+                () => new LuceneDev2000_BclNumericParseAnalyzer(),
+                () => new LuceneDev2000_2001_2002_2004_AddInvariantCultureCodeFixProvider())
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
+                ExpectedDiagnostics = { expected },
+                CodeActionEquivalenceKey = "Add CultureInfo.InvariantCulture",
+                NumberOfIncrementalIterations = 2,
+                NumberOfFixAllIterations = 2
+            };
+            await test.RunAsync();
+        }
     }
 }

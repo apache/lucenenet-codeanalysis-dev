@@ -81,7 +81,15 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev2xxx
                 SyntaxFactory.IdentifierName(cultureMember));
             var newArg = SyntaxFactory.Argument(cultureExpr);
 
-            var newInvocation = invocation.WithArgumentList(invocation.ArgumentList.AddArguments(newArg));
+            // For TryParse-style methods, the IFormatProvider must come BEFORE the trailing
+            // `out` argument: bool TryParse(string, IFormatProvider, out T). Otherwise append.
+            var args = invocation.ArgumentList.Arguments;
+            int insertAt = args.Count;
+            if (args.Count > 0 && args[args.Count - 1].RefKindKeyword.IsKind(SyntaxKind.OutKeyword))
+                insertAt = args.Count - 1;
+
+            var newArgs = args.Insert(insertAt, newArg);
+            var newInvocation = invocation.WithArgumentList(invocation.ArgumentList.WithArguments(newArgs));
             var newRoot = EnsureGlobalizationUsing(root).ReplaceNode(invocation, newInvocation);
             return document.WithSyntaxRoot(newRoot);
         }
