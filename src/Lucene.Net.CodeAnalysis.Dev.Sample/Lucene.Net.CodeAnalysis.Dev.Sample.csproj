@@ -56,6 +56,10 @@ under the License.
     <PackageReference Include="Lucene.Net.CodeAnalysis.Dev" VersionOverride="$(_CodeAnalysisPackageVersion)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="J2N" />
+  </ItemGroup>
+
   <Target Name="EnsureNuGetPackageBuilt" BeforeTargets="PrepareForBuild" Condition="'$(DesignTimeBuild)' != 'true'">
 
     <Message Importance="high" Text="Running NuGet Package Build..." />
