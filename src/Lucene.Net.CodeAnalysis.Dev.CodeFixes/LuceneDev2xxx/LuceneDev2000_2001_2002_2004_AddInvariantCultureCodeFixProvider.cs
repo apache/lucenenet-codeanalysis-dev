@@ -101,15 +101,38 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev2xxx
                 var hasUsing = compilationUnit.Usings.Any(u => u.Name?.ToString() == "System.Globalization");
                 if (!hasUsing)
                 {
+                    // Match the document's existing line ending so the inserted using directive
+                    // doesn't mix CRLF and LF (the .gitattributes for this repo enforces CRLF
+                    // for *.cs, but local checkouts may differ).
+                    var newline = DetectLineEnding(root);
                     var usingDirective = SyntaxFactory.UsingDirective(
                         SyntaxFactory.QualifiedName(
                             SyntaxFactory.IdentifierName("System"),
                             SyntaxFactory.IdentifierName("Globalization")))
-                        .WithTrailingTrivia(SyntaxFactory.ElasticEndOfLine("\n"));
+                        .WithTrailingTrivia(SyntaxFactory.ElasticEndOfLine(newline));
                     return compilationUnit.AddUsings(usingDirective);
                 }
             }
             return root;
+        }
+
+        private static string DetectLineEnding(SyntaxNode root)
+        {
+            var text = root.GetText();
+            if (text.Lines.Count > 1)
+            {
+                var firstLine = text.Lines[0];
+                var endIncludingBreak = text.Lines[1].Start;
+                var breakLength = endIncludingBreak - firstLine.End;
+                if (breakLength == 2) return "\r\n";
+                if (breakLength == 1)
+                {
+                    var ch = text[firstLine.End];
+                    if (ch == '\r') return "\r";
+                    return "\n";
+                }
+            }
+            return "\n";
         }
     }
 }

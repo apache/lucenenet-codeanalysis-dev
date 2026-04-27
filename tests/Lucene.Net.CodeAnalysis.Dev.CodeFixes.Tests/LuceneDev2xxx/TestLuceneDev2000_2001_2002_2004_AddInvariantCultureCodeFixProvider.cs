@@ -102,6 +102,35 @@ public class Sample
         }
 
         [Test]
+        public async Task IntParse_PreservesCrlfLineEndings()
+        {
+            // Repo policy is `*.cs eol=crlf`. The codefix must emit an inserted `using`
+            // directive with the same line ending as the rest of the document, otherwise
+            // CI (which checks out CRLF) and dev machines (which may not) disagree.
+            var testCode = "\r\npublic class Sample\r\n{\r\n    public int M() => int.Parse(\"1\");\r\n}";
+            var fixedCode = "using System.Globalization;\r\n\r\npublic class Sample\r\n{\r\n    public int M() => int.Parse(\"1\", CultureInfo.InvariantCulture);\r\n}";
+
+            var expected = new DiagnosticResult(Descriptors.LuceneDev2000_BclNumericParseMissingFormatProvider)
+                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithMessageFormat(Descriptors.LuceneDev2000_BclNumericParseMissingFormatProvider.MessageFormat)
+                .WithArguments("Parse", "Int32")
+                .WithLocation("/0/Test0.cs", line: 4, column: 27);
+
+            var test = new InjectableCodeFixTest(
+                () => new LuceneDev2000_BclNumericParseAnalyzer(),
+                () => new LuceneDev2000_2001_2002_2004_AddInvariantCultureCodeFixProvider())
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics = { expected },
+                CodeActionEquivalenceKey = "Add CultureInfo.InvariantCulture",
+                NumberOfIncrementalIterations = 2,
+                NumberOfFixAllIterations = 2
+            };
+            await test.RunAsync();
+        }
+
+        [Test]
         public async Task DoubleTryParse_InsertsInvariantCultureBeforeOutArg()
         {
             // Regression: TryParse signature is (string, IFormatProvider, out T) — the provider
