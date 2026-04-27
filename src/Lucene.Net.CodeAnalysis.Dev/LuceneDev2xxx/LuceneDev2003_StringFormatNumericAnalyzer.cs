@@ -43,8 +43,9 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev2xxx
         {
             var invocation = (InvocationExpressionSyntax)ctx.Node;
 
-            // Match Format(...) on System.String. Don't bother with using-static or alias forms;
-            // the canonical Lucene.NET style is string.Format(...).
+            // Match Format(...) called as either `string.Format(...)` (member access) or `Format(...)`
+            // (identifier — e.g. via `using static System.String;`). Containing-type check below
+            // confirms the resolved method really is on System.String.
             string? methodName = invocation.Expression switch
             {
                 MemberAccessExpressionSyntax m => m.Name.Identifier.ValueText,

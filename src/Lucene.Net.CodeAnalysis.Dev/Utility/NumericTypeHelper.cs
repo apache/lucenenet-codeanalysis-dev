@@ -134,7 +134,10 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
 
             foreach (var arg in invocation.ArgumentList.Arguments)
             {
-                var argType = semanticModel.GetTypeInfo(arg.Expression).Type;
+                // For literals like `null` or `default`, GetTypeInfo(...).Type is null but
+                // ConvertedType reflects the parameter type chosen by overload resolution.
+                var typeInfo = semanticModel.GetTypeInfo(arg.Expression);
+                var argType = typeInfo.Type ?? typeInfo.ConvertedType;
                 if (argType is null) continue;
                 if (SymbolEqualityComparer.Default.Equals(argType, fpType))
                     return arg.Expression;

@@ -75,6 +75,51 @@ public class Sample
         }
 
         [Test]
+        public async Task IntTryFormat_WithoutProvider_ReportsDiagnostic()
+        {
+            var testCode = @"
+using System;
+
+public class Sample
+{
+    public bool M(int i, Span<char> buffer) => i.TryFormat(buffer, out _);
+}";
+
+            var expected = new DiagnosticResult(Descriptors.LuceneDev2001_BclNumericToStringMissingFormatProvider)
+                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithMessageFormat(Descriptors.LuceneDev2001_BclNumericToStringMissingFormatProvider.MessageFormat)
+                .WithArguments("TryFormat", "Int32")
+                .WithLocation("/0/Test0.cs", line: 6, column: 50);
+
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2001_BclNumericToStringAnalyzer())
+            {
+                TestCode = testCode,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
+                ExpectedDiagnostics = { expected }
+            };
+            await test.RunAsync();
+        }
+
+        [Test]
+        public async Task IntTryFormat_WithProvider_NoDiagnostic()
+        {
+            var testCode = @"
+using System;
+using System.Globalization;
+
+public class Sample
+{
+    public bool M(int i, Span<char> buffer) => i.TryFormat(buffer, out _, provider: CultureInfo.InvariantCulture);
+}";
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2001_BclNumericToStringAnalyzer())
+            {
+                TestCode = testCode,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net80
+            };
+            await test.RunAsync();
+        }
+
+        [Test]
         public async Task IntToString_WithProvider_NoDiagnostic()
         {
             var testCode = @"

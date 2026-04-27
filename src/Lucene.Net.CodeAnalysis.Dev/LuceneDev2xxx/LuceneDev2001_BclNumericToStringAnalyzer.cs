@@ -64,7 +64,9 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev2xxx
             if (!NumericTypeHelper.IsBclNumericSpecialType(containing))
                 return;
 
-            if (NumericTypeHelper.HasFormatProviderParameter(method, semantic.Compilation))
+            // Bail only when the call site actually supplies a provider argument; methods like
+            // TryFormat declare an *optional* IFormatProvider parameter that callers often omit.
+            if (NumericTypeHelper.GetFormatProviderArgument(invocation, semantic) is not null)
                 return;
 
             // Exempt parameterless ToString() inside a class's ToString() override —

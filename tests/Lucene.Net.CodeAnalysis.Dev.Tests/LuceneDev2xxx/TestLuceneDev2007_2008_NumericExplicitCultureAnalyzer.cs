@@ -82,6 +82,32 @@ public class Sample
         }
 
         [Test]
+        public async Task NullProviderLiteral_Reports2007()
+        {
+            // Regression: passing `null` for IFormatProvider should be treated as a non-invariant
+            // explicit provider (it's effectively current-culture). The argument's TypeInfo.Type
+            // is null for the `null` literal, so detection must fall back to ConvertedType.
+            var testCode = @"
+public class Sample
+{
+    public string M(int i) => i.ToString((string)null, null);
+}";
+
+            var expected = new DiagnosticResult(Descriptors.LuceneDev2007_NumericNonInvariantFormatProvider)
+                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithMessageFormat(Descriptors.LuceneDev2007_NumericNonInvariantFormatProvider.MessageFormat)
+                .WithArguments("ToString")
+                .WithLocation("/0/Test0.cs", line: 4, column: 33);
+
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2007_2008_NumericExplicitCultureAnalyzer())
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { expected }
+            };
+            await test.RunAsync();
+        }
+
+        [Test]
         public async Task IsEnabledByDefault_2007True_2008False()
         {
             Assert.That(Descriptors.LuceneDev2007_NumericNonInvariantFormatProvider.IsEnabledByDefault, Is.True);
