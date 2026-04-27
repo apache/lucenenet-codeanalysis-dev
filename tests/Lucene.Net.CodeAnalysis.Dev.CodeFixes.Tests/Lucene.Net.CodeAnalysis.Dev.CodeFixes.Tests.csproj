@@ -30,6 +30,7 @@ under the License.
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CodeFix.Testing" />
+    <PackageReference Include="J2N" />
   </ItemGroup>
 
   <ItemGroup>

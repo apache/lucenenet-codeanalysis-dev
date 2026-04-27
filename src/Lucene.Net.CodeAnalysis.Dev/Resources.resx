@@ -307,4 +307,103 @@ under the License.
     <value>Call to '{0}' uses a single-character string literal. Use the char overload instead (e.g., 'x' instead of "x").</value>
   </data>
 
+  <!-- 2000: BCL numeric Parse/TryParse missing IFormatProvider -->
+  <data name="LuceneDev2000_AnalyzerTitle" xml:space="preserve">
+    <value>Numeric Parse/TryParse should specify an IFormatProvider</value>
+  </data>
+  <data name="LuceneDev2000_AnalyzerDescription" xml:space="preserve">
+    <value>Calls to numeric Parse and TryParse methods without an IFormatProvider use the current culture in .NET, but Java Lucene parses numerics using invariant culture. Specify CultureInfo.InvariantCulture (or CultureInfo.CurrentCulture, where intended) explicitly.</value>
+  </data>
+  <data name="LuceneDev2000_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Call to '{0}' on numeric type '{1}' should specify an IFormatProvider (typically CultureInfo.InvariantCulture).</value>
+  </data>
+
+  <!-- 2001: BCL numeric ToString/TryFormat missing IFormatProvider -->
+  <data name="LuceneDev2001_AnalyzerTitle" xml:space="preserve">
+    <value>Numeric ToString/TryFormat should specify an IFormatProvider</value>
+  </data>
+  <data name="LuceneDev2001_AnalyzerDescription" xml:space="preserve">
+    <value>Calls to numeric ToString and TryFormat without an IFormatProvider use the current culture in .NET, but Java Lucene formats numerics using invariant culture. Specify CultureInfo.InvariantCulture (or CultureInfo.CurrentCulture, where intended) explicitly. Calls inside a ToString() override are exempted because that signature has no IFormatProvider parameter.</value>
+  </data>
+  <data name="LuceneDev2001_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Call to '{0}' on numeric type '{1}' should specify an IFormatProvider (typically CultureInfo.InvariantCulture).</value>
+  </data>
+
+  <!-- 2002: System.Convert numeric methods missing IFormatProvider -->
+  <data name="LuceneDev2002_AnalyzerTitle" xml:space="preserve">
+    <value>System.Convert numeric method should specify an IFormatProvider</value>
+  </data>
+  <data name="LuceneDev2002_AnalyzerDescription" xml:space="preserve">
+    <value>Calls to System.Convert numeric methods without an IFormatProvider use the current culture in .NET, but Java Lucene uses invariant culture. Specify CultureInfo.InvariantCulture (or CultureInfo.CurrentCulture, where intended) explicitly. Prefer the Parse/TryParse methods on the type for performance and flexibility.</value>
+  </data>
+  <data name="LuceneDev2002_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Call to 'Convert.{0}' should specify an IFormatProvider (typically CultureInfo.InvariantCulture).</value>
+  </data>
+
+  <!-- 2003: string.Format with numeric argument missing IFormatProvider -->
+  <data name="LuceneDev2003_AnalyzerTitle" xml:space="preserve">
+    <value>string.Format with numeric argument should specify an IFormatProvider</value>
+  </data>
+  <data name="LuceneDev2003_AnalyzerDescription" xml:space="preserve">
+    <value>Calls to string.Format with numeric arguments and no IFormatProvider format the values in the current culture, but Java Lucene uses invariant culture. Pass CultureInfo.InvariantCulture (or CultureInfo.CurrentCulture, where intended) as the first argument.</value>
+  </data>
+  <data name="LuceneDev2003_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Call to 'string.Format' with a numeric argument should specify an IFormatProvider (typically CultureInfo.InvariantCulture).</value>
+  </data>
+
+  <!-- 2004: J2N.Numerics.* missing IFormatProvider -->
+  <data name="LuceneDev2004_AnalyzerTitle" xml:space="preserve">
+    <value>J2N numeric method should specify an IFormatProvider</value>
+  </data>
+  <data name="LuceneDev2004_AnalyzerDescription" xml:space="preserve">
+    <value>Calls to J2N.Numerics.* Parse, TryParse, ToString, or TryFormat methods without an IFormatProvider should be reviewed. J2N intentionally lacks many overloads that omit IFormatProvider; the few that exist (e.g., legacy ToString overloads) should still pass an explicit culture.</value>
+  </data>
+  <data name="LuceneDev2004_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Call to '{0}' on J2N numeric type '{1}' should specify an IFormatProvider (typically CultureInfo.InvariantCulture).</value>
+  </data>
+
+  <!-- 2005: Implicit numeric formatting via string concatenation -->
+  <data name="LuceneDev2005_AnalyzerTitle" xml:space="preserve">
+    <value>Numeric type concatenated to string formats using current culture</value>
+  </data>
+  <data name="LuceneDev2005_AnalyzerDescription" xml:space="preserve">
+    <value>Concatenating a numeric value with a string (e.g., "" + i) implicitly formats the value using the current culture, but Java Lucene uses invariant culture. Wrap the numeric expression in .ToString(CultureInfo.InvariantCulture) (or CultureInfo.CurrentCulture, where intended) explicitly.</value>
+  </data>
+  <data name="LuceneDev2005_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Numeric value of type '{0}' is concatenated to a string and will be formatted using the current culture. Wrap with .ToString(CultureInfo.InvariantCulture) explicitly.</value>
+  </data>
+
+  <!-- 2006: Implicit numeric formatting via string interpolation -->
+  <data name="LuceneDev2006_AnalyzerTitle" xml:space="preserve">
+    <value>Numeric value in interpolated string formats using current culture</value>
+  </data>
+  <data name="LuceneDev2006_AnalyzerDescription" xml:space="preserve">
+    <value>Interpolated strings (e.g., $"{i}") implicitly format numeric values using the current culture, but Java Lucene uses invariant culture. Use FormattableString.Invariant($"...") or string.Create(CultureInfo.InvariantCulture, $"..."), or wrap the value in .ToString(CultureInfo.InvariantCulture) explicitly.</value>
+  </data>
+  <data name="LuceneDev2006_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Numeric value of type '{0}' is interpolated into a string and will be formatted using the current culture. Use FormattableString.Invariant or wrap with .ToString(CultureInfo.InvariantCulture) explicitly.</value>
+  </data>
+
+  <!-- 2007: Explicit IFormatProvider passed, but not InvariantCulture -->
+  <data name="LuceneDev2007_AnalyzerTitle" xml:space="preserve">
+    <value>Numeric format/parse uses non-invariant culture</value>
+  </data>
+  <data name="LuceneDev2007_AnalyzerDescription" xml:space="preserve">
+    <value>The IFormatProvider passed to a numeric format/parse call is not CultureInfo.InvariantCulture. Java Lucene uses invariant culture by default; suppress this warning explicitly when the use of a different culture is intentional.</value>
+  </data>
+  <data name="LuceneDev2007_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Call to '{0}' passes a non-invariant IFormatProvider. Use CultureInfo.InvariantCulture unless current-culture behavior is intentional.</value>
+  </data>
+
+  <!-- 2008: Explicit IFormatProvider passed, and it IS InvariantCulture (review aid) -->
+  <data name="LuceneDev2008_AnalyzerTitle" xml:space="preserve">
+    <value>Numeric format/parse uses CultureInfo.InvariantCulture (review aid)</value>
+  </data>
+  <data name="LuceneDev2008_AnalyzerDescription" xml:space="preserve">
+    <value>Disabled by default. Enable during the culture-correctness audit to walk every numeric format/parse call that already passes CultureInfo.InvariantCulture, so each can be verified.</value>
+  </data>
+  <data name="LuceneDev2008_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Call to '{0}' passes CultureInfo.InvariantCulture; verify this matches Lucene's behavior at this site.</value>
+  </data>
+
 </root>
