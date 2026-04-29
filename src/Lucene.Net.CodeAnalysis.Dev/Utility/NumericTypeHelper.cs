@@ -18,7 +18,9 @@
  */
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -82,21 +84,39 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
             "J2N.Numerics.Double",
         };
 
-        public static IEnumerable<INamedTypeSymbol> GetJ2NNumericTypes(Compilation compilation)
+        // Resolved J2N numeric types are cached per-Compilation so analyzers don't
+        // re-run GetTypeByMetadataName for every numeric invocation/concat/interpolation node.
+        // ConditionalWeakTable keeps the cache alive only as long as the Compilation is.
+        private sealed class J2NTypeBox { public ImmutableArray<INamedTypeSymbol> Types; }
+        private static readonly ConditionalWeakTable<Compilation, J2NTypeBox> J2NTypeCache = new();
+
+        public static ImmutableArray<INamedTypeSymbol> GetJ2NNumericTypes(Compilation compilation)
+            => J2NTypeCache.GetValue(compilation, ResolveJ2NTypes).Types;
+
+        private static J2NTypeBox ResolveJ2NTypes(Compilation compilation)
         {
+            var builder = ImmutableArray.CreateBuilder<INamedTypeSymbol>(J2NNumericMetadataNames.Length);
             foreach (var name in J2NNumericMetadataNames)
             {
                 var t = compilation.GetTypeByMetadataName(name);
-                if (t is not null) yield return t;
+                if (t is not null) builder.Add(t);
             }
+            return new J2NTypeBox { Types = builder.ToImmutable() };
         }
 
         public static bool IsJ2NNumericType(ITypeSymbol? type, Compilation compilation)
         {
             if (type is null) return false;
+            if (type is not INamedTypeSymbol named) return false;
+
+            // Fast pre-filter: skip the symbol-equality loop unless the metadata name matches a J2N type.
+            // (BCL primitives never sit under J2N.Numerics, so this short-circuits the hot path.)
+            if (named.ContainingNamespace?.ToDisplayString() != "J2N.Numerics")
+                return false;
+
             foreach (var j2n in GetJ2NNumericTypes(compilation))
             {
-                if (SymbolEqualityComparer.Default.Equals(type, j2n))
+                if (SymbolEqualityComparer.Default.Equals(named, j2n))
                     return true;
             }
             return false;
