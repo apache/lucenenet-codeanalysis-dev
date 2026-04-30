@@ -406,4 +406,37 @@ under the License.
     <value>Call to '{0}' passes CultureInfo.InvariantCulture; verify this matches Lucene's behavior at this site.</value>
   </data>
 
+  <!-- 4000: NoInlining on interface or abstract method -->
+  <data name="LuceneDev4000_AnalyzerTitle" xml:space="preserve">
+    <value>[MethodImpl(MethodImplOptions.NoInlining)] has no effect on interface or abstract methods</value>
+  </data>
+  <data name="LuceneDev4000_AnalyzerDescription" xml:space="preserve">
+    <value>The MethodImpl attribute is not inherited, so applying NoInlining to an interface or abstract method declaration has no effect on the eventual implementation. Apply the attribute to the implementing method instead.</value>
+  </data>
+  <data name="LuceneDev4000_AnalyzerMessageFormat" xml:space="preserve">
+    <value>[MethodImpl(MethodImplOptions.NoInlining)] on '{0}' has no effect because the method is abstract or an interface member; remove the attribute or apply it to the implementation.</value>
+  </data>
+
+  <!-- 4001: NoInlining on empty-bodied method -->
+  <data name="LuceneDev4001_AnalyzerTitle" xml:space="preserve">
+    <value>[MethodImpl(MethodImplOptions.NoInlining)] should not be used on empty-bodied methods</value>
+  </data>
+  <data name="LuceneDev4001_AnalyzerDescription" xml:space="preserve">
+    <value>An empty-bodied method calls nothing, so it cannot appear above any frame in a stack trace. Preventing inlining provides no benefit and only harms performance.</value>
+  </data>
+  <data name="LuceneDev4001_AnalyzerMessageFormat" xml:space="preserve">
+    <value>[MethodImpl(MethodImplOptions.NoInlining)] on '{0}' has no benefit because the method body is empty; remove the attribute.</value>
+  </data>
+
+  <!-- 4002: Missing NoInlining on method referenced by StackTraceHelper.DoesStackTraceContainMethod -->
+  <data name="LuceneDev4002_AnalyzerTitle" xml:space="preserve">
+    <value>Method referenced by StackTraceHelper.DoesStackTraceContainMethod should be marked NoInlining</value>
+  </data>
+  <data name="LuceneDev4002_AnalyzerDescription" xml:space="preserve">
+    <value>If a method is referenced by StackTraceHelper.DoesStackTraceContainMethod and the JIT inlines it, the method will not appear in the stack trace and the check will silently fail. Apply [MethodImpl(MethodImplOptions.NoInlining)] to the method.</value>
+  </data>
+  <data name="LuceneDev4002_AnalyzerMessageFormat" xml:space="preserve">
+    <value>'{0}' is referenced by StackTraceHelper.DoesStackTraceContainMethod and should be marked with [MethodImpl(MethodImplOptions.NoInlining)] to prevent the JIT from inlining it out of the stack trace.</value>
+  </data>
+
 </root>
