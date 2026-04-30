@@ -28,17 +28,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev4xxx
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LuceneDev4000_4001_4002_NoInliningCodeFixProvider)), Shared]
-    public sealed class LuceneDev4000_4001_4002_NoInliningCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LuceneDev4000_4001_NoInliningOnNoOpCodeFixProvider)), Shared]
+    public sealed class LuceneDev4000_4001_NoInliningOnNoOpCodeFixProvider : CodeFixProvider
     {
         private const string TitleRemoveAttribute = "Remove [MethodImpl(MethodImplOptions.NoInlining)]";
 
-        // Note: LuceneDev4002 has no code fix here. Its diagnostic is reported on the
-        // referenced method declaration but is triggered from a separate
-        // StackTraceHelper.DoesStackTraceContainMethod invocation — Roslyn treats this
-        // as a "non-local" diagnostic, which the code fix pipeline does not permit
-        // fixing automatically. The IDE still surfaces the warning on the declaration
-        // and the user adds the attribute manually.
         public override ImmutableArray<string> FixableDiagnosticIds =>
             ImmutableArray.Create(
                 Descriptors.LuceneDev4000_NoInliningHasNoEffect.Id,

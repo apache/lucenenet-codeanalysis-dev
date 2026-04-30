@@ -28,7 +28,7 @@ using System.Threading.Tasks;
 namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev4xxx
 {
     [TestFixture]
-    public class TestLuceneDev4000_4001_4002_NoInliningCodeFixProvider
+    public class TestLuceneDev4000_4001_NoInliningOnNoOpCodeFixProvider
     {
         // -----------------------------------------------------------------
         // 4000: remove attribute on interface / abstract method
@@ -60,8 +60,8 @@ public interface ISample
                 .WithArguments("DoWork");
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev4000_4001_4002_NoInliningAnalyzer(),
-                () => new LuceneDev4000_4001_4002_NoInliningCodeFixProvider())
+                () => new LuceneDev4000_4001_NoInliningOnNoOpAnalyzer(),
+                () => new LuceneDev4000_4001_NoInliningOnNoOpCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -105,8 +105,8 @@ public class Sample
                 .WithArguments("DoWork");
 
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev4000_4001_4002_NoInliningAnalyzer(),
-                () => new LuceneDev4000_4001_4002_NoInliningCodeFixProvider())
+                () => new LuceneDev4000_4001_NoInliningOnNoOpAnalyzer(),
+                () => new LuceneDev4000_4001_NoInliningOnNoOpCodeFixProvider())
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -115,8 +115,5 @@ public class Sample
 
             await test.RunAsync();
         }
-
-        // Note: LuceneDev4002 has no code fix (see CodeFixProvider class comment) —
-        // analyzer-only behavior is exercised in the analyzer tests.
     }
 }
