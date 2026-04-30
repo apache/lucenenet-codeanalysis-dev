@@ -156,9 +156,10 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev4xxx
                                 SyntaxFactory.IdentifierName("NoInlining"))))));
 
             var leadingIndent = ExtractLeadingIndentation(targetDecl);
+            var endOfLine = DetectEndOfLine(targetRoot);
             var newAttributeList = SyntaxFactory.AttributeList(SyntaxFactory.SingletonSeparatedList(attribute))
                 .WithLeadingTrivia(targetDecl.GetLeadingTrivia())
-                .WithTrailingTrivia(SyntaxFactory.EndOfLine("\n"), leadingIndent);
+                .WithTrailingTrivia(endOfLine, leadingIndent);
 
             var newAttributeLists = SyntaxFactory.List<AttributeListSyntax>(
                 new[] { newAttributeList }.Concat(targetDecl.AttributeLists));
@@ -177,13 +178,25 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev4xxx
                 if (!hasUsing)
                 {
                     var usingDirective = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(requiredNs))
-                        .WithTrailingTrivia(SyntaxFactory.EndOfLine("\n"));
+                        .WithTrailingTrivia(endOfLine);
                     compilationUnit = compilationUnit.AddUsings(usingDirective);
                     newTargetRoot = compilationUnit;
                 }
             }
 
             return solution.WithDocumentSyntaxRoot(targetDocument.Id, newTargetRoot);
+        }
+
+        private static SyntaxTrivia DetectEndOfLine(SyntaxNode root)
+        {
+            // Match the source's existing line-ending convention so the fixed
+            // output doesn't mix CRLF and LF.
+            foreach (var trivia in root.DescendantTrivia())
+            {
+                if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                    return trivia;
+            }
+            return SyntaxFactory.EndOfLine("\n");
         }
 
         private static SyntaxTrivia ExtractLeadingIndentation(SyntaxNode node)
