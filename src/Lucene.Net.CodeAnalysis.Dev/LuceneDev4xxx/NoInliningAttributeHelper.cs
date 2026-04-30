@@ -23,7 +23,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev4xxx
 {
-    internal static class NoInliningAttributeHelper
+    public static class NoInliningAttributeHelper
     {
         public static AttributeSyntax? FindNoInliningAttribute(
             MethodDeclarationSyntax methodDecl,
