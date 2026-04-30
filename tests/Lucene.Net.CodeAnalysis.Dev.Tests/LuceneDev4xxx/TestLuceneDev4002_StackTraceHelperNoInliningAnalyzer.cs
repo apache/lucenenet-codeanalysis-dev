@@ -64,10 +64,13 @@ public class Caller
     }
 }" + StackTraceHelperStub;
 
+            // Diagnostic is now reported on the DoesStackTraceContainMethod invocation
+            // (call site) so the IDE can surface it and a future code fix can be hooked
+            // up. Argument is the qualified target method name.
             var expected = new DiagnosticResult(Descriptors.LuceneDev4002_MissingNoInlining)
                 .WithSeverity(DiagnosticSeverity.Warning)
-                .WithSpan(4, 5, 7, 6)
-                .WithArguments("Merge");
+                .WithSpan(14, 13, 14, 132)
+                .WithArguments("Target.Merge");
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev4002_StackTraceHelperNoInliningAnalyzer())
             {

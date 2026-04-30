@@ -436,7 +436,7 @@ under the License.
     <value>If a method is referenced by StackTraceHelper.DoesStackTraceContainMethod and the JIT inlines it, the method will not appear in the stack trace and the check will silently fail. Apply [MethodImpl(MethodImplOptions.NoInlining)] to the method.</value>
   </data>
   <data name="LuceneDev4002_AnalyzerMessageFormat" xml:space="preserve">
-    <value>'{0}' is referenced by StackTraceHelper.DoesStackTraceContainMethod and should be marked with [MethodImpl(MethodImplOptions.NoInlining)] to prevent the JIT from inlining it out of the stack trace.</value>
+    <value>'{0}' is referenced by this StackTraceHelper.DoesStackTraceContainMethod call and should be marked with [MethodImpl(MethodImplOptions.NoInlining)] to prevent the JIT from inlining it out of the stack trace.</value>
   </data>
 
 </root>

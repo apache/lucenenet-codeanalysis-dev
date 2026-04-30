@@ -99,6 +99,12 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev4xxx
             if (targetType is null)
                 return;
 
+            // Report once per call site if any matching method declaration in source
+            // is missing NoInlining. Locating the diagnostic on the invocation makes
+            // it a "local" diagnostic relative to the syntax tree the analyzer is
+            // visiting, which means the IDE surfaces it (compilation-wide non-local
+            // diagnostics are filtered out of live IDE analysis) and a code fix can
+            // be wired up in the future.
             foreach (var member in targetType.GetMembers(methodNameValue).OfType<IMethodSymbol>())
             {
                 if (member.MethodKind != MethodKind.Ordinary)
@@ -120,8 +126,9 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev4xxx
 
                     ctx.ReportDiagnostic(Diagnostic.Create(
                         Descriptors.LuceneDev4002_MissingNoInlining,
-                        methodDecl.GetLocation(),
-                        methodDecl.Identifier.ValueText));
+                        invocation.GetLocation(),
+                        $"{targetType.Name}.{methodDecl.Identifier.ValueText}"));
+                    return;
                 }
             }
         }
