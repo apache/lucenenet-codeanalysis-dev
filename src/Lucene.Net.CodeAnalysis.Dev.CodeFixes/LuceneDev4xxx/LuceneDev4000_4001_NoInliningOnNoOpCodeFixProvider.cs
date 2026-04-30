@@ -18,12 +18,14 @@
 
 using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Lucene.Net.CodeAnalysis.Dev.Utility;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev4xxx
@@ -71,22 +73,60 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev4xxx
             if (root is null)
                 return document;
 
-            if (attribute.Parent is AttributeListSyntax attrList)
+            if (attribute.Parent is not AttributeListSyntax attrList)
+                return document;
+
+            SyntaxNode newRoot;
+            if (attrList.Attributes.Count > 1)
             {
-                SyntaxNode newRoot;
-                if (attrList.Attributes.Count == 1)
-                {
-                    newRoot = root.RemoveNode(attrList, SyntaxRemoveOptions.KeepNoTrivia)!;
-                }
-                else
-                {
-                    var newList = attrList.WithAttributes(attrList.Attributes.Remove(attribute));
-                    newRoot = root.ReplaceNode(attrList, newList);
-                }
+                // [Foo, MethodImpl(NoInlining), Bar] → [Foo, Bar]
+                var newList = attrList.WithAttributes(attrList.Attributes.Remove(attribute));
+                newRoot = root.ReplaceNode(attrList, newList);
                 return document.WithSyntaxRoot(newRoot);
             }
 
-            return document;
+            // Removing the whole [ ... ] list.
+            //
+            // Trivia handling: the attribute list's leading trivia is typically
+            // (newline)(indent)[comment(newline)(indent)]*. We want to keep any
+            // comments (and the newline that ends each one) but drop the final
+            // whitespace block — which is just the indentation for the now-removed
+            // attribute. The token following the list already carries its own
+            // newline+indent, so leaving that whitespace in would double-indent the
+            // next line. We move the trimmed trivia onto the next token.
+            var leading = attrList.GetLeadingTrivia();
+            int trim = leading.Count;
+            while (trim > 0 && leading[trim - 1].IsKind(SyntaxKind.WhitespaceTrivia))
+            {
+                trim--;
+            }
+            var triviaToKeep = SyntaxFactory.TriviaList(leading.Take(trim));
+
+            // Locate the parent that owns this attribute list. Use the parent's
+            // AttributeLists collection (e.g. on MethodDeclarationSyntax) so that
+            // removing the list and re-attaching trivia happens in a single step
+            // and preserves indentation of the surrounding declaration.
+            if (attrList.Parent is MemberDeclarationSyntax member)
+            {
+                var newAttrLists = member.AttributeLists.Remove(attrList);
+                MemberDeclarationSyntax newMember = member.WithAttributeLists(newAttrLists);
+
+                // Prepend the trivia we want to keep (e.g. comments) to the new
+                // first token of the member declaration.
+                if (triviaToKeep.Count > 0)
+                {
+                    var firstToken = newMember.GetFirstToken();
+                    var combined = triviaToKeep.AddRange(firstToken.LeadingTrivia);
+                    newMember = newMember.ReplaceToken(firstToken, firstToken.WithLeadingTrivia(combined));
+                }
+
+                newRoot = root.ReplaceNode(member, newMember);
+                return document.WithSyntaxRoot(newRoot);
+            }
+
+            // Fallback: just remove the list, dropping its trivia.
+            newRoot = root.RemoveNode(attrList, SyntaxRemoveOptions.KeepNoTrivia)!;
+            return document.WithSyntaxRoot(newRoot);
         }
     }
 }
