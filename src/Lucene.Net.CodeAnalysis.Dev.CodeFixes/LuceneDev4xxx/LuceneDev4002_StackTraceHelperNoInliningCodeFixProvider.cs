@@ -29,20 +29,17 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.Options;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev4xxx
 {
-    /// <summary>
-    /// Code fix for LuceneDev4002: adds [MethodImpl(MethodImplOptions.NoInlining)]
-    /// to the target method declaration referenced by the
-    /// StackTraceHelper.DoesStackTraceContainMethod call. Adds
-    /// `using System.Runtime.CompilerServices;` to the target's compilation unit
-    /// if missing.
-    /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LuceneDev4002_StackTraceHelperNoInliningCodeFixProvider)), Shared]
     public sealed class LuceneDev4002_StackTraceHelperNoInliningCodeFixProvider : CodeFixProvider
     {
         private const string Title = "Add [MethodImpl(MethodImplOptions.NoInlining)] to the referenced method";
+        private const string CompilerServicesNamespace = "System.Runtime.CompilerServices";
 
         public override ImmutableArray<string> FixableDiagnosticIds =>
             ImmutableArray.Create(Descriptors.LuceneDev4002_MissingNoInlining.Id);
@@ -103,7 +100,6 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev4xxx
             if (methodImplAttrSymbol is null)
                 return solution;
 
-            // Find the first ordinary method that needs the attribute.
             MethodDeclarationSyntax? targetDecl = null;
             foreach (var member in targetType.GetMembers(methodNameValue).OfType<IMethodSymbol>())
             {
@@ -141,76 +137,73 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev4xxx
 
             var targetRoot = await targetTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 
-            // Build [MethodImpl(MethodImplOptions.NoInlining)] as its own attribute
-            // list. Place it ahead of any existing lists, copying the method's
-            // leading trivia onto our new list and re-attaching one indent's worth
-            // of trivia between the list and the original method position.
-            var attribute = SyntaxFactory.Attribute(
-                SyntaxFactory.IdentifierName("MethodImpl"),
-                SyntaxFactory.AttributeArgumentList(
-                    SyntaxFactory.SingletonSeparatedList(
-                        SyntaxFactory.AttributeArgument(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("MethodImplOptions"),
-                                SyntaxFactory.IdentifierName("NoInlining"))))));
+            // Build [MethodImpl(MethodImplOptions.NoInlining)] with no manual trivia,
+            // and let the Formatter annotation handle indentation and line endings.
+            var newAttributeList = SyntaxFactory.AttributeList(
+                SyntaxFactory.SingletonSeparatedList(
+                    SyntaxFactory.Attribute(
+                        SyntaxFactory.IdentifierName("MethodImpl"),
+                        SyntaxFactory.AttributeArgumentList(
+                            SyntaxFactory.SingletonSeparatedList(
+                                SyntaxFactory.AttributeArgument(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("MethodImplOptions"),
+                                        SyntaxFactory.IdentifierName("NoInlining"))))))))
+                .WithAdditionalAnnotations(Formatter.Annotation);
 
-            var leadingIndent = ExtractLeadingIndentation(targetDecl);
-            var endOfLine = DetectEndOfLine(targetRoot);
-            var newAttributeList = SyntaxFactory.AttributeList(SyntaxFactory.SingletonSeparatedList(attribute))
-                .WithLeadingTrivia(targetDecl.GetLeadingTrivia())
-                .WithTrailingTrivia(endOfLine, leadingIndent);
-
-            var newAttributeLists = SyntaxFactory.List<AttributeListSyntax>(
-                new[] { newAttributeList }.Concat(targetDecl.AttributeLists));
-
-            var newMethodDecl = targetDecl
-                .WithLeadingTrivia(SyntaxFactory.TriviaList())
-                .WithAttributeLists(newAttributeLists);
+            var newAttributeLists = targetDecl.AttributeLists.Insert(0, newAttributeList);
+            var newMethodDecl = targetDecl.WithAttributeLists(newAttributeLists);
 
             var newTargetRoot = targetRoot.ReplaceNode(targetDecl, newMethodDecl);
 
             // Add the using if missing.
-            if (newTargetRoot is CompilationUnitSyntax compilationUnit)
+            if (newTargetRoot is CompilationUnitSyntax compilationUnit
+                && !compilationUnit.Usings.Any(u => u.Name?.ToString() == CompilerServicesNamespace))
             {
-                const string requiredNs = "System.Runtime.CompilerServices";
-                bool hasUsing = compilationUnit.Usings.Any(u => u.Name?.ToString() == requiredNs);
-                if (!hasUsing)
-                {
-                    var usingDirective = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(requiredNs))
-                        .WithTrailingTrivia(endOfLine);
-                    compilationUnit = compilationUnit.AddUsings(usingDirective);
-                    newTargetRoot = compilationUnit;
-                }
+                var usingDirective = SyntaxFactory.UsingDirective(
+                        SyntaxFactory.ParseName(CompilerServicesNamespace))
+                    .WithAdditionalAnnotations(Formatter.Annotation);
+                compilationUnit = compilationUnit.AddUsings(usingDirective);
+                newTargetRoot = compilationUnit;
             }
 
-            return solution.WithDocumentSyntaxRoot(targetDocument.Id, newTargetRoot);
+            var newTargetDocument = targetDocument.WithSyntaxRoot(newTargetRoot);
+
+            // Honor the source file's existing line ending convention so the fix
+            // doesn't introduce mixed line endings (the workspace's NewLine option
+            // otherwise defaults to Environment.NewLine, which can disagree with
+            // a source file that uses the opposite convention).
+            var sourceText = await targetTree.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var newLine = DetectNewLine(sourceText);
+            var options = newTargetDocument.Project.Solution.Workspace.Options
+                .WithChangedOption(FormattingOptions.NewLine, LanguageNames.CSharp, newLine);
+
+            var formatted = await Formatter.FormatAsync(
+                newTargetDocument,
+                Formatter.Annotation,
+                options,
+                cancellationToken).ConfigureAwait(false);
+
+            return formatted.Project.Solution;
         }
 
-        private static SyntaxTrivia DetectEndOfLine(SyntaxNode root)
+        private static string DetectNewLine(SourceText text)
         {
-            // Match the source's existing line-ending convention so the fixed
-            // output doesn't mix CRLF and LF.
-            foreach (var trivia in root.DescendantTrivia())
+            foreach (var line in text.Lines)
             {
-                if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
-                    return trivia;
+                var lineBreakLength = line.EndIncludingLineBreak - line.End;
+                if (lineBreakLength == 0)
+                    continue;
+                var firstChar = text[line.End];
+                if (firstChar == '\r' && lineBreakLength == 2)
+                    return "\r\n";
+                if (firstChar == '\n')
+                    return "\n";
+                if (firstChar == '\r')
+                    return "\r";
             }
-            return SyntaxFactory.EndOfLine("\n");
-        }
-
-        private static SyntaxTrivia ExtractLeadingIndentation(SyntaxNode node)
-        {
-            // Indentation = trailing whitespace of the leading trivia (after the
-            // last newline). Used to align the new attribute list with the method.
-            foreach (var t in node.GetLeadingTrivia().Reverse())
-            {
-                if (t.IsKind(SyntaxKind.WhitespaceTrivia))
-                    return t;
-                if (t.IsKind(SyntaxKind.EndOfLineTrivia))
-                    break;
-            }
-            return SyntaxFactory.Whitespace("");
+            return "\n";
         }
 
         // ---- Argument resolution (mirrors the analyzer) ----
