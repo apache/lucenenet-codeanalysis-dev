@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -106,14 +105,14 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev4xxx
                 if (member.MethodKind != MethodKind.Ordinary)
                     continue;
 
+                if (NoInliningAttributeHelper.HasNoInliningAttribute(member, methodImplAttrSymbol))
+                    continue;
+
                 foreach (var declRef in member.DeclaringSyntaxReferences)
                 {
                     if (declRef.GetSyntax(cancellationToken) is not MethodDeclarationSyntax methodDecl)
                         continue;
 
-                    var declSemantic = compilation.GetSemanticModel(methodDecl.SyntaxTree);
-                    if (NoInliningAttributeHelper.FindNoInliningAttribute(methodDecl, declSemantic, methodImplAttrSymbol) is not null)
-                        continue;
                     if (NoInliningAttributeHelper.HasEmptyBody(methodDecl))
                         continue;
                     if (NoInliningAttributeHelper.IsInterfaceOrAbstractMethod(methodDecl))
@@ -267,40 +266,17 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev4xxx
 
         private static INamedTypeSymbol? FindSourceTypeByName(Compilation compilation, string typeName)
         {
-            foreach (var type in EnumerateAllTypes(compilation.Assembly.GlobalNamespace))
+            // Use Roslyn's symbol-name index instead of walking every namespace.
+            // Restrict to the source assembly so we don't match metadata types.
+            foreach (var symbol in compilation.GetSymbolsWithName(n => n == typeName, SymbolFilter.Type))
             {
-                if (type.Name == typeName)
+                if (symbol is INamedTypeSymbol type
+                    && SymbolEqualityComparer.Default.Equals(type.ContainingAssembly, compilation.Assembly))
+                {
                     return type;
+                }
             }
             return null;
-        }
-
-        private static IEnumerable<INamedTypeSymbol> EnumerateAllTypes(INamespaceSymbol ns)
-        {
-            foreach (var member in ns.GetMembers())
-            {
-                if (member is INamedTypeSymbol type)
-                {
-                    yield return type;
-                    foreach (var nested in EnumerateNestedTypes(type))
-                        yield return nested;
-                }
-                else if (member is INamespaceSymbol child)
-                {
-                    foreach (var t in EnumerateAllTypes(child))
-                        yield return t;
-                }
-            }
-        }
-
-        private static IEnumerable<INamedTypeSymbol> EnumerateNestedTypes(INamedTypeSymbol type)
-        {
-            foreach (var nested in type.GetTypeMembers())
-            {
-                yield return nested;
-                foreach (var deeper in EnumerateNestedTypes(nested))
-                    yield return deeper;
-            }
         }
     }
 }

@@ -146,6 +146,56 @@ public class Caller
         }
 
         [Test]
+        public async Task LuceneDev4002_Reports_When_TargetMethod_Is_In_Different_Document()
+        {
+            // The Target type and the Caller live in separate source files. The analyzer
+            // must build a SemanticModel against the Target's syntax tree before
+            // inspecting attributes — using the caller's SemanticModel against a node
+            // from a different tree throws ArgumentException. Target carries an
+            // unrelated attribute so the attribute-walk path actually executes.
+            var targetSource = @"
+using System;
+
+[AttributeUsage(AttributeTargets.Method)]
+public class FooAttribute : Attribute { }
+
+public class Target
+{
+    [Foo]
+    public void Merge()
+    {
+        var x = 1;
+    }
+}
+";
+
+            var callerSource = @"
+public class Caller
+{
+    public void Check()
+    {
+        if (Lucene.Net.Support.ExceptionHandling.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge)))
+        {
+        }
+    }
+}" + StackTraceHelperStub;
+
+            var expected = new DiagnosticResult(Descriptors.LuceneDev4002_MissingNoInlining)
+                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithLocation("/0/Test1.cs", line: 6, column: 13)
+                .WithArguments("Target.Merge");
+
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev4002_StackTraceHelperNoInliningAnalyzer())
+            {
+                ExpectedDiagnostics = { expected }
+            };
+            test.TestState.Sources.Add(targetSource);
+            test.TestState.Sources.Add(callerSource);
+
+            await test.RunAsync();
+        }
+
+        [Test]
         public async Task LuceneDev4002_NoDiagnostic_For_SingleArgOverload()
         {
             // The single-arg overload doesn't validate the owning class, so we don't

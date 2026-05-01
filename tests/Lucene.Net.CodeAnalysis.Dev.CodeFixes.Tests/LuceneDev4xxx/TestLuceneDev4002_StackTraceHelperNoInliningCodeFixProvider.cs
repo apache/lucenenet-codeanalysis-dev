@@ -166,6 +166,64 @@ public class Caller
         }
 
         [Test]
+        public async Task Fix_AddsAttributeAndUsing_InTargetDocument_WhenTargetIsInDifferentFile()
+        {
+            // Target lives in /0/Test0.cs, Caller in /0/Test1.cs. The code fix must
+            // edit the target's document (adding the attribute and the using) rather
+            // than the caller's.
+            var targetSource = @"
+public class Target
+{
+    public void Merge()
+    {
+        var x = 1;
+    }
+}
+";
+
+            var callerSource = @"
+public class Caller
+{
+    public void Check()
+    {
+        if (Lucene.Net.Support.ExceptionHandling.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge)))
+        {
+        }
+    }
+}" + StackTraceHelperStub;
+
+            var fixedTargetSource = @"using System.Runtime.CompilerServices;
+
+public class Target
+{
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public void Merge()
+    {
+        var x = 1;
+    }
+}
+";
+
+            var expected = new DiagnosticResult(Descriptors.LuceneDev4002_MissingNoInlining)
+                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithLocation("/0/Test1.cs", line: 6, column: 13)
+                .WithArguments("Target.Merge");
+
+            var test = new InjectableCodeFixTest(
+                () => new LuceneDev4002_StackTraceHelperNoInliningAnalyzer(),
+                () => new LuceneDev4002_StackTraceHelperNoInliningCodeFixProvider())
+            {
+                ExpectedDiagnostics = { expected }
+            };
+            test.TestState.Sources.Add(targetSource);
+            test.TestState.Sources.Add(callerSource);
+            test.FixedState.Sources.Add(fixedTargetSource);
+            test.FixedState.Sources.Add(callerSource);
+
+            await test.RunAsync();
+        }
+
+        [Test]
         public async Task Fix_PreservesExistingAttributeOnTarget()
         {
             // Target method has another attribute; the new MethodImpl list should

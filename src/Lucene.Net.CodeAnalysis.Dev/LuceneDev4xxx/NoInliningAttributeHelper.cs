@@ -25,6 +25,8 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev4xxx
 {
     public static class NoInliningAttributeHelper
     {
+        private const int NoInlining = 0x0008;
+
         public static AttributeSyntax? FindNoInliningAttribute(
             MethodDeclarationSyntax methodDecl,
             SemanticModel semantic,
@@ -46,6 +48,27 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev4xxx
             return null;
         }
 
+        // Symbol-based variant: works across syntax trees and avoids
+        // Compilation.GetSemanticModel (which would trip RS1030 in an analyzer).
+        public static bool HasNoInliningAttribute(
+            IMethodSymbol method,
+            INamedTypeSymbol methodImplAttrSymbol)
+        {
+            foreach (var attr in method.GetAttributes())
+            {
+                if (!SymbolEqualityComparer.Default.Equals(attr.AttributeClass, methodImplAttrSymbol))
+                    continue;
+
+                if (attr.ConstructorArguments.Length == 0)
+                    continue;
+
+                var first = attr.ConstructorArguments[0];
+                if (first.Value is int intValue && (intValue & NoInlining) == NoInlining)
+                    return true;
+            }
+            return false;
+        }
+
         private static bool AttributeSpecifiesNoInlining(AttributeSyntax attr, SemanticModel semantic)
         {
             if (attr.ArgumentList is null || attr.ArgumentList.Arguments.Count == 0)
@@ -61,11 +84,10 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev4xxx
             var constant = semantic.GetConstantValue(firstPositional.Expression);
             if (constant.HasValue && constant.Value is int intValue)
             {
-                const int NoInlining = 0x0008;
                 return (intValue & NoInlining) == NoInlining;
             }
 
-            return firstPositional.Expression.ToString().Contains("NoInlining");
+            return false;
         }
 
         public static bool IsInterfaceOrAbstractMethod(MethodDeclarationSyntax methodDecl)

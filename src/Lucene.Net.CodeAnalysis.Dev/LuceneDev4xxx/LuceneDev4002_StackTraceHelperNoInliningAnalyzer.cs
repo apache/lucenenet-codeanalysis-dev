@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Lucene.Net.CodeAnalysis.Dev.Utility;
@@ -32,10 +31,8 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev4xxx
     /// StackTraceHelper.DoesStackTraceContainMethod(className, methodName) overload
     /// that lack [MethodImpl(MethodImplOptions.NoInlining)]. Without it the JIT may
     /// inline the method out of the stack trace, silently breaking the check.
-    ///
-    /// This analyzer has no code fix: the diagnostic is reported on the referenced
-    /// method declaration but is triggered by a separate invocation, which Roslyn
-    /// treats as a non-local diagnostic and does not allow code fixes for.
+    /// The diagnostic is reported on the invocation so the IDE surfaces it as a
+    /// local diagnostic and a code fix can apply the attribute to the target method.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class LuceneDev4002_StackTraceHelperNoInliningAnalyzer : DiagnosticAnalyzer
@@ -110,12 +107,12 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev4xxx
                 if (member.MethodKind != MethodKind.Ordinary)
                     continue;
 
+                if (NoInliningAttributeHelper.HasNoInliningAttribute(member, methodImplAttrSymbol))
+                    continue;
+
                 foreach (var declRef in member.DeclaringSyntaxReferences)
                 {
                     if (declRef.GetSyntax(ctx.CancellationToken) is not MethodDeclarationSyntax methodDecl)
-                        continue;
-
-                    if (NoInliningAttributeHelper.FindNoInliningAttribute(methodDecl, ctx.SemanticModel, methodImplAttrSymbol) is not null)
                         continue;
 
                     if (NoInliningAttributeHelper.HasEmptyBody(methodDecl))
@@ -192,40 +189,17 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev4xxx
 
         private static INamedTypeSymbol? FindSourceTypeByName(Compilation compilation, string typeName)
         {
-            foreach (var type in EnumerateAllTypes(compilation.Assembly.GlobalNamespace))
+            // Use Roslyn's symbol-name index instead of walking every namespace.
+            // Restrict to the source assembly so we don't match metadata types.
+            foreach (var symbol in compilation.GetSymbolsWithName(n => n == typeName, SymbolFilter.Type))
             {
-                if (type.Name == typeName)
+                if (symbol is INamedTypeSymbol type
+                    && SymbolEqualityComparer.Default.Equals(type.ContainingAssembly, compilation.Assembly))
+                {
                     return type;
+                }
             }
             return null;
-        }
-
-        private static IEnumerable<INamedTypeSymbol> EnumerateAllTypes(INamespaceSymbol ns)
-        {
-            foreach (var member in ns.GetMembers())
-            {
-                if (member is INamedTypeSymbol type)
-                {
-                    yield return type;
-                    foreach (var nested in EnumerateNestedTypes(type))
-                        yield return nested;
-                }
-                else if (member is INamespaceSymbol child)
-                {
-                    foreach (var t in EnumerateAllTypes(child))
-                        yield return t;
-                }
-            }
-        }
-
-        private static IEnumerable<INamedTypeSymbol> EnumerateNestedTypes(INamedTypeSymbol type)
-        {
-            foreach (var nested in type.GetTypeMembers())
-            {
-                yield return nested;
-                foreach (var deeper in EnumerateNestedTypes(nested))
-                    yield return deeper;
-            }
         }
     }
 }
