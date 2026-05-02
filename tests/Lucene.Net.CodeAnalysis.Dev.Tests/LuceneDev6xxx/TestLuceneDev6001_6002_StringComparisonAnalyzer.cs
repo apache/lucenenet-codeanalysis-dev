@@ -79,6 +79,80 @@ public class Sample
         }
 
         [Test]
+        public async Task Skips_IndexOf_CharLiteral()
+        {
+            var testCode = @"
+using System;
+
+public class Sample
+{
+    public void M()
+    {
+        string text = ""Hello"";
+        int index = text.IndexOf('H');
+    }
+}";
+
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { } // IndexOf(char) has no StringComparison overload; no diagnostic
+            };
+
+            await test.RunAsync();
+        }
+
+        [Test]
+        public async Task Skips_IndexOf_CharVariable()
+        {
+            var testCode = @"
+using System;
+
+public class Sample
+{
+    public void M()
+    {
+        string text = ""Hello"";
+        char c = 'H';
+        int index = text.IndexOf(c);
+    }
+}";
+
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { } // IndexOf(char) has no StringComparison overload; no diagnostic
+            };
+
+            await test.RunAsync();
+        }
+
+        [Test]
+        public async Task Skips_StartsWith_CharVariable()
+        {
+            var testCode = @"
+using System;
+
+public class Sample
+{
+    public void M()
+    {
+        string text = ""Hello"";
+        char c = 'H';
+        bool starts = text.StartsWith(c);
+    }
+}";
+
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { } // StartsWith(char) has no StringComparison overload; no diagnostic
+            };
+
+            await test.RunAsync();
+        }
+
+        [Test]
         public async Task Detects_IndexOf_MissingStringComparison()
         {
             var testCode = @"
