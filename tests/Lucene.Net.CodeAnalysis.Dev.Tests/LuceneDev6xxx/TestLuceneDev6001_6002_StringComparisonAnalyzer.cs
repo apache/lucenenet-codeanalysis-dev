@@ -581,5 +581,82 @@ public class Sample
 
             await test.RunAsync();
         }
+
+        [Test]
+        public async Task Detects_J2NStringBuilderExtensions_ReducedForm_MissingStringComparison()
+        {
+            var testCode = @"
+using System.Text;
+using J2N.Text;
+
+namespace J2N.Text
+{
+    public static class StringBuilderExtensions
+    {
+        public static int IndexOf(this StringBuilder sb, string value) => 0;
+    }
+}
+
+public class Sample
+{
+    public void M()
+    {
+        var sb = new StringBuilder(""hello"");
+        int index = sb.IndexOf(""he"");
+    }
+}";
+
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6001_MissingStringComparison.Id, DiagnosticSeverity.Error)
+                .WithSeverity(DiagnosticSeverity.Error)
+                .WithMessageFormat(Descriptors.LuceneDev6001_MissingStringComparison.MessageFormat)
+                .WithArguments("IndexOf")
+                .WithLocation("/0/Test0.cs", line: 18, column: 24);
+
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { expected }
+            };
+
+            await test.RunAsync();
+        }
+
+        [Test]
+        public async Task Detects_J2NStringBuilderExtensions_StaticForm_MissingStringComparison()
+        {
+            var testCode = @"
+using System.Text;
+
+namespace J2N.Text
+{
+    public static class StringBuilderExtensions
+    {
+        public static int IndexOf(this StringBuilder sb, string value) => 0;
+    }
+}
+
+public class Sample
+{
+    public void M()
+    {
+        var sb = new StringBuilder(""hello"");
+        int index = J2N.Text.StringBuilderExtensions.IndexOf(sb, ""he"");
+    }
+}";
+
+            var expected = new DiagnosticResult(Descriptors.LuceneDev6001_MissingStringComparison.Id, DiagnosticSeverity.Error)
+                .WithSeverity(DiagnosticSeverity.Error)
+                .WithMessageFormat(Descriptors.LuceneDev6001_MissingStringComparison.MessageFormat)
+                .WithArguments("IndexOf")
+                .WithLocation("/0/Test0.cs", line: 17, column: 54);
+
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { expected }
+            };
+
+            await test.RunAsync();
+        }
     }
 }
