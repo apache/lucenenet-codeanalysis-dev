@@ -175,7 +175,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
             // Handle ambiguous candidates
             if (candidateSymbols.Length > 0)
             {
-                // Check if any candidate is from String or J2N types and takes a string first parameter
+                // Check if any candidate is from String or J2N types and takes a string value parameter
                 var relevantCandidates = candidateSymbols
                     .Where(c => ContainingTypeIsStringOrJ2N(c.ContainingType) && ValueParameterIsString(c))
                     .ToImmutableArray();

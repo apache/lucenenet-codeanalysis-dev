@@ -146,6 +146,7 @@ public class Sample
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6001_6002_StringComparisonAnalyzer())
             {
                 TestCode = testCode,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net80, // string.StartsWith(char) requires .NET Core 2.0+
                 ExpectedDiagnostics = { } // StartsWith(char) has no StringComparison overload; no diagnostic
             };
 
