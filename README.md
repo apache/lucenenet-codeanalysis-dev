@@ -63,9 +63,8 @@ It is important that you follow this process to avoid rework of your PR.
 
 1. Make sure there is an issue on the main [Apache Lucene.NET repo](https://github.com/apache/lucenenet/issues) for the analyzer(s) needed, that has been approved by the Lucene.NET team as indicated by having the `approved-rule` label.
 2. Reserve your diagnostic ID(s) _before_ implementing the analyzer(s):
-    - If you are a Lucene.NET committer, you can reserve one yourself. Modify the [DiagnosticCategoryAndIdRanges.txt](DiagnosticCategoryAndIdRanges.txt) file (following the instructions in that file) to reserve your ID(s). Commit and push the change to this file directly to the `main` branch, as the only file in the commit. DO NOT include any other code or changes in this commit. In the event of a conflict, do not merge this file; discard your changes, pull latest, and try again. Include the issue number in your commit message.
-    - If you are not a Lucene.NET committer, request in the discussion for the GitHub issue that a committer do the steps above for you for your desired number of diagnostic IDs. Please make sure to mention which category the ID(s) should belong to.
-3. Once you have the reserved ID(s), you can proceed with implementing your analyzer and submitting a pull request. Make sure to include your analyzer in the [AnalyzerReleases.Unshipped.md](src/Lucene.Net.CodeAnalysis.Dev/AnalyzerReleases.Unshipped.md) file.
+    - Submit a pull request that modifies the [DiagnosticCategoryAndIdRanges.txt](DiagnosticCategoryAndIdRanges.txt) file (following the instructions in that file) to reserve your ID(s). Make sure your PR is based on latest `main`, and that the correct category is chosen for each ID. DO NOT include any other code or changes in this commit. In the event of a conflict, this PR cannot be merged; pull latest, and try again (possibly with new IDs chosen). Include the issue number in your commit message.
+3. Once you have the reserved ID(s) merged on `main`, you can proceed with implementing your analyzer and submitting a pull request. Make sure to include your analyzer in the [AnalyzerReleases.Unshipped.md](src/Lucene.Net.CodeAnalysis.Dev/AnalyzerReleases.Unshipped.md) file.
 
 ### Requirements
 
