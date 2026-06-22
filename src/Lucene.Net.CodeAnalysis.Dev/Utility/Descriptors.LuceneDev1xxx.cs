@@ -91,5 +91,57 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
                 Design,
                 Warning
             );
+
+        public static readonly DiagnosticDescriptor LuceneDev1009_PublicFields =
+            Diagnostic(
+                "LuceneDev1009",
+                Design,
+                Warning
+            );
+
+        public static readonly DiagnosticDescriptor LuceneDev1010_PropertyWithNoGetter =
+            Diagnostic(
+                "LuceneDev1010",
+                Design,
+                Warning
+            );
+
+        public static readonly DiagnosticDescriptor LuceneDev1011_PropertyReturnsArray =
+            Diagnostic(
+                "LuceneDev1011",
+                Design,
+                Warning
+            );
+
+        public static readonly DiagnosticDescriptor LuceneDev1012_MethodReturnsWritableArray =
+            Diagnostic(
+                "LuceneDev1012",
+                Design,
+                Warning
+            );
+
+        public static readonly DiagnosticDescriptor LuceneDev1013_NullableEnum =
+            Diagnostic(
+                "LuceneDev1013",
+                Design,
+                Warning
+            );
+
+        // Disabled by default: this rule was only ever used as a one-time porting aid to identify
+        // members changed from ICollection/IList/ISet to IEnumerable during the Java port.
+        public static readonly DiagnosticDescriptor LuceneDev1014_MemberAcceptsOrReturnsIEnumerable =
+            Diagnostic(
+                "LuceneDev1014",
+                Design,
+                Warning,
+                isEnabledByDefault: false
+            );
+
+        public static readonly DiagnosticDescriptor LuceneDev1015_MemberAcceptsOrReturnsListOrDictionary =
+            Diagnostic(
+                "LuceneDev1015",
+                Design,
+                Warning
+            );
     }
 }
