@@ -4,22 +4,23 @@
 
 #
 # The ranges below represent the **currently used IDs** for the corresponding category.
-# When implementing a new rule for the category, BEFORE submitting a PR:
+# When implementing a new rule for the category, BEFORE implementing the analyzer:
 #   1. Choose the rule ID immediately following the range end.
 #   2. Update the range end to the chosen rule ID.
-#   3. Commit and push the change to this file to `main`, with this file being the only file in the commit.
-#   4. Your rule ID is now reserved and can be used in your PR.
+#   3. Submit a pull request that changes only this file, with the issue number in the commit message.
+#   4. Once that pull request is merged to `main`, your rule ID is reserved and can be used in your implementation PR.
 #
-# In the event of conflict in step 3, make sure you discard your changes, pull latest, and try again.
+# In the event of a conflict in step 3, this reservation PR cannot be merged; pull latest, and try again
+# (possibly with new IDs chosen).
 # DO NOT remove ID ranges already defined or merge this file in git.
 #
-Design: LuceneDev1000-LuceneDev1008
+Design: LuceneDev1000-LuceneDev1015
 Globalization: LuceneDev2000-LuceneDev2008
 Mobility:
 Performance: LuceneDev4000-LuceneDev4003
 Security:
 Usage: LuceneDev6000-LuceneDev6005
-Naming:
+Naming: LuceneDev7000-LuceneDev7008
 Interoperability:
 Maintainability:
 Reliability:
