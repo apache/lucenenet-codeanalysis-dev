@@ -125,4 +125,8 @@ under the License.
   <data name="MakeXInternal" xml:space="preserve">
     <value>Make {0} internal</value>
   </data>
+  <data name="RenameToX" xml:space="preserve">
+    <value>Rename to '{0}'</value>
+    <comment>Title for a rename code fix; {0} is the suggested new name.</comment>
+  </data>
 </root>

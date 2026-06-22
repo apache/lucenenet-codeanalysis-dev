@@ -439,4 +439,180 @@ under the License.
     <value>'{0}' is referenced by this StackTraceHelper.DoesStackTraceContainMethod call and should be marked with [MethodImpl(MethodImplOptions.NoInlining)] to prevent the JIT from inlining it out of the stack trace.</value>
   </data>
 
+  <!-- 1009: Public fields -->
+  <data name="LuceneDev1009_AnalyzerTitle" xml:space="preserve">
+    <value>Fields should not be public</value>
+  </data>
+  <data name="LuceneDev1009_AnalyzerDescription" xml:space="preserve">
+    <value>Public fields break encapsulation and cannot be changed to properties later without breaking binary compatibility. Use a public property instead.</value>
+  </data>
+  <data name="LuceneDev1009_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Field '{0}' should not be public; consider using a public property instead.</value>
+  </data>
+
+  <!-- 1010: Property with a setter but no getter -->
+  <data name="LuceneDev1010_AnalyzerTitle" xml:space="preserve">
+    <value>Properties should not have a setter without a getter</value>
+  </data>
+  <data name="LuceneDev1010_AnalyzerDescription" xml:space="preserve">
+    <value>A property with a setter but no getter is write-only, which is unintuitive. Provide a getter, or expose a SetXxx method instead.</value>
+  </data>
+  <data name="LuceneDev1010_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Property '{0}' has a setter but no getter; provide a getter or use a SetXxx method instead.</value>
+  </data>
+
+  <!-- 1011: Property returns an array -->
+  <data name="LuceneDev1011_AnalyzerTitle" xml:space="preserve">
+    <value>Properties should not return arrays</value>
+  </data>
+  <data name="LuceneDev1011_AnalyzerDescription" xml:space="preserve">
+    <value>A property that returns an array allows callers to mutate the array contents, and may allocate a new array on each access. Return a read-only collection, or expose a method that makes the allocation explicit.</value>
+  </data>
+  <data name="LuceneDev1011_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Property '{0}' returns an array; consider returning a read-only collection or exposing a method instead.</value>
+  </data>
+
+  <!-- 1012: Method returns a writable array -->
+  <data name="LuceneDev1012_AnalyzerTitle" xml:space="preserve">
+    <value>Methods should not return writable arrays</value>
+  </data>
+  <data name="LuceneDev1012_AnalyzerDescription" xml:space="preserve">
+    <value>A method that returns a writable array allows callers to mutate internal state. Return a read-only collection, or document and intentionally return a copy.</value>
+  </data>
+  <data name="LuceneDev1012_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Method '{0}' returns a writable array; consider returning a read-only collection instead.</value>
+  </data>
+
+  <!-- 1013: Nullable enum member -->
+  <data name="LuceneDev1013_AnalyzerTitle" xml:space="preserve">
+    <value>Public members should not be nullable enums</value>
+  </data>
+  <data name="LuceneDev1013_AnalyzerDescription" xml:space="preserve">
+    <value>A nullable enum public member is usually an artifact of the Java port. Prefer a non-nullable enum with an explicit 'None'/default value, or reconsider the API design.</value>
+  </data>
+  <data name="LuceneDev1013_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Member '{0}' is a nullable enum; consider using a non-nullable enum with an explicit default value instead.</value>
+  </data>
+
+  <!-- 1014: Member accepts or returns IEnumerable (disabled by default; one-time port aid) -->
+  <data name="LuceneDev1014_AnalyzerTitle" xml:space="preserve">
+    <value>Members should not accept or return IEnumerable&lt;T&gt;</value>
+  </data>
+  <data name="LuceneDev1014_AnalyzerDescription" xml:space="preserve">
+    <value>This rule identifies members that were changed from ICollection, IList or ISet to IEnumerable&lt;T&gt; during the Java port, which may have changed the API contract. It is disabled by default and intended as a one-time review aid.</value>
+  </data>
+  <data name="LuceneDev1014_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Member '{0}' accepts or returns IEnumerable&lt;T&gt;; verify whether ICollection, IList or ISet is more appropriate.</value>
+  </data>
+
+  <!-- 1015: Member accepts or returns List&lt;T&gt; or Dictionary&lt;K,V&gt; -->
+  <data name="LuceneDev1015_AnalyzerTitle" xml:space="preserve">
+    <value>Members should not accept or return List&lt;T&gt; or Dictionary&lt;K, V&gt;</value>
+  </data>
+  <data name="LuceneDev1015_AnalyzerDescription" xml:space="preserve">
+    <value>Exposing concrete collection types like List&lt;T&gt; or Dictionary&lt;K, V&gt; in public APIs leaks implementation details. Prefer interfaces such as IList&lt;T&gt;, IReadOnlyList&lt;T&gt;, IDictionary&lt;K, V&gt; or IReadOnlyDictionary&lt;K, V&gt;.</value>
+  </data>
+  <data name="LuceneDev1015_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Member '{0}' accepts or returns '{1}'; prefer an interface type such as IList&lt;T&gt; or IDictionary&lt;K, V&gt; instead.</value>
+  </data>
+
+  <!-- 7000: Private field name -->
+  <data name="LuceneDev7000_AnalyzerTitle" xml:space="preserve">
+    <value>Private fields should follow the naming convention</value>
+  </data>
+  <data name="LuceneDev7000_AnalyzerDescription" xml:space="preserve">
+    <value>Private fields should be named using camelCase, optionally prefixed with an underscore (e.g. 'field' or '_field'), or be UPPER_CASE for constants.</value>
+  </data>
+  <data name="LuceneDev7000_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Private field '{0}' does not follow the naming convention; use camelCase, optionally with a leading underscore.</value>
+  </data>
+
+  <!-- 7001: Protected field name -->
+  <data name="LuceneDev7001_AnalyzerTitle" xml:space="preserve">
+    <value>Protected fields should follow the naming convention</value>
+  </data>
+  <data name="LuceneDev7001_AnalyzerDescription" xml:space="preserve">
+    <value>Protected (and protected internal) fields should be named using the 'm_' prefix followed by camelCase (e.g. 'm_field'), or be UPPER_CASE for constants.</value>
+  </data>
+  <data name="LuceneDev7001_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Protected field '{0}' does not follow the naming convention; use the 'm_' prefix followed by camelCase.</value>
+  </data>
+
+  <!-- 7002: Method parameter name -->
+  <data name="LuceneDev7002_AnalyzerTitle" xml:space="preserve">
+    <value>Method parameters should follow the naming convention</value>
+  </data>
+  <data name="LuceneDev7002_AnalyzerDescription" xml:space="preserve">
+    <value>Method parameters should be named using camelCase, starting with a lowercase letter.</value>
+  </data>
+  <data name="LuceneDev7002_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Method parameter '{0}' does not follow the naming convention; use camelCase.</value>
+  </data>
+
+  <!-- 7003: Interface name -->
+  <data name="LuceneDev7003_AnalyzerTitle" xml:space="preserve">
+    <value>Interface names should begin with 'I'</value>
+  </data>
+  <data name="LuceneDev7003_AnalyzerDescription" xml:space="preserve">
+    <value>Interface names should begin with a capital 'I' followed by PascalCase (e.g. 'IComparer').</value>
+  </data>
+  <data name="LuceneDev7003_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Interface '{0}' does not follow the naming convention; interface names should begin with 'I'.</value>
+  </data>
+
+  <!-- 7004: Class name -->
+  <data name="LuceneDev7004_AnalyzerTitle" xml:space="preserve">
+    <value>Class names should follow the naming convention</value>
+  </data>
+  <data name="LuceneDev7004_AnalyzerDescription" xml:space="preserve">
+    <value>Class names should use PascalCase, starting with an uppercase letter.</value>
+  </data>
+  <data name="LuceneDev7004_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Class '{0}' does not follow the naming convention; use PascalCase.</value>
+  </data>
+
+  <!-- 7005: Member contains 'Comparator' -->
+  <data name="LuceneDev7005_AnalyzerTitle" xml:space="preserve">
+    <value>Public members should not contain the word 'Comparator'</value>
+  </data>
+  <data name="LuceneDev7005_AnalyzerDescription" xml:space="preserve">
+    <value>'Comparator' is a Java term. In .NET the equivalent is 'Comparer'. Rename the member to use 'Comparer'.</value>
+  </data>
+  <data name="LuceneDev7005_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Member '{0}' contains the word 'Comparator'; use the .NET term 'Comparer' instead.</value>
+  </data>
+
+  <!-- 7006: Member named 'Size' -->
+  <data name="LuceneDev7006_AnalyzerTitle" xml:space="preserve">
+    <value>Public members should not be named 'Size'</value>
+  </data>
+  <data name="LuceneDev7006_AnalyzerDescription" xml:space="preserve">
+    <value>'Size' is a Java naming convention. In .NET, prefer 'Count' for the number of elements or 'Length' for arrays and strings.</value>
+  </data>
+  <data name="LuceneDev7006_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Member '{0}' is named 'Size'; use 'Count' or 'Length' instead, per .NET conventions.</value>
+  </data>
+
+  <!-- 7007: Member contains non-.NET numeric term -->
+  <data name="LuceneDev7007_AnalyzerTitle" xml:space="preserve">
+    <value>Public members should not contain non-.NET numeric type names</value>
+  </data>
+  <data name="LuceneDev7007_AnalyzerDescription" xml:space="preserve">
+    <value>Member names should use .NET numeric type names. Java-style numeric terms such as 'Int', 'Long', 'Short' and 'Float' should be replaced with 'Int32', 'Int64', 'Int16' and 'Single' respectively.</value>
+  </data>
+  <data name="LuceneDev7007_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Member '{0}' contains a non-.NET numeric term; use .NET numeric type names such as Int32, Int64, Int16 or Single.</value>
+  </data>
+
+  <!-- 7008: Type contains non-.NET numeric term -->
+  <data name="LuceneDev7008_AnalyzerTitle" xml:space="preserve">
+    <value>Type names should not contain non-.NET numeric type names</value>
+  </data>
+  <data name="LuceneDev7008_AnalyzerDescription" xml:space="preserve">
+    <value>Type names should use .NET numeric type names. Java-style numeric terms such as 'Int', 'Long', 'Short' and 'Float' should be replaced with 'Int32', 'Int64', 'Int16' and 'Single' respectively.</value>
+  </data>
+  <data name="LuceneDev7008_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Type '{0}' contains a non-.NET numeric term; use .NET numeric type names such as Int32, Int64, Int16 or Single.</value>
+  </data>
+
 </root>
