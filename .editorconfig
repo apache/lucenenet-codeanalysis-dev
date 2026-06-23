@@ -132,7 +132,7 @@ trim_trailing_whitespace = false
 end_of_line = crlf
 
 # ========================================
-# Powershell
+# PowerShell
 # ========================================
 [*.ps1]
 indent_style = space
