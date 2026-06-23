@@ -205,7 +205,7 @@ git checkout <release-branch>
 ## Run the Apache Release Audit Tool
 
 > [!IMPORTANT]
-> This command depends on Powershell and Java.
+> This command depends on PowerShell and Java.
 
 The Release Audit Tool will ensure that all source code files and most other non-generated text files contain a license header.
 

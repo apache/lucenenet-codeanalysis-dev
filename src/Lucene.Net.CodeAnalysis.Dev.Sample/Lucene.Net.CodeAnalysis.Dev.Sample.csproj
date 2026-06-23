@@ -67,7 +67,7 @@ under the License.
     <!-- Build the project that produces the NuGet package -->
     <MSBuild Projects="..\Lucene.Net.CodeAnalysis.Dev.Package\Lucene.Net.CodeAnalysis.Dev.Package.csproj" Targets="Restore;PrepareForBuild;Build" Properties="Configuration=$(Configuration)" />
 
-    <!-- Since we may be continually using the last build number (unless a commit occured),
+    <!-- Since we may be continually using the last build number (unless a commit occurred),
           we need to clear the project local NuGet cache. -->
     <ForceDeleteDirectory DirectoryPath="$(_RestorePackagesPath)" />
 
