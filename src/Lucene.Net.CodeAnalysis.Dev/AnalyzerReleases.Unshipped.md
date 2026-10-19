@@ -11,6 +11,8 @@ LuceneDev1014 | Design        | Disabled | Members should not accept or return I
 LuceneDev1015 | Design        | Warning  | Members should not accept or return List<T> or Dictionary<K, V>; prefer interface types
 LuceneDev3000 | Documentation | Warning  | Publicly visible XML doc comments should not use see/seealso cref to reference non-publicly-visible symbols (broken API doc links)
 LuceneDev4003 | Performance   | Warning  | Use nameof() instead of calling ToString() on an enum member known at compile time
+LuceneDev6006 | Usage         | Warning  | Use J2N collection types (List, HashSet, Dictionary, OrderedDictionary) instead of their BCL counterparts
+LuceneDev6007 | Usage         | Warning  | Use JCG.OrderedHashSet/OrderedDictionary instead of JCG.LinkedHashSet/LinkedDictionary
 LuceneDev6012 | Usage         | Warning  | StackTraceHelper className arguments should use nameof
 LuceneDev6013 | Usage         | Warning  | StackTraceHelper methodName arguments should use nameof
 LuceneDev6014 | Usage         | Error    | StackTraceHelper calls should reference a method declared on the named type
