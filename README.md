@@ -76,3 +76,39 @@ Before submitting a pull request to this repo, ensure that each analyzer you're 
 5. Has a working, sample violation in the `Lucene.Net.CodeAnalysis.Dev.Sample` project
 6. Has good unit test coverage in the `Lucene.Net.CodeAnalysis.Dev.Tests` project, using existing styles and practices per the other unit tests there 
 
+### Specifying Expected Diagnostics in Tests
+
+Expected diagnostic locations are specified using the [markup syntax](https://github.com/dotnet/roslyn/blob/main/src/RoslynSdk/Microsoft.CodeAnalysis.Testing/Microsoft.CodeAnalysis.Analyzer.Testing/TestFileMarkupParser.cs) of `Microsoft.CodeAnalysis.Testing` directly in the test code, rather than with line and column numbers. The markup is removed before the code is compiled, and the marked span must match the reported diagnostic's span exactly. Any diagnostic that is reported but not expected fails the test.
+
+To assert on the severity, message, or message arguments of a diagnostic, wrap its span in `{|#0:...|}` (numbering each location from 0 within a test) and reference the location from a `DiagnosticResult` with `.WithLocation(0)`:
+
+```csharp
+const string testCode =
+    """
+    public interface {|#0:Comparer|}
+    {
+        void DoWork();
+    }
+    """;
+
+var expected = new DiagnosticResult(Descriptors.LuceneDev7003_InterfaceName)
+    .WithSeverity(DiagnosticSeverity.Warning)
+    .WithArguments("Comparer")
+    .WithLocation(0);
+```
+
+Alternatively, wrap the span in `{|DiagnosticId:...|}` to expect a diagnostic with that ID without needing a `DiagnosticResult`, or `[|...|]` when the analyzer under test supports only a single diagnostic. These forms do not assert the severity or message, so they are best suited to tests that cover many locations or nested code; include at least one `DiagnosticResult` per rule that does. For example:
+
+```csharp
+const string testCode =
+    """
+    public class Sample
+    {
+        public int {|LuceneDev7007:ReadInt|}() => 0;
+        public long {|LuceneDev7007:ReadLong|}() => 0;
+    }
+    """;
+```
+
+For code fix tests, use markup in `TestCode` only; `FixedCode` should contain no markup, as no diagnostics are expected after the fix is applied.
+
