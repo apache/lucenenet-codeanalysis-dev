@@ -76,5 +76,21 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
                 Usage,
                 Info
             );
+
+        // 6006: BCL collection type used where a J2N collection type should be preferred
+        public static readonly DiagnosticDescriptor LuceneDev6006_PreferJ2NCollection =
+            Diagnostic(
+                "LuceneDev6006",
+                Usage,
+                Warning
+            );
+
+        // 6007: J2N Linked* collection type used where the J2N Ordered* collection type should be preferred
+        public static readonly DiagnosticDescriptor LuceneDev6007_PreferJ2NOrderedCollection =
+            Diagnostic(
+                "LuceneDev6007",
+                Usage,
+                Warning
+            );
     }
 }
