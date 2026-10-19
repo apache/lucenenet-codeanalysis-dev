@@ -34,14 +34,14 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev2xxx
             var testCode = @"
 public class Sample
 {
-    public string M(int i) => i.ToString();
+    public string M(int i) => i.{|#0:ToString|}();
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev2001_BclNumericToStringMissingFormatProvider)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2001_BclNumericToStringMissingFormatProvider.MessageFormat)
                 .WithArguments("ToString", "Int32")
-                .WithLocation("/0/Test0.cs", line: 4, column: 33);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2001_BclNumericToStringAnalyzer())
             {
@@ -57,14 +57,14 @@ public class Sample
             var testCode = @"
 public class Sample
 {
-    public string M(int i) => i.ToString(""D"");
+    public string M(int i) => i.{|#0:ToString|}(""D"");
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev2001_BclNumericToStringMissingFormatProvider)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2001_BclNumericToStringMissingFormatProvider.MessageFormat)
                 .WithArguments("ToString", "Int32")
-                .WithLocation("/0/Test0.cs", line: 4, column: 33);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2001_BclNumericToStringAnalyzer())
             {
@@ -82,14 +82,14 @@ using System;
 
 public class Sample
 {
-    public bool M(int i, Span<char> buffer) => i.TryFormat(buffer, out _);
+    public bool M(int i, Span<char> buffer) => i.{|#0:TryFormat|}(buffer, out _);
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev2001_BclNumericToStringMissingFormatProvider)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2001_BclNumericToStringMissingFormatProvider.MessageFormat)
                 .WithArguments("TryFormat", "Int32")
-                .WithLocation("/0/Test0.cs", line: 6, column: 50);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2001_BclNumericToStringAnalyzer())
             {

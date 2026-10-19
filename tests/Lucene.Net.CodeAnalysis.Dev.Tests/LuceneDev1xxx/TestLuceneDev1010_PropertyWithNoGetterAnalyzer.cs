@@ -35,14 +35,14 @@ public class TestLuceneDev1010_PropertyWithNoGetterAnalyzer
             public class MyClass
             {
                 private int _value;
-                public int Value { set => _value = value; }
+                public int {|#0:Value|} { set => _value = value; }
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev1010_PropertyWithNoGetter)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("Value")
-            .WithLocation(4, 16);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1010_PropertyWithNoGetterAnalyzer())
         {
@@ -79,14 +79,14 @@ public class TestLuceneDev1010_PropertyWithNoGetterAnalyzer
             public class MyClass
             {
                 private int _value;
-                public int this[int index] { set => _value = value; }
+                public int {|#0:this|}[int index] { set => _value = value; }
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev1010_PropertyWithNoGetter)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("this[]")
-            .WithLocation(4, 16);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1010_PropertyWithNoGetterAnalyzer())
         {

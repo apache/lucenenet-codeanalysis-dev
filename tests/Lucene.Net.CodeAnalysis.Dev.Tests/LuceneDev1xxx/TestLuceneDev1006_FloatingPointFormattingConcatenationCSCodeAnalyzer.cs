@@ -38,7 +38,7 @@ public class C
 
     public void M(int upto, int start)
     {
-        Message(""  level "" + levelBottom + "" to "" + maxLevel + "": "" + (1 + upto - start) + "" segments"");
+        Message(""  level "" + {|#0:levelBottom|} + "" to "" + {|#1:maxLevel|} + "": "" + (1 + upto - start) + "" segments"");
     }
 }
 ";
@@ -46,12 +46,12 @@ public class C
             var expectedLevelBottom = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1006_FloatingPointFormatting.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1006_FloatingPointFormatting.MessageFormat)
                 .WithArguments("levelBottom")
-                .WithLocation("/0/Test0.cs", line: 11, column: 30);
+                .WithLocation(0);
 
             var expectedMaxLevel = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1006_FloatingPointFormatting.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1006_FloatingPointFormatting.MessageFormat)
                 .WithArguments("maxLevel")
-                .WithLocation("/0/Test0.cs", line: 11, column: 53);
+                .WithLocation(1);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1006_FloatingPointFormattingConcatenationCSCodeAnalyzer())
             {

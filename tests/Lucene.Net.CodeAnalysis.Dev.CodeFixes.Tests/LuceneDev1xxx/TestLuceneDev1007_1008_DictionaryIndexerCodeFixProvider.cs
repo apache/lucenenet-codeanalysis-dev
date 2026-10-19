@@ -37,7 +37,7 @@ public class Sample
 {
     public string M(IDictionary<string, string> dict, string key)
     {
-        return dict[key];
+        return {|#0:dict[key]|};
     }
 }";
 
@@ -56,7 +56,7 @@ public class Sample
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev1008_GenericDictionaryIndexerReferenceType.MessageFormat)
                 .WithArguments("dict[key]")
-                .WithLocation("/0/Test0.cs", line: 8, column: 16);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev1007_1008_DictionaryIndexerAnalyzer(),
@@ -80,7 +80,7 @@ public class Sample
 {
     public int M(IDictionary<string, int> dict, string key)
     {
-        return dict[key];
+        return {|#0:dict[key]|};
     }
 }";
 
@@ -99,7 +99,7 @@ public class Sample
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev1007_GenericDictionaryIndexerValueType.MessageFormat)
                 .WithArguments("dict[key]")
-                .WithLocation("/0/Test0.cs", line: 8, column: 16);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev1007_1008_DictionaryIndexerAnalyzer(),
@@ -126,7 +126,7 @@ public class Sample
         int value = 42;
         if (value > 0)
         {
-            return dict[key];
+            return {|#0:dict[key]|};
         }
         return value;
     }
@@ -152,7 +152,7 @@ public class Sample
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev1007_GenericDictionaryIndexerValueType.MessageFormat)
                 .WithArguments("dict[key]")
-                .WithLocation("/0/Test0.cs", line: 11, column: 20);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev1007_1008_DictionaryIndexerAnalyzer(),

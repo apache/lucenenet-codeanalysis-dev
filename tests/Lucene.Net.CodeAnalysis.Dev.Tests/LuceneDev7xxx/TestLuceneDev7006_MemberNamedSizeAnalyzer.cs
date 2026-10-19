@@ -52,14 +52,14 @@ public class TestLuceneDev7006_MemberNamedSizeAnalyzer
             """
             public class MyClass
             {
-                public int Size { get; set; }
+                public int {|#0:Size|} { get; set; }
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev7006_MemberNamedSize)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("Size")
-            .WithLocation(3, 16);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7006_MemberNamedSizeAnalyzer())
         {
@@ -76,14 +76,14 @@ public class TestLuceneDev7006_MemberNamedSizeAnalyzer
             """
             public class MyClass
             {
-                public int Size() => 0;
+                public int {|#0:Size|}() => 0;
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev7006_MemberNamedSize)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("Size")
-            .WithLocation(3, 16);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7006_MemberNamedSizeAnalyzer())
         {

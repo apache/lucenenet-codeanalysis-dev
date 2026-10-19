@@ -36,14 +36,14 @@ using System;
 
 public class Sample
 {
-    public int M() => Convert.ToInt32(""1"");
+    public int M() => Convert.{|#0:ToInt32|}(""1"");
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev2002_ConvertNumericMissingFormatProvider)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2002_ConvertNumericMissingFormatProvider.MessageFormat)
                 .WithArguments("ToInt32")
-                .WithLocation("/0/Test0.cs", line: 6, column: 31);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2002_ConvertNumericAnalyzer())
             {
@@ -61,14 +61,14 @@ using System;
 
 public class Sample
 {
-    public string M(int i) => Convert.ToString(i);
+    public string M(int i) => Convert.{|#0:ToString|}(i);
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev2002_ConvertNumericMissingFormatProvider)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2002_ConvertNumericMissingFormatProvider.MessageFormat)
                 .WithArguments("ToString")
-                .WithLocation("/0/Test0.cs", line: 6, column: 39);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2002_ConvertNumericAnalyzer())
             {

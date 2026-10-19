@@ -35,7 +35,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev2xxx
             var testCode = @"
 public class Sample
 {
-    public int M() => int.Parse(""1"");
+    public int M() => int.{|#0:Parse|}(""1"");
 }";
 
             var fixedCode = @"using System.Globalization;
@@ -49,7 +49,7 @@ public class Sample
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2000_BclNumericParseMissingFormatProvider.MessageFormat)
                 .WithArguments("Parse", "Int32")
-                .WithLocation("/0/Test0.cs", line: 4, column: 27);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev2000_BclNumericParseAnalyzer(),
@@ -71,7 +71,7 @@ public class Sample
             var testCode = @"
 public class Sample
 {
-    public string M(int i) => i.ToString();
+    public string M(int i) => i.{|#0:ToString|}();
 }";
 
             var fixedCode = @"using System.Globalization;
@@ -85,7 +85,7 @@ public class Sample
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2001_BclNumericToStringMissingFormatProvider.MessageFormat)
                 .WithArguments("ToString", "Int32")
-                .WithLocation("/0/Test0.cs", line: 4, column: 33);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev2001_BclNumericToStringAnalyzer(),
@@ -107,14 +107,14 @@ public class Sample
             // Repo policy is `*.cs eol=crlf`. The codefix must emit an inserted `using`
             // directive with the same line ending as the rest of the document, otherwise
             // CI (which checks out CRLF) and dev machines (which may not) disagree.
-            var testCode = "\r\npublic class Sample\r\n{\r\n    public int M() => int.Parse(\"1\");\r\n}";
+            var testCode = "\r\npublic class Sample\r\n{\r\n    public int M() => int.{|#0:Parse|}(\"1\");\r\n}";
             var fixedCode = "using System.Globalization;\r\n\r\npublic class Sample\r\n{\r\n    public int M() => int.Parse(\"1\", CultureInfo.InvariantCulture);\r\n}";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev2000_BclNumericParseMissingFormatProvider)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2000_BclNumericParseMissingFormatProvider.MessageFormat)
                 .WithArguments("Parse", "Int32")
-                .WithLocation("/0/Test0.cs", line: 4, column: 27);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev2000_BclNumericParseAnalyzer(),
@@ -138,7 +138,7 @@ public class Sample
             var testCode = @"
 public class Sample
 {
-    public bool M() => double.TryParse(""1.5"", out _);
+    public bool M() => double.{|#0:TryParse|}(""1.5"", out _);
 }";
 
             var fixedCode = @"using System.Globalization;
@@ -152,7 +152,7 @@ public class Sample
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2000_BclNumericParseMissingFormatProvider.MessageFormat)
                 .WithArguments("TryParse", "Double")
-                .WithLocation("/0/Test0.cs", line: 4, column: 31);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev2000_BclNumericParseAnalyzer(),

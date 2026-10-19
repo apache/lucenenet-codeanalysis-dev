@@ -52,7 +52,7 @@ public class MyClass
 
     public void MyMethod()
     {
-        string result = float1.ToString(CultureInfo.InvariantCulture);
+        string result = {|#0:float1.ToString|}(CultureInfo.InvariantCulture);
     }
 }";
 
@@ -88,7 +88,7 @@ public class MyClass
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev1001_FloatingPointFormatting.MessageFormat)
                 .WithArguments("float1.ToString")
-                .WithLocation("/0/Test0.cs", line: 25, column: 25);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev1001_FloatingPointFormattingCSCodeAnalyzer(),
@@ -129,7 +129,7 @@ public class MyClass
 
     public void MyMethod()
     {
-        string result = double1.ToString(CultureInfo.InvariantCulture);
+        string result = {|#0:double1.ToString|}(CultureInfo.InvariantCulture);
     }
 }";
 
@@ -165,7 +165,7 @@ public class MyClass
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev1001_FloatingPointFormatting.MessageFormat)
                 .WithArguments("double1.ToString")
-                .WithLocation("/0/Test0.cs", line: 25, column: 25);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev1001_FloatingPointFormattingCSCodeAnalyzer(),

@@ -40,14 +40,14 @@ public class TestLuceneDev1013_NullableEnumAnalyzer
             {{EnumDef}}
             public class MyClass
             {
-                public Mode? Mode { get; set; }
+                public Mode? {|#0:Mode|} { get; set; }
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev1013_NullableEnum)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("Mode")
-            .WithLocation(4, 18);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1013_NullableEnumAnalyzer())
         {
@@ -65,14 +65,14 @@ public class TestLuceneDev1013_NullableEnumAnalyzer
             {{EnumDef}}
             public class MyClass
             {
-                public void Configure(Mode? mode) { }
+                public void Configure(Mode? {|#0:mode|}) { }
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev1013_NullableEnum)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("mode")
-            .WithLocation(4, 33);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1013_NullableEnumAnalyzer())
         {

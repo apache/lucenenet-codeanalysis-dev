@@ -54,14 +54,14 @@ public class TestLuceneDev7001_ProtectedFieldNameAnalyzer
             """
             public class MyClass
             {
-                protected int count;
+                protected int {|#0:count|};
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev7001_ProtectedFieldName)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("count")
-            .WithLocation(3, 19);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7001_ProtectedFieldNameAnalyzer())
         {
@@ -78,14 +78,14 @@ public class TestLuceneDev7001_ProtectedFieldNameAnalyzer
             """
             public class MyClass
             {
-                protected internal int count;
+                protected internal int {|#0:count|};
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev7001_ProtectedFieldName)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("count")
-            .WithLocation(3, 28);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7001_ProtectedFieldNameAnalyzer())
         {

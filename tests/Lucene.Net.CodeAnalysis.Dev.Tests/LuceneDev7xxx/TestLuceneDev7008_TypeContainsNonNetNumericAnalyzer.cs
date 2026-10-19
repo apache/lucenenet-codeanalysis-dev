@@ -49,7 +49,7 @@ public class TestLuceneDev7008_TypeContainsNonNetNumericAnalyzer
     {
         const string testCode =
             """
-            public class LongReader
+            public class {|#0:LongReader|}
             {
             }
             """;
@@ -57,7 +57,7 @@ public class TestLuceneDev7008_TypeContainsNonNetNumericAnalyzer
         var expected = new DiagnosticResult(Descriptors.LuceneDev7008_TypeContainsNonNetNumeric)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("LongReader")
-            .WithLocation(1, 14);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7008_TypeContainsNonNetNumericAnalyzer())
         {

@@ -44,7 +44,7 @@ public class C
 
     public string Message()
     {
-        return ""  level "" + levelBottom;
+        return ""  level "" + {|#0:levelBottom|};
     }
 }
 ";
@@ -73,7 +73,7 @@ public class C
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev1006_FloatingPointFormatting.MessageFormat)
                 .WithArguments("levelBottom")
-                .WithLocation("/0/Test0.cs", line: 16, column: 29);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev1006_FloatingPointFormattingConcatenationCSCodeAnalyzer(),
@@ -105,7 +105,7 @@ public class C
 
     public string Message()
     {
-        return ""  level "" + maxLevel;
+        return ""  level "" + {|#0:maxLevel|};
     }
 }
 ";
@@ -134,7 +134,7 @@ public class C
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev1006_FloatingPointFormatting.MessageFormat)
                 .WithArguments("maxLevel")
-                .WithLocation("/0/Test0.cs", line: 16, column: 29);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev1006_FloatingPointFormattingConcatenationCSCodeAnalyzer(),

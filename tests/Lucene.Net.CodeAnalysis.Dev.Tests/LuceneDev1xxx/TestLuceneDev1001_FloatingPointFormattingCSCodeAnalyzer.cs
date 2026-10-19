@@ -56,7 +56,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
 
             public void MyMethod()
             {
-                string result = float1.ToString(CultureInfo.InvariantCulture);
+                string result = {|#0:float1.ToString|}(CultureInfo.InvariantCulture);
             }
        }
        ";
@@ -64,7 +64,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1001_FloatingPointFormatting.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1001_FloatingPointFormatting.MessageFormat)
                 .WithArguments("float1.ToString")
-                .WithLocation("/0/Test0.cs", line: 15, column: 33);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1001_FloatingPointFormattingCSCodeAnalyzer())
             {

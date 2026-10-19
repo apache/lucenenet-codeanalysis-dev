@@ -34,14 +34,14 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev2xxx
             var testCode = @"
 public class Sample
 {
-    public string M(int i) => ""x="" + i;
+    public string M(int i) => ""x="" + {|#0:i|};
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev2005_NumericStringConcatenation)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2005_NumericStringConcatenation.MessageFormat)
                 .WithArguments("Int32")
-                .WithLocation("/0/Test0.cs", line: 4, column: 38);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2005_NumericConcatenationAnalyzer())
             {
@@ -57,14 +57,14 @@ public class Sample
             var testCode = @"
 public class Sample
 {
-    public string M(int a, int b) => """" + (a + b);
+    public string M(int a, int b) => """" + {|#0:(a + b)|};
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev2005_NumericStringConcatenation)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2005_NumericStringConcatenation.MessageFormat)
                 .WithArguments("Int32")
-                .WithLocation("/0/Test0.cs", line: 4, column: 43);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2005_NumericConcatenationAnalyzer())
             {

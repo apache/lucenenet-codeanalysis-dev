@@ -41,13 +41,13 @@ using System.Runtime.CompilerServices;
 
 public interface ISample
 {
-    [MethodImpl(MethodImplOptions.NoInlining)]
+    [{|#0:MethodImpl(MethodImplOptions.NoInlining)|}]
     void DoWork();
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev4000_NoInliningHasNoEffect)
                 .WithSeverity(DiagnosticSeverity.Warning)
-                .WithSpan(6, 6, 6, 46)
+                .WithLocation(0)
                 .WithArguments("DoWork");
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev4000_4001_NoInliningOnNoOpAnalyzer())
@@ -67,13 +67,13 @@ using System.Runtime.CompilerServices;
 
 public abstract class Sample
 {
-    [MethodImpl(MethodImplOptions.NoInlining)]
+    [{|#0:MethodImpl(MethodImplOptions.NoInlining)|}]
     public abstract void DoWork();
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev4000_NoInliningHasNoEffect)
                 .WithSeverity(DiagnosticSeverity.Warning)
-                .WithSpan(6, 6, 6, 46)
+                .WithLocation(0)
                 .WithArguments("DoWork");
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev4000_4001_NoInliningOnNoOpAnalyzer())
@@ -120,7 +120,7 @@ using System.Runtime.CompilerServices;
 
 public class Sample
 {
-    [MethodImpl(MethodImplOptions.NoInlining)]
+    [{|#0:MethodImpl(MethodImplOptions.NoInlining)|}]
     public void DoWork()
     {
     }
@@ -128,7 +128,7 @@ public class Sample
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev4001_NoInliningOnEmptyMethod)
                 .WithSeverity(DiagnosticSeverity.Warning)
-                .WithSpan(6, 6, 6, 46)
+                .WithLocation(0)
                 .WithArguments("DoWork");
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev4000_4001_NoInliningOnNoOpAnalyzer())

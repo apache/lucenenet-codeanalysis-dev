@@ -35,7 +35,7 @@ public class TestLuceneDev1012_MethodReturnsWritableArrayAnalyzer
             public class MyClass
             {
                 private readonly int[] m_values = new int[1];
-                public int[] GetValues()
+                public int[] {|#0:GetValues|}()
                 {
                     return m_values;
                 }
@@ -45,7 +45,7 @@ public class TestLuceneDev1012_MethodReturnsWritableArrayAnalyzer
         var expected = new DiagnosticResult(Descriptors.LuceneDev1012_MethodReturnsWritableArray)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("GetValues")
-            .WithLocation(4, 18);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1012_MethodReturnsWritableArrayAnalyzer())
         {
@@ -63,14 +63,14 @@ public class TestLuceneDev1012_MethodReturnsWritableArrayAnalyzer
             public class MyClass
             {
                 private readonly int[] m_values = new int[1];
-                public int[] GetValues() => m_values;
+                public int[] {|#0:GetValues|}() => m_values;
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev1012_MethodReturnsWritableArray)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("GetValues")
-            .WithLocation(4, 18);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1012_MethodReturnsWritableArrayAnalyzer())
         {
@@ -127,14 +127,14 @@ public class TestLuceneDev1012_MethodReturnsWritableArrayAnalyzer
             public class MyClass
             {
                 private readonly int[]? m_values = null;
-                public int[]? GetValues() => m_values;
+                public int[]? {|#0:GetValues|}() => m_values;
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev1012_MethodReturnsWritableArray)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("GetValues")
-            .WithLocation(5, 19);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1012_MethodReturnsWritableArrayAnalyzer())
         {

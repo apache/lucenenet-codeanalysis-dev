@@ -35,7 +35,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev2xxx
             var testCode = @"
 public class Sample
 {
-    public string M(int i) => string.Format(""{0}"", i);
+    public string M(int i) => string.{|#0:Format|}(""{0}"", i);
 }";
 
             var fixedCode = @"using System.Globalization;
@@ -48,7 +48,7 @@ public class Sample
             var expected = new DiagnosticResult(Descriptors.LuceneDev2003_StringFormatNumericMissingFormatProvider)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2003_StringFormatNumericMissingFormatProvider.MessageFormat)
-                .WithLocation("/0/Test0.cs", line: 4, column: 38);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev2003_StringFormatNumericAnalyzer(),

@@ -34,7 +34,7 @@ public class TestLuceneDev7001_ProtectedFieldNameCodeFixProvider
             """
             public class MyClass
             {
-                protected int count;
+                protected int {|#0:count|};
 
                 protected int Get() => count;
             }
@@ -53,7 +53,7 @@ public class TestLuceneDev7001_ProtectedFieldNameCodeFixProvider
         var expected = new DiagnosticResult(Descriptors.LuceneDev7001_ProtectedFieldName)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("count")
-            .WithLocation(3, 19);
+            .WithLocation(0);
 
         var test = new InjectableCodeFixTest(
             () => new LuceneDev7001_ProtectedFieldNameAnalyzer(),

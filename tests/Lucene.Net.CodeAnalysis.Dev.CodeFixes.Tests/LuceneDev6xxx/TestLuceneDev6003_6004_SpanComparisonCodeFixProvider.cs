@@ -40,7 +40,7 @@ public class Sample
     public void M()
     {
         ReadOnlySpan<char> span = ""Hello"".AsSpan();
-        int index = span.IndexOf(""test"", StringComparison.Ordinal);
+        int index = span.IndexOf(""test"", {|#0:StringComparison.Ordinal|});
     }
 }";
 
@@ -58,7 +58,7 @@ public class Sample
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6003_RedundantOrdinal)
                 .WithSeverity(DiagnosticSeverity.Warning)
-                .WithSpan(9, 42, 9, 66)
+                .WithLocation(0)
                 .WithArguments("IndexOf");
 
             var test = new InjectableCodeFixTest(
@@ -84,7 +84,7 @@ public class Sample
     public void M()
     {
         ReadOnlySpan<char> span = ""Hello"".AsSpan();
-        int index = span.IndexOf(""test"", StringComparison.CurrentCulture);
+        int index = span.IndexOf(""test"", {|#0:StringComparison.CurrentCulture|});
     }
 }";
 
@@ -102,7 +102,7 @@ public class Sample
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6004_InvalidComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
-                .WithSpan(9, 42, 9, 73)
+                .WithLocation(0)
                 .WithArguments("IndexOf", "CurrentCulture");
 
             var test = new InjectableCodeFixTest(
@@ -132,7 +132,7 @@ public class Sample
     public void M()
     {
         ReadOnlySpan<char> span = ""Hello"".AsSpan();
-        int index = span.IndexOf(""test"", StringComparison.CurrentCultureIgnoreCase);
+        int index = span.IndexOf(""test"", {|#0:StringComparison.CurrentCultureIgnoreCase|});
     }
 }";
 
@@ -150,7 +150,7 @@ public class Sample
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6004_InvalidComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
-                .WithSpan(9, 42, 9, 83)
+                .WithLocation(0)
                 .WithArguments("IndexOf", "CurrentCultureIgnoreCase");
 
             var test = new InjectableCodeFixTest(
@@ -180,7 +180,7 @@ public class Sample
     public void M()
     {
         ReadOnlySpan<char> span = ""Hi World"".AsSpan();
-        int index = span.IndexOf(""x"", StringComparison.Ordinal);
+        int index = span.IndexOf(""x"", {|#0:StringComparison.Ordinal|});
     }
 }";
 
@@ -198,7 +198,7 @@ public class Sample
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6003_RedundantOrdinal)
                 .WithSeverity(DiagnosticSeverity.Warning)
-                .WithSpan(9, 39, 9, 63)
+                .WithLocation(0)
                 .WithArguments("IndexOf");
 
             var test = new InjectableCodeFixTest(

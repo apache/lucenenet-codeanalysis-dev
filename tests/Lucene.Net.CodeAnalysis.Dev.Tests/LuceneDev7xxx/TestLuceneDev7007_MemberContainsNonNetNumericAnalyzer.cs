@@ -49,24 +49,24 @@ public class TestLuceneDev7007_MemberContainsNonNetNumericAnalyzer
     }
 
     [Test]
-    [TestCase("ReadLong", 16)]
-    [TestCase("ReadInt", 16)]
-    [TestCase("ReadFloat", 16)]
-    [TestCase("ReadShort", 16)]
-    public async Task NonNetNumericMethodName_Diagnostic(string methodName, int column)
+    [TestCase("ReadLong")]
+    [TestCase("ReadInt")]
+    [TestCase("ReadFloat")]
+    [TestCase("ReadShort")]
+    public async Task NonNetNumericMethodName_Diagnostic(string methodName)
     {
         string testCode =
             $$"""
             public class MyClass
             {
-                public int {{methodName}}() => 0;
+                public int {|#0:{{methodName}}|}() => 0;
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev7007_MemberContainsNonNetNumeric)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments(methodName)
-            .WithLocation(3, column);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7007_MemberContainsNonNetNumericAnalyzer())
         {

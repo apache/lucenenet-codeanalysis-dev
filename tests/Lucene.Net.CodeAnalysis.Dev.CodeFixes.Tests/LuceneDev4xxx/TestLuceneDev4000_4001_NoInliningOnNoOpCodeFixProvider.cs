@@ -42,7 +42,7 @@ using System.Runtime.CompilerServices;
 
 public interface ISample
 {
-    [MethodImpl(MethodImplOptions.NoInlining)]
+    [{|#0:MethodImpl(MethodImplOptions.NoInlining)|}]
     void DoWork();
 }";
 
@@ -56,7 +56,7 @@ public interface ISample
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev4000_NoInliningHasNoEffect)
                 .WithSeverity(DiagnosticSeverity.Warning)
-                .WithSpan(6, 6, 6, 46)
+                .WithLocation(0)
                 .WithArguments("DoWork");
 
             var test = new InjectableCodeFixTest(
@@ -83,7 +83,7 @@ using System.Runtime.CompilerServices;
 
 public class Sample
 {
-    [MethodImpl(MethodImplOptions.NoInlining)]
+    [{|#0:MethodImpl(MethodImplOptions.NoInlining)|}]
     public void DoWork()
     {
     }
@@ -101,7 +101,7 @@ public class Sample
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev4001_NoInliningOnEmptyMethod)
                 .WithSeverity(DiagnosticSeverity.Warning)
-                .WithSpan(6, 6, 6, 46)
+                .WithLocation(0)
                 .WithArguments("DoWork");
 
             var test = new InjectableCodeFixTest(
@@ -130,7 +130,7 @@ using System.Runtime.CompilerServices;
 public class Sample
 {
     // Important comment about the method.
-    [MethodImpl(MethodImplOptions.NoInlining)]
+    [{|#0:MethodImpl(MethodImplOptions.NoInlining)|}]
     public void DoWork()
     {
     }
@@ -149,7 +149,7 @@ public class Sample
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev4001_NoInliningOnEmptyMethod)
                 .WithSeverity(DiagnosticSeverity.Warning)
-                .WithSpan(7, 6, 7, 46)
+                .WithLocation(0)
                 .WithArguments("DoWork");
 
             var test = new InjectableCodeFixTest(
@@ -185,7 +185,7 @@ public class BarAttribute : Attribute { }
 
 public class Sample
 {
-    [Foo, MethodImpl(MethodImplOptions.NoInlining), Bar]
+    [Foo, {|#0:MethodImpl(MethodImplOptions.NoInlining)|}, Bar]
     public void DoWork()
     {
     }
@@ -211,7 +211,7 @@ public class Sample
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev4001_NoInliningOnEmptyMethod)
                 .WithSeverity(DiagnosticSeverity.Warning)
-                .WithSpan(13, 11, 13, 51)
+                .WithLocation(0)
                 .WithArguments("DoWork");
 
             var test = new InjectableCodeFixTest(
@@ -243,7 +243,7 @@ public class BarAttribute : Attribute { }
 public class Sample
 {
     [Foo]
-    [MethodImpl(MethodImplOptions.NoInlining)]
+    [{|#0:MethodImpl(MethodImplOptions.NoInlining)|}]
     [Bar]
     public void DoWork()
     {
@@ -271,7 +271,7 @@ public class Sample
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev4001_NoInliningOnEmptyMethod)
                 .WithSeverity(DiagnosticSeverity.Warning)
-                .WithSpan(14, 6, 14, 46)
+                .WithLocation(0)
                 .WithArguments("DoWork");
 
             var test = new InjectableCodeFixTest(

@@ -37,14 +37,14 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev2xxx
             var testCode = @"
 public class Sample
 {
-    public string M() => J2N.Numerics.Int32.ToString(42);
+    public string M() => J2N.Numerics.Int32.{|#0:ToString|}(42);
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev2004_J2NNumericMissingFormatProvider)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2004_J2NNumericMissingFormatProvider.MessageFormat)
                 .WithArguments("ToString", "Int32")
-                .WithLocation("/0/Test0.cs", line: 4, column: 45);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2004_J2NNumericMissingFormatProviderAnalyzer())
             {

@@ -60,7 +60,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             }
             protected internal bool LessThan(float termA, float termB)
             {
-                return termA < termB;
+                return {|#0:termA < termB|};
             }
        }
        ";
@@ -68,7 +68,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1000_FloatingPointEquality.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1000_FloatingPointEquality.MessageFormat)
                 .WithArguments("termA < termB")
-                .WithLocation("/0/Test0.cs", line: 19, column: 24);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer())
             {
@@ -100,7 +100,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             }
             protected internal bool LessThan(float termA, float termB)
             {
-                return termA == termB;
+                return {|#0:termA == termB|};
             }
        }
        ";
@@ -108,7 +108,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1000_FloatingPointEquality.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1000_FloatingPointEquality.MessageFormat)
                 .WithArguments("termA == termB")
-                .WithLocation("/0/Test0.cs", line: 19, column: 24);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer())
             {
@@ -140,7 +140,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             }
             protected internal bool LessThan(float termA, float termB)
             {
-                return termA > termB;
+                return {|#0:termA > termB|};
             }
        }
        ";
@@ -148,7 +148,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1000_FloatingPointEquality.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1000_FloatingPointEquality.MessageFormat)
                 .WithArguments("termA > termB")
-                .WithLocation("/0/Test0.cs", line: 19, column: 24);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer())
             {
@@ -180,7 +180,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             }
             protected internal bool LessThan(float termA, float termB)
             {
-                return termA <= termB;
+                return {|#0:termA <= termB|};
             }
        }
        ";
@@ -188,7 +188,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1000_FloatingPointEquality.Id)
                  .WithMessageFormat(Descriptors.LuceneDev1000_FloatingPointEquality.MessageFormat)
                  .WithArguments("termA <= termB")
-                 .WithLocation("/0/Test0.cs", line: 19, column: 24);
+                 .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer())
             {
@@ -220,7 +220,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             }
             protected internal bool LessThan(float termA, float termB)
             {
-                return termA >= termB;
+                return {|#0:termA >= termB|};
             }
        }
        ";
@@ -228,7 +228,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1000_FloatingPointEquality.Id)
                  .WithMessageFormat(Descriptors.LuceneDev1000_FloatingPointEquality.MessageFormat)
                  .WithArguments("termA >= termB")
-                 .WithLocation("/0/Test0.cs", line: 19, column: 24);
+                 .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer())
             {
@@ -257,7 +257,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
 
             public void MyMethod()
             {
-                var x = myFloat1 == myFloat2;
+                var x = {|#0:myFloat1 == myFloat2|};
             }
        }
        ";
@@ -265,7 +265,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1000_FloatingPointEquality.Id)
                  .WithMessageFormat(Descriptors.LuceneDev1000_FloatingPointEquality.MessageFormat)
                  .WithArguments("myFloat1 == myFloat2")
-                 .WithLocation("/0/Test0.cs", line: 16, column: 25);
+                 .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer())
             {
@@ -293,14 +293,14 @@ namespace Lucene.Net.CodeAnalysis.Dev
             {
                 float a = 1f;
                 float b = 1f;
-                var x = a == b;
+                var x = {|#0:a == b|};
             }
        }
        ";
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1000_FloatingPointEquality.Id)
                  .WithMessageFormat(Descriptors.LuceneDev1000_FloatingPointEquality.MessageFormat)
                  .WithArguments("a == b")
-                 .WithLocation("/0/Test0.cs", line: 15, column: 25);
+                 .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer())
             {
@@ -326,7 +326,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
         {
             public void MyMethod(Term a, Term b)
             {
-                var x = a.Score == b.Score;
+                var x = {|#0:a.Score == b.Score|};
             }
        }
        public class Term
@@ -338,7 +338,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1000_FloatingPointEquality.Id)
                  .WithMessageFormat(Descriptors.LuceneDev1000_FloatingPointEquality.MessageFormat)
                  .WithArguments("a.Score == b.Score")
-                 .WithLocation("/0/Test0.cs", line: 13, column: 25);
+                 .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer())
             {
@@ -366,7 +366,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             {
                 float a = 1f;
                 float b = 1f;
-                var x = a.Equals(b);
+                var x = {|#0:a.Equals|}(b);
             }
        }
        ";
@@ -374,7 +374,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1000_FloatingPointEquality.Id)
                  .WithMessageFormat(Descriptors.LuceneDev1000_FloatingPointEquality.MessageFormat)
                  .WithArguments("a.Equals")
-                 .WithLocation("/0/Test0.cs", line: 15, column: 25);
+                 .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1000_FloatingPointEqualityCSCodeAnalyzer())
             {

@@ -40,12 +40,12 @@ public class Sample
     public void M()
     {
         string text = ""Hello"";
-        int index = text.IndexOf(""H"");
+        int index = text.IndexOf({|#0:""H""|});
     }
 }";
             var expected = new DiagnosticResult(Descriptors.LuceneDev6005_SingleCharString)
                 .WithSeverity(DiagnosticSeverity.Info)
-                .WithSpan(9, 34, 9, 37)
+                .WithLocation(0)
                 .WithArguments("IndexOf", "\"H\"");
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6005_SingleCharStringAnalyzer())
@@ -68,12 +68,12 @@ public class Sample
     public void M()
     {
         string text = ""Hello"";
-        int index = text.IndexOf(""\"""");  // Added missing semicolon
+        int index = text.IndexOf({|#0:""\""""|});  // Added missing semicolon
     }
 }";
             var expected = new DiagnosticResult(Descriptors.LuceneDev6005_SingleCharString)
                 .WithSeverity(DiagnosticSeverity.Info)
-                .WithSpan(9, 34, 9, 38)
+                .WithLocation(0)
                 .WithArguments("IndexOf", "\"\\\"\"");
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6005_SingleCharStringAnalyzer())
