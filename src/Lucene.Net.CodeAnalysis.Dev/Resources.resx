@@ -306,6 +306,24 @@ under the License.
   <data name="LuceneDev6005_AnalyzerMessageFormat" xml:space="preserve">
     <value>Call to '{0}' uses a single-character string literal. Use the char overload instead (e.g., 'x' instead of "x").</value>
   </data>
+  <data name="LuceneDev6006_AnalyzerTitle" xml:space="preserve">
+    <value>Use J2N collection types instead of BCL collection types</value>
+  </data>
+  <data name="LuceneDev6006_AnalyzerDescription" xml:space="preserve">
+    <value>The J2N collection types (JCG.List&lt;T&gt;, JCG.HashSet&lt;T&gt;, JCG.Dictionary&lt;TKey, TValue&gt; and JCG.OrderedDictionary&lt;TKey, TValue&gt;) provide Java-compatible structural equality, formatting and null key support, and should be used instead of their System.Collections.Generic counterparts. Suppress this warning where the BCL type is required.</value>
+  </data>
+  <data name="LuceneDev6006_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Use '{0}' instead of '{1}'</value>
+  </data>
+  <data name="LuceneDev6007_AnalyzerTitle" xml:space="preserve">
+    <value>Use J2N ordered collection types instead of J2N linked collection types</value>
+  </data>
+  <data name="LuceneDev6007_AnalyzerDescription" xml:space="preserve">
+    <value>JCG.OrderedHashSet&lt;T&gt; and JCG.OrderedDictionary&lt;TKey, TValue&gt; should be used instead of JCG.LinkedHashSet&lt;T&gt; and JCG.LinkedDictionary&lt;TKey, TValue&gt;. Suppress this warning where the linked type is required.</value>
+  </data>
+  <data name="LuceneDev6007_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Use '{0}' instead of '{1}'</value>
+  </data>
 
   <!-- 2000: BCL numeric Parse/TryParse missing IFormatProvider -->
   <data name="LuceneDev2000_AnalyzerTitle" xml:space="preserve">
