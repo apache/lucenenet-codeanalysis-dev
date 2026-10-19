@@ -31,7 +31,7 @@ to be used "beyond the group that owns it."
 
 ## Building
 
-To build the analyzers, you will need to have the [.NET 8 SDK](https://dotnet.microsoft.com/download) installed.
+To build the analyzers, you will need to have the [.NET 10 SDK](https://dotnet.microsoft.com/download) installed.
 
 To build from the repo root, run the following command:
 
