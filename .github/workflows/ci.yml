@@ -112,14 +112,11 @@ jobs:
     needs: build
     strategy:
       matrix:
-        # macos-15-intel is specifically for running x64, macos-latest for arm64
-        # NOTE: macos-15-intel will be discontinued in fall 2027
-        os: [windows-latest, ubuntu-latest, macos-15-intel, macos-latest]
+        # macos-latest is for running arm64
+        os: [windows-latest, ubuntu-latest, macos-latest]
         arch: [x64, arm64]
         tfm: [net8.0]
         exclude:
-        - arch: arm64
-          os: macos-15-intel
         - arch: arm64
           os: windows-latest
         - arch: arm64
