@@ -32,7 +32,7 @@ public class TestLuceneDev7003_InterfaceNameCodeFixProvider
     {
         const string testCode =
             """
-            public interface Walkable
+            public interface {|#0:Walkable|}
             {
                 void Walk();
             }
@@ -59,7 +59,7 @@ public class TestLuceneDev7003_InterfaceNameCodeFixProvider
         var expected = new DiagnosticResult(Descriptors.LuceneDev7003_InterfaceName)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("Walkable")
-            .WithLocation(1, 18);
+            .WithLocation(0);
 
         var test = new InjectableCodeFixTest(
             () => new LuceneDev7003_InterfaceNameAnalyzer(),
@@ -78,7 +78,7 @@ public class TestLuceneDev7003_InterfaceNameCodeFixProvider
     {
         const string testCode =
             """
-            public interface iWalkable
+            public interface {|#0:iWalkable|}
             {
                 void Walk();
             }
@@ -105,7 +105,7 @@ public class TestLuceneDev7003_InterfaceNameCodeFixProvider
         var expected = new DiagnosticResult(Descriptors.LuceneDev7003_InterfaceName)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("iWalkable")
-            .WithLocation(1, 18);
+            .WithLocation(0);
 
         var test = new InjectableCodeFixTest(
             () => new LuceneDev7003_InterfaceNameAnalyzer(),

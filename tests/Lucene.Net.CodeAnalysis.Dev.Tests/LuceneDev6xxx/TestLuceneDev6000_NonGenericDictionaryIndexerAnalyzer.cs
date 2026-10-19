@@ -38,14 +38,14 @@ public class Sample
 {
     public object M(IDictionary dict)
     {
-        return dict[""key""];
+        return {|#0:dict[""key""]|};
     }
 }";
             var expected = new DiagnosticResult(Descriptors.LuceneDev6000_NonGenericDictionaryIndexer)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithMessageFormat(Descriptors.LuceneDev6000_NonGenericDictionaryIndexer.MessageFormat)
                 .WithArguments("dict[\"key\"]")
-                .WithLocation("/0/Test0.cs", line: 8, column: 16);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6000_NonGenericDictionaryIndexerAnalyzer())
             {
@@ -65,14 +65,14 @@ public class Sample
 {
     public object M(Hashtable table)
     {
-        return table[""key""];
+        return {|#0:table[""key""]|};
     }
 }";
             var expected = new DiagnosticResult(Descriptors.LuceneDev6000_NonGenericDictionaryIndexer)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithMessageFormat(Descriptors.LuceneDev6000_NonGenericDictionaryIndexer.MessageFormat)
                 .WithArguments("table[\"key\"]")
-                .WithLocation("/0/Test0.cs", line: 8, column: 16);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6000_NonGenericDictionaryIndexerAnalyzer())
             {

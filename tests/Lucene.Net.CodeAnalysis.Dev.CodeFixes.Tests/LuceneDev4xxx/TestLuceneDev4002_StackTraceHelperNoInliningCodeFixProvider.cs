@@ -59,7 +59,7 @@ public class Caller
 {
     public void Check()
     {
-        if (Lucene.Net.Support.ExceptionHandling.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge)))
+        if ({|#0:Lucene.Net.Support.ExceptionHandling.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge))|})
         {
         }
     }
@@ -89,7 +89,7 @@ public class Caller
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev4002_MissingNoInlining)
                 .WithSeverity(DiagnosticSeverity.Warning)
-                .WithSpan(16, 13, 16, 132)
+                .WithLocation(0)
                 .WithArguments("Target.Merge");
 
             var test = new InjectableCodeFixTest(
@@ -121,7 +121,7 @@ public class Caller
 {
     public void Check()
     {
-        if (Lucene.Net.Support.ExceptionHandling.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge)))
+        if ({|#0:Lucene.Net.Support.ExceptionHandling.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge))|})
         {
         }
     }
@@ -150,7 +150,7 @@ public class Caller
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev4002_MissingNoInlining)
                 .WithSeverity(DiagnosticSeverity.Warning)
-                .WithSpan(14, 13, 14, 132)
+                .WithLocation(0)
                 .WithArguments("Target.Merge");
 
             var test = new InjectableCodeFixTest(
@@ -186,6 +186,17 @@ public class Caller
 {
     public void Check()
     {
+        if ({|#0:Lucene.Net.Support.ExceptionHandling.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge))|})
+        {
+        }
+    }
+}" + StackTraceHelperStub;
+
+            var fixedCallerSource = @"
+public class Caller
+{
+    public void Check()
+    {
         if (Lucene.Net.Support.ExceptionHandling.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge)))
         {
         }
@@ -206,7 +217,7 @@ public class Target
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev4002_MissingNoInlining)
                 .WithSeverity(DiagnosticSeverity.Warning)
-                .WithLocation("/0/Test1.cs", line: 6, column: 13)
+                .WithLocation(0)
                 .WithArguments("Target.Merge");
 
             var test = new InjectableCodeFixTest(
@@ -218,7 +229,7 @@ public class Target
             test.TestState.Sources.Add(targetSource);
             test.TestState.Sources.Add(callerSource);
             test.FixedState.Sources.Add(fixedTargetSource);
-            test.FixedState.Sources.Add(callerSource);
+            test.FixedState.Sources.Add(fixedCallerSource);
 
             await test.RunAsync();
         }
@@ -248,7 +259,7 @@ public class Caller
 {
     public void Check()
     {
-        if (Lucene.Net.Support.ExceptionHandling.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge)))
+        if ({|#0:Lucene.Net.Support.ExceptionHandling.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge))|})
         {
         }
     }
@@ -283,7 +294,7 @@ public class Caller
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev4002_MissingNoInlining)
                 .WithSeverity(DiagnosticSeverity.Warning)
-                .WithSpan(21, 13, 21, 132)
+                .WithLocation(0)
                 .WithArguments("Target.Merge");
 
             var test = new InjectableCodeFixTest(

@@ -36,14 +36,14 @@ using System.Globalization;
 
 public class Sample
 {
-    public string M(int i) => i.ToString(CultureInfo.CurrentCulture);
+    public string M(int i) => i.{|#0:ToString|}(CultureInfo.CurrentCulture);
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev2007_NumericNonInvariantFormatProvider)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2007_NumericNonInvariantFormatProvider.MessageFormat)
                 .WithArguments("ToString")
-                .WithLocation("/0/Test0.cs", line: 6, column: 33);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2007_2008_NumericExplicitCultureAnalyzer())
             {
@@ -64,14 +64,14 @@ using System.Globalization;
 
 public class Sample
 {
-    public string M(int i) => i.ToString(CultureInfo.InvariantCulture);
+    public string M(int i) => i.{|#0:ToString|}(CultureInfo.InvariantCulture);
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev2008_NumericInvariantFormatProvider)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithMessageFormat(Descriptors.LuceneDev2008_NumericInvariantFormatProvider.MessageFormat)
                 .WithArguments("ToString")
-                .WithLocation("/0/Test0.cs", line: 6, column: 33);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2007_2008_NumericExplicitCultureAnalyzer())
             {
@@ -90,14 +90,14 @@ public class Sample
             var testCode = @"
 public class Sample
 {
-    public string M(int i) => i.ToString((string)null, null);
+    public string M(int i) => i.{|#0:ToString|}((string)null, null);
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev2007_NumericNonInvariantFormatProvider)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2007_NumericNonInvariantFormatProvider.MessageFormat)
                 .WithArguments("ToString")
-                .WithLocation("/0/Test0.cs", line: 4, column: 33);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2007_2008_NumericExplicitCultureAnalyzer())
             {

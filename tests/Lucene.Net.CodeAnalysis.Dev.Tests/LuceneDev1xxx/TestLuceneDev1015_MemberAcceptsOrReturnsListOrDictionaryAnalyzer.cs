@@ -35,14 +35,14 @@ public class TestLuceneDev1015_MemberAcceptsOrReturnsListOrDictionaryAnalyzer
             using System.Collections.Generic;
             public class MyClass
             {
-                public List<int> GetItems() => null;
+                public List<int> {|#0:GetItems|}() => null;
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev1015_MemberAcceptsOrReturnsListOrDictionary)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("GetItems", "List")
-            .WithLocation(4, 22);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1015_MemberAcceptsOrReturnsListOrDictionaryAnalyzer())
         {
@@ -60,14 +60,14 @@ public class TestLuceneDev1015_MemberAcceptsOrReturnsListOrDictionaryAnalyzer
             using System.Collections.Generic;
             public class MyClass
             {
-                public void SetItems(Dictionary<int, string> items) { }
+                public void SetItems(Dictionary<int, string> {|#0:items|}) { }
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev1015_MemberAcceptsOrReturnsListOrDictionary)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("items", "Dictionary")
-            .WithLocation(4, 50);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1015_MemberAcceptsOrReturnsListOrDictionaryAnalyzer())
         {

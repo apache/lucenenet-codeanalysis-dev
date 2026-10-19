@@ -44,7 +44,7 @@ public class C
 
     public string Message()
     {
-        return $""  level {levelBottom}"";
+        return $""  level {{|#0:levelBottom|}}"";
     }
 }
 ";
@@ -73,7 +73,7 @@ public class C
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev1006_FloatingPointFormatting.MessageFormat)
                 .WithArguments("levelBottom")
-                .WithLocation("/0/Test0.cs", line: 16, column: 27);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev1006_FloatingPointFormattingConcatenationCSCodeAnalyzer(),
@@ -106,7 +106,7 @@ public class C
 
     public string Message()
     {
-        return $""  level {levelBottom,5:F2}"";
+        return $""  level {{|#0:levelBottom|},5:F2}"";
     }
 }
 ";
@@ -135,7 +135,7 @@ public class C
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev1006_FloatingPointFormatting.MessageFormat)
                 .WithArguments("levelBottom")
-                .WithLocation("/0/Test0.cs", line: 16, column: 27);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev1006_FloatingPointFormattingConcatenationCSCodeAnalyzer(),
@@ -168,7 +168,7 @@ public class C
 
     public string Message()
     {
-        return $""  level {levelBottom:F2}"";
+        return $""  level {{|#0:levelBottom|}:F2}"";
     }
 }
 ";
@@ -198,7 +198,7 @@ public class C
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev1006_FloatingPointFormatting.MessageFormat)
                 .WithArguments("levelBottom")
-                .WithLocation("/0/Test0.cs", line: 17, column: 27);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev1006_FloatingPointFormattingConcatenationCSCodeAnalyzer(),

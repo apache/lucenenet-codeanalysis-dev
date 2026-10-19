@@ -39,14 +39,14 @@ public class Sample
     public void M()
     {
         ReadOnlySpan<char> span = ""Hello"".AsSpan();
-        int index = span.IndexOf(""test"", StringComparison.Ordinal);
+        int index = span.IndexOf(""test"", {|#0:StringComparison.Ordinal|});
     }
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6003_RedundantOrdinal)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("IndexOf")
-                .WithSpan(9, 42, 9, 66);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
@@ -68,14 +68,14 @@ public class Sample
     public void M()
     {
         ReadOnlySpan<char> span = stackalloc char[5];
-        bool starts = span.StartsWith(""test"", StringComparison.Ordinal);
+        bool starts = span.StartsWith(""test"", {|#0:StringComparison.Ordinal|});
     }
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6003_RedundantOrdinal)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("StartsWith")
-                .WithSpan(9, 47, 9, 71);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
@@ -98,14 +98,14 @@ public class Sample
     public void M()
     {
         ReadOnlySpan<char> span = ""Hello"".AsSpan();
-        int index = span.IndexOf(""test"", StringComparison.CurrentCulture);
+        int index = span.IndexOf(""test"", {|#0:StringComparison.CurrentCulture|});
     }
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6004_InvalidComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithArguments("IndexOf", "CurrentCulture")
-                .WithSpan(9, 42, 9, 73);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
@@ -127,14 +127,14 @@ public class Sample
     public void M()
     {
         ReadOnlySpan<char> span = ""Hello"".AsSpan();
-        int index = span.LastIndexOf(""test"", StringComparison.CurrentCultureIgnoreCase);
+        int index = span.LastIndexOf(""test"", {|#0:StringComparison.CurrentCultureIgnoreCase|});
     }
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6004_InvalidComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithArguments("LastIndexOf", "CurrentCultureIgnoreCase")
-                .WithSpan(9, 46, 9, 87);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
@@ -156,14 +156,14 @@ public class Sample
     public void M()
     {
         ReadOnlySpan<char> span = ""Hello"".AsSpan();
-        bool ends = span.EndsWith(""test"", StringComparison.InvariantCulture);
+        bool ends = span.EndsWith(""test"", {|#0:StringComparison.InvariantCulture|});
     }
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6004_InvalidComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithArguments("EndsWith", "InvariantCulture")
-                .WithSpan(9, 43, 9, 76);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
@@ -185,14 +185,14 @@ public class Sample
     public void M()
     {
         ReadOnlySpan<char> span = ""Hello"".AsSpan();
-        bool ends = span.EndsWith(""test"", StringComparison.InvariantCultureIgnoreCase);
+        bool ends = span.EndsWith(""test"", {|#0:StringComparison.InvariantCultureIgnoreCase|});
     }
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev6004_InvalidComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithArguments("EndsWith", "InvariantCultureIgnoreCase")
-                .WithSpan(9, 43, 9, 86);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {
@@ -312,20 +312,20 @@ public class Sample
     public void M()
     {
         ReadOnlySpan<char> span = ""Hello"".AsSpan();
-        int index1 = span.IndexOf(""test"", StringComparison.Ordinal);
-        int index2 = span.LastIndexOf(""test"", StringComparison.CurrentCulture);
+        int index1 = span.IndexOf(""test"", {|#0:StringComparison.Ordinal|});
+        int index2 = span.LastIndexOf(""test"", {|#1:StringComparison.CurrentCulture|});
     }
 }";
 
             var expected1 = new DiagnosticResult(Descriptors.LuceneDev6003_RedundantOrdinal)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("IndexOf")
-                .WithSpan(9, 43, 9, 67);
+                .WithLocation(0);
 
             var expected2 = new DiagnosticResult(Descriptors.LuceneDev6004_InvalidComparison)
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithArguments("LastIndexOf", "CurrentCulture")
-                .WithSpan(10, 47, 10, 78);
+                .WithLocation(1);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6003_6004_SpanComparisonAnalyzer())
             {

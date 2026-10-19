@@ -46,7 +46,7 @@ public class Sample
 {
     public void M()
     {
-        var x = int.Parse(""1"");
+        var x = int.{|#0:Parse|}(""1"");
     }
 }";
 
@@ -54,7 +54,7 @@ public class Sample
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2000_BclNumericParseMissingFormatProvider.MessageFormat)
                 .WithArguments("Parse", "Int32")
-                .WithLocation("/0/Test0.cs", line: 6, column: 21);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2000_BclNumericParseAnalyzer())
             {
@@ -72,7 +72,7 @@ public class Sample
 {
     public void M()
     {
-        double.TryParse(""1.5"", out _);
+        double.{|#0:TryParse|}(""1.5"", out _);
     }
 }";
 
@@ -80,7 +80,7 @@ public class Sample
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2000_BclNumericParseMissingFormatProvider.MessageFormat)
                 .WithArguments("TryParse", "Double")
-                .WithLocation("/0/Test0.cs", line: 6, column: 16);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2000_BclNumericParseAnalyzer())
             {

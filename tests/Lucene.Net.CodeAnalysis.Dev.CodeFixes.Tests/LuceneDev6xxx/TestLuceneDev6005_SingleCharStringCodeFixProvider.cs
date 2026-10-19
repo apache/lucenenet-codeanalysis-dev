@@ -40,7 +40,7 @@ public class Sample
     public void M()
     {
         string text = ""Hello"";
-        int index = text.IndexOf(""H"");
+        int index = text.IndexOf({|#0:""H""|});
     }
 }";
 
@@ -59,7 +59,7 @@ public class Sample
             var expected = new DiagnosticResult(Descriptors.LuceneDev6005_SingleCharString)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("IndexOf", "\"H\"")
-                .WithSpan(9, 34, 9, 37);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6005_SingleCharStringAnalyzer(),
@@ -85,7 +85,7 @@ public class Sample
     public void M()
     {
         string text = ""Hello"";
-        int index = text.IndexOf(""\"""");
+        int index = text.IndexOf({|#0:""\""""|});
     }
 }";
 
@@ -104,7 +104,7 @@ public class Sample
             var expected = new DiagnosticResult(Descriptors.LuceneDev6005_SingleCharString)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("IndexOf", "\"\\\"\"")
-                .WithSpan(9, 34, 9, 38);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6005_SingleCharStringAnalyzer(),
@@ -130,8 +130,8 @@ public class Sample
     public void M()
     {
         string text = ""Hello"";
-        int i1 = text.IndexOf(""H"");
-        int i2 = text.IndexOf(""\n"");
+        int i1 = text.IndexOf({|#0:""H""|});
+        int i2 = text.IndexOf({|#1:""\n""|});
     }
 }";
 
@@ -151,12 +151,12 @@ public class Sample
             var expected1 = new DiagnosticResult(Descriptors.LuceneDev6005_SingleCharString)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("IndexOf", "\"H\"")
-                .WithSpan(9, 31, 9, 34);
+                .WithLocation(0);
 
             var expected2 = new DiagnosticResult(Descriptors.LuceneDev6005_SingleCharString)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("IndexOf", "\"\\n\"")
-                .WithSpan(10, 31, 10, 35);
+                .WithLocation(1);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6005_SingleCharStringAnalyzer(),
@@ -180,7 +180,7 @@ public class Sample
 {
     public void M(ReadOnlySpan<char> span)
     {
-        int index = span.IndexOf(""X"");
+        int index = span.IndexOf({|#0:""X""|});
     }
 }";
 
@@ -198,7 +198,7 @@ public class Sample
             var expected = new DiagnosticResult(Descriptors.LuceneDev6005_SingleCharString)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("IndexOf", "\"X\"")
-                .WithSpan(8, 34, 8, 37);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6005_SingleCharStringAnalyzer(),

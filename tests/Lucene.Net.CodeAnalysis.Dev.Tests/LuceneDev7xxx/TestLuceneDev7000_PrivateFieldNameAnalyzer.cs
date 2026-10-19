@@ -65,14 +65,14 @@ public class TestLuceneDev7000_PrivateFieldNameAnalyzer
             """
             public class MyClass
             {
-                private int FieldValue;
+                private int {|#0:FieldValue|};
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev7000_PrivateFieldName)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("FieldValue")
-            .WithLocation(3, 17);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7000_PrivateFieldNameAnalyzer())
         {
@@ -89,14 +89,14 @@ public class TestLuceneDev7000_PrivateFieldNameAnalyzer
             """
             public class MyClass
             {
-                internal int FieldValue;
+                internal int {|#0:FieldValue|};
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev7000_PrivateFieldName)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("FieldValue")
-            .WithLocation(3, 18);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7000_PrivateFieldNameAnalyzer())
         {

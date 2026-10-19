@@ -35,7 +35,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev2xxx
             var testCode = @"
 public class Sample
 {
-    public string M(int i) => ""x="" + i;
+    public string M(int i) => ""x="" + {|#0:i|};
 }";
 
             var fixedCode = @"using System.Globalization;
@@ -49,7 +49,7 @@ public class Sample
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2005_NumericStringConcatenation.MessageFormat)
                 .WithArguments("Int32")
-                .WithLocation("/0/Test0.cs", line: 4, column: 38);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev2005_NumericConcatenationAnalyzer(),
@@ -71,7 +71,7 @@ public class Sample
             var testCode = @"
 public class Sample
 {
-    public string M(int i) => $""value={i}"";
+    public string M(int i) => $""value={{|#0:i|}}"";
 }";
 
             var fixedCode = @"using System.Globalization;
@@ -85,7 +85,7 @@ public class Sample
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2006_NumericStringInterpolation.MessageFormat)
                 .WithArguments("Int32")
-                .WithLocation("/0/Test0.cs", line: 4, column: 40);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev2006_NumericInterpolationAnalyzer(),

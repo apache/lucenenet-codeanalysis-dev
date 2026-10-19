@@ -32,9 +32,9 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
             """
             namespace Lucene.Net.Support;
 
-            public class MyClass
+            {|#0:public class MyClass
             {
-            }
+            }|}
             """;
 
         const string fixedCode =
@@ -50,7 +50,7 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
             .WithArguments("Class", "MyClass")
-            .WithLocation(3, 1);
+            .WithLocation(0);
 
         var test = new InjectableCodeFixTest(
             () => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeAnalyzer(),
@@ -71,9 +71,9 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
             """
             namespace Lucene.Net.Support
             {
-                public class MyClass
+                {|#0:public class MyClass
                 {
-                }
+                }|}
             }
             """;
 
@@ -91,7 +91,7 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
             .WithArguments("Class", "MyClass")
-            .WithLocation(3, 5);
+            .WithLocation(0);
 
         var test = new InjectableCodeFixTest(
             () => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeAnalyzer(),
@@ -112,20 +112,20 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
             """
             namespace Lucene.Net.Support;
 
-            public partial class MyPartialClass
+            {|#0:public partial class MyPartialClass
             {
                 public void Method1() { }
-            }
+            }|}
             """;
 
         const string testCode2 =
             """
             namespace Lucene.Net.Support;
 
-            public partial class MyPartialClass
+            {|#1:public partial class MyPartialClass
             {
                 public void Method2() { }
-            }
+            }|}
             """;
 
         const string fixedCode1 =
@@ -152,13 +152,13 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
             .WithArguments("Class", "MyPartialClass")
-            .WithLocation("/0/Test0.cs", line: 3, column: 1);
+            .WithLocation(0);
 
         var expected2 = new DiagnosticResult(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
             .WithArguments("Class", "MyPartialClass")
-            .WithLocation("/0/Test1.cs", line: 3, column: 1);
+            .WithLocation(1);
 
         var test = new InjectableCodeFixTest(
             () => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeAnalyzer(),
@@ -184,10 +184,10 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
             """
             namespace Lucene.Net.Support
             {
-                public partial class MyPartialClass
+                {|#0:public partial class MyPartialClass
                 {
                     public void Method1() { }
-                }
+                }|}
             }
             """;
 
@@ -195,10 +195,10 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
             """
             namespace Lucene.Net.Support
             {
-                public partial class MyPartialClass
+                {|#1:public partial class MyPartialClass
                 {
                     public void Method2() { }
-                }
+                }|}
             }
             """;
 
@@ -228,13 +228,13 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
             .WithArguments("Class", "MyPartialClass")
-            .WithLocation("/0/Test0.cs", line: 3, column: 5);
+            .WithLocation(0);
 
         var expected2 = new DiagnosticResult(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
             .WithArguments("Class", "MyPartialClass")
-            .WithLocation("/0/Test1.cs", line: 3, column: 5);
+            .WithLocation(1);
 
         var test = new InjectableCodeFixTest(
             () => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeAnalyzer(),
@@ -277,9 +277,9 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
 
             namespace Lucene.Net.Support;
 
-            public class MyClass
+            {|#0:public class MyClass
             {
-            }
+            }|}
             """;
 
         const string fixedCode =
@@ -312,7 +312,7 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
             .WithArguments("Class", "MyClass")
-            .WithLocation(20, 1);
+            .WithLocation(0);
 
         var test = new InjectableCodeFixTest(
             () => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeAnalyzer(),
@@ -350,9 +350,9 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
                  * limitations under the License.
                  */
 
-                public class MyClass
+                {|#0:public class MyClass
                 {
-                }
+                }|}
             }
             """;
 
@@ -387,7 +387,7 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
             .WithArguments("Class", "MyClass")
-            .WithLocation(20, 5);
+            .WithLocation(0);
 
         var test = new InjectableCodeFixTest(
             () => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeAnalyzer(),
@@ -408,9 +408,9 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
             """
             namespace Lucene.Net.Support
             {
-                public class MyClass
+                {|#0:public class MyClass
                 {
-                } // Important trailing comment
+                }|} // Important trailing comment
             }
             """;
 
@@ -428,7 +428,7 @@ public class TestLuceneDev1005_LuceneNetSupportPublicTypesCSCodeFixProvider
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
             .WithArguments("Class", "MyClass")
-            .WithLocation(3, 5);
+            .WithLocation(0);
 
         var test = new InjectableCodeFixTest(
             () => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeAnalyzer(),

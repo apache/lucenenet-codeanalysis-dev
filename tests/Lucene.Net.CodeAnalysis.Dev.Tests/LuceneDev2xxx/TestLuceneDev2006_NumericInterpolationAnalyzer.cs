@@ -34,14 +34,14 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev2xxx
             var testCode = @"
 public class Sample
 {
-    public string M(int i) => $""value={i}"";
+    public string M(int i) => $""value={{|#0:i|}}"";
 }";
 
             var expected = new DiagnosticResult(Descriptors.LuceneDev2006_NumericStringInterpolation)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithMessageFormat(Descriptors.LuceneDev2006_NumericStringInterpolation.MessageFormat)
                 .WithArguments("Int32")
-                .WithLocation("/0/Test0.cs", line: 4, column: 40);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2006_NumericInterpolationAnalyzer())
             {

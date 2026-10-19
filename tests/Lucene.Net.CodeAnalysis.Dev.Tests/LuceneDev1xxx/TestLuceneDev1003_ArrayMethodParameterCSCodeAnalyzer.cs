@@ -52,7 +52,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
 
         public class MyClass
         {
-            public static bool ParseChar(string id, int[] pos, char ch)
+            public static bool ParseChar(string id, {|#0:int[] pos|}, char ch)
             {
                 int start = pos[0];
                 //pos[0] = PatternProps.SkipWhiteSpace(id, pos[0]);
@@ -71,7 +71,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1003_ArrayMethodParameter.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1003_ArrayMethodParameter.MessageFormat)
                 .WithArguments("int[] pos")
-                .WithLocation("/0/Test0.cs", line: 11, column: 53);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1003_ArrayMethodParameterCSCodeAnalyzer())
             {

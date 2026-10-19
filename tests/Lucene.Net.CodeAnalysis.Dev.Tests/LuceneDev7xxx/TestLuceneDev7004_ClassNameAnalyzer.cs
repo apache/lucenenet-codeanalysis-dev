@@ -49,7 +49,7 @@ public class TestLuceneDev7004_ClassNameAnalyzer
     {
         const string testCode =
             """
-            public class IMyClass
+            public class {|#0:IMyClass|}
             {
             }
             """;
@@ -57,7 +57,7 @@ public class TestLuceneDev7004_ClassNameAnalyzer
         var expected = new DiagnosticResult(Descriptors.LuceneDev7004_ClassName)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("IMyClass")
-            .WithLocation(1, 14);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7004_ClassNameAnalyzer())
         {
@@ -72,7 +72,7 @@ public class TestLuceneDev7004_ClassNameAnalyzer
     {
         const string testCode =
             """
-            public class myClass
+            public class {|#0:myClass|}
             {
             }
             """;
@@ -80,7 +80,7 @@ public class TestLuceneDev7004_ClassNameAnalyzer
         var expected = new DiagnosticResult(Descriptors.LuceneDev7004_ClassName)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("myClass")
-            .WithLocation(1, 14);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7004_ClassNameAnalyzer())
         {
@@ -96,13 +96,13 @@ public class TestLuceneDev7004_ClassNameAnalyzer
         // Delegates are CLR classes (reflection t.IsClass), so they follow the class-name rule.
         const string testCode =
             """
-            public delegate void IMyHandler();
+            public delegate void {|#0:IMyHandler|}();
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev7004_ClassName)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("IMyHandler")
-            .WithLocation(1, 22);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7004_ClassNameAnalyzer())
         {

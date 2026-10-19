@@ -40,7 +40,7 @@ public class MyClass
     public void MyMethod()
     {
         string text = ""Hello World"";
-        int index = text.IndexOf(""Hello"");
+        int index = text.{|#0:IndexOf|}(""Hello"");
     }
 }";
 
@@ -60,7 +60,7 @@ public class MyClass
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_MissingStringComparison.MessageFormat)
                 .WithArguments("IndexOf")
-                .WithLocation("/0/Test0.cs", line: 9, column: 26);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
@@ -85,7 +85,7 @@ public class MyClass
     public void MyMethod()
     {
         string text = ""Hello World"";
-        bool starts = text.StartsWith(""Hello"");
+        bool starts = text.{|#0:StartsWith|}(""Hello"");
     }
 }";
 
@@ -105,7 +105,7 @@ public class MyClass
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_MissingStringComparison.MessageFormat)
                 .WithArguments("StartsWith")
-                .WithLocation("/0/Test0.cs", line: 9, column: 28);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
@@ -130,7 +130,7 @@ public class MyClass
     public void MyMethod()
     {
         string text = ""Hello World"";
-        bool ends = text.EndsWith(""World"");
+        bool ends = text.{|#0:EndsWith|}(""World"");
     }
 }";
 
@@ -150,7 +150,7 @@ public class MyClass
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_MissingStringComparison.MessageFormat)
                 .WithArguments("EndsWith")
-                .WithLocation("/0/Test0.cs", line: 9, column: 26);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
@@ -175,7 +175,7 @@ public class MyClass
     public void MyMethod()
     {
         string text = ""Hello World Hello"";
-        int index = text.LastIndexOf(""Hello"");
+        int index = text.{|#0:LastIndexOf|}(""Hello"");
     }
 }";
 
@@ -195,7 +195,7 @@ public class MyClass
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_MissingStringComparison.MessageFormat)
                 .WithArguments("LastIndexOf")
-                .WithLocation("/0/Test0.cs", line: 9, column: 26);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
@@ -220,7 +220,7 @@ public class MyClass
     public void MyMethod()
     {
         string text = ""Hello World"";
-        int index = text.IndexOf(""World"", 5);
+        int index = text.{|#0:IndexOf|}(""World"", 5);
     }
 }";
 
@@ -240,7 +240,7 @@ public class MyClass
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_MissingStringComparison.MessageFormat)
                 .WithArguments("IndexOf")
-                .WithLocation("/0/Test0.cs", line: 9, column: 26);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
@@ -265,7 +265,7 @@ public class MyClass
     public void MyMethod()
     {
         string text = ""Hello World"";
-        int index = text.IndexOf(""World"", 0, 11);
+        int index = text.{|#0:IndexOf|}(""World"", 0, 11);
     }
 }";
 
@@ -285,7 +285,7 @@ public class MyClass
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6001_MissingStringComparison.MessageFormat)
                 .WithArguments("IndexOf")
-                .WithLocation("/0/Test0.cs", line: 9, column: 26);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
@@ -310,7 +310,7 @@ public class MyClass
     public void MyMethod()
     {
         string text = ""Hello World"";
-        int index = text.IndexOf(""Hello"", StringComparison.CurrentCulture);
+        int index = text.IndexOf(""Hello"", {|#0:StringComparison.CurrentCulture|});
     }
 }";
 
@@ -330,7 +330,7 @@ public class MyClass
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6002_InvalidStringComparison.MessageFormat)
                 .WithArguments("IndexOf", "CurrentCulture")
-                .WithLocation("/0/Test0.cs", line: 9, column: 43);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
@@ -355,7 +355,7 @@ public class MyClass
     public void MyMethod()
     {
         string text = ""Hello World"";
-        bool starts = text.StartsWith(""Hello"", StringComparison.InvariantCulture);
+        bool starts = text.StartsWith(""Hello"", {|#0:StringComparison.InvariantCulture|});
     }
 }";
 
@@ -375,7 +375,7 @@ public class MyClass
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6002_InvalidStringComparison.MessageFormat)
                 .WithArguments("StartsWith", "InvariantCulture")
-                .WithLocation("/0/Test0.cs", line: 9, column: 48);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6001_6002_StringComparisonAnalyzer(),
@@ -400,7 +400,7 @@ public class MyClass
     public void MyMethod()
     {
         string text = ""Hello World"";
-        bool ends = text.EndsWith(""WORLD"", StringComparison.CurrentCultureIgnoreCase);
+        bool ends = text.EndsWith(""WORLD"", {|#0:StringComparison.CurrentCultureIgnoreCase|});
     }
 }";
 
@@ -420,7 +420,7 @@ public class MyClass
                 .WithSeverity(DiagnosticSeverity.Error)
                 .WithMessageFormat(Descriptors.LuceneDev6002_InvalidStringComparison.MessageFormat)
                 .WithArguments("EndsWith", "CurrentCultureIgnoreCase")
-                .WithLocation("/0/Test0.cs", line: 9, column: 44);
+                .WithLocation(0);
 
             var test = new InjectableCodeFixTest(
                 () => new LuceneDev6001_6002_StringComparisonAnalyzer(),

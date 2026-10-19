@@ -53,7 +53,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
 
         public class MyClass
         {
-            public static byte[] GetVersionByteArrayFromCompactInt32(int version) // ICU4N specific - Renamed from GetVersionByteArrayFromCompactInt
+            public static {|#0:byte[]|} GetVersionByteArrayFromCompactInt32(int version) // ICU4N specific - Renamed from GetVersionByteArrayFromCompactInt
             {
                 return new byte[] {
                     (byte)(version >> 24),
@@ -69,7 +69,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1004_ArrayMethodReturnValue.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1004_ArrayMethodReturnValue.MessageFormat)
                 .WithArguments("byte[]")
-                .WithLocation("/0/Test0.cs", line: 11, column: 27);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1004_ArrayMethodReturnValueCSCodeAnalyzer())
             {

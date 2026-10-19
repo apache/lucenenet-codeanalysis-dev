@@ -59,7 +59,7 @@ namespace Lucene.Net.CodeAnalysis.Dev
             public void MyMethod()
             {
                 long foo = 33;
-                var result = ((double)float1 * (double)float2) / foo;
+                var result = {|#0:({|#1:(double)float1 * (double)float2|}) / foo|};
             }
        }
        ";
@@ -67,12 +67,12 @@ namespace Lucene.Net.CodeAnalysis.Dev
             var expected1 = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1002_FloatingPointArithmetic.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1002_FloatingPointArithmetic.MessageFormat)
                 .WithArguments("((double)float1 * (double)float2) / foo")
-                .WithLocation("/0/Test0.cs", line: 17, column: 30);
+                .WithLocation(0);
 
             var expected2 = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1002_FloatingPointArithmetic.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1002_FloatingPointArithmetic.MessageFormat)
                 .WithArguments("(double)float1 * (double)float2")
-                .WithLocation("/0/Test0.cs", line: 17, column: 31);
+                .WithLocation(1);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1002_FloatingPointArithmeticCSCodeAnalyzer())
             {

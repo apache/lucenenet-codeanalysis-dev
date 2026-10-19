@@ -52,14 +52,14 @@ public class TestLuceneDev7005_MemberContainsComparerAnalyzer
             """
             public class MyClass
             {
-                public int GetComparator() => 0;
+                public int {|#0:GetComparator|}() => 0;
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev7005_MemberContainsComparer)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("GetComparator")
-            .WithLocation(3, 16);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7005_MemberContainsComparerAnalyzer())
         {
@@ -74,7 +74,7 @@ public class TestLuceneDev7005_MemberContainsComparerAnalyzer
     {
         const string testCode =
             """
-            public class MyComparator
+            public class {|#0:MyComparator|}
             {
             }
             """;
@@ -82,7 +82,7 @@ public class TestLuceneDev7005_MemberContainsComparerAnalyzer
         var expected = new DiagnosticResult(Descriptors.LuceneDev7005_MemberContainsComparer)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("MyComparator")
-            .WithLocation(1, 14);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7005_MemberContainsComparerAnalyzer())
         {
@@ -99,14 +99,14 @@ public class TestLuceneDev7005_MemberContainsComparerAnalyzer
             """
             public class MyClass
             {
-                protected int m_comparatorState;
+                protected int {|#0:m_comparatorState|};
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev7005_MemberContainsComparer)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("m_comparatorState")
-            .WithLocation(3, 19);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7005_MemberContainsComparerAnalyzer())
         {
@@ -123,14 +123,14 @@ public class TestLuceneDev7005_MemberContainsComparerAnalyzer
         // under its qualified name (e.g. "IComparator.ComparatorMethod").
         const string testCode =
             """
-            public interface IComparator
+            public interface {|#0:IComparator|}
             {
-                void ComparatorMethod();
+                void {|#1:ComparatorMethod|}();
             }
 
             public class MyClass : IComparator
             {
-                void IComparator.ComparatorMethod() { }
+                void IComparator.{|#2:ComparatorMethod|}() { }
             }
             """;
 
@@ -142,15 +142,15 @@ public class TestLuceneDev7005_MemberContainsComparerAnalyzer
                 new DiagnosticResult(Descriptors.LuceneDev7005_MemberContainsComparer)
                     .WithSeverity(DiagnosticSeverity.Warning)
                     .WithArguments("IComparator")
-                    .WithLocation(1, 18),
+                    .WithLocation(0),
                 new DiagnosticResult(Descriptors.LuceneDev7005_MemberContainsComparer)
                     .WithSeverity(DiagnosticSeverity.Warning)
                     .WithArguments("ComparatorMethod")
-                    .WithLocation(3, 10),
+                    .WithLocation(1),
                 new DiagnosticResult(Descriptors.LuceneDev7005_MemberContainsComparer)
                     .WithSeverity(DiagnosticSeverity.Warning)
                     .WithArguments("IComparator.ComparatorMethod")
-                    .WithLocation(8, 22),
+                    .WithLocation(2),
             }
         };
         await test.RunAsync();

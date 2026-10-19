@@ -52,14 +52,14 @@ public class TestLuceneDev7002_MethodParameterNameAnalyzer
             """
             public class MyClass
             {
-                public int Add(int First, int second) => First + second;
+                public int Add(int {|#0:First|}, int second) => First + second;
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev7002_MethodParameterName)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("First")
-            .WithLocation(3, 24);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7002_MethodParameterNameAnalyzer())
         {
@@ -76,14 +76,14 @@ public class TestLuceneDev7002_MethodParameterNameAnalyzer
             """
             public class MyClass
             {
-                public void Foo(int value_) { }
+                public void Foo(int {|#0:value_|}) { }
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev7002_MethodParameterName)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("value_")
-            .WithLocation(3, 25);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7002_MethodParameterNameAnalyzer())
         {

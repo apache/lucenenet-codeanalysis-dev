@@ -35,14 +35,14 @@ public class TestLuceneDev1011_PropertyReturnsArrayAnalyzer
             public class MyClass
             {
                 private readonly int[] _values = new int[1];
-                public int[] Values => _values;
+                public int[] {|#0:Values|} => _values;
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev1011_PropertyReturnsArray)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("Values")
-            .WithLocation(4, 18);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1011_PropertyReturnsArrayAnalyzer())
         {

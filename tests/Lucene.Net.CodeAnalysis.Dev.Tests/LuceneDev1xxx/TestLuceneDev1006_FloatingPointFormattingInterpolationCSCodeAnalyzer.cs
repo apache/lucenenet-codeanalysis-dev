@@ -38,7 +38,7 @@ public class C
 
     public void M()
     {
-        Message($""  level {levelBottom} to {maxLevel}"");
+        Message($""  level {{|#0:levelBottom|}} to {{|#1:maxLevel|}}"");
     }
 }
 ";
@@ -46,12 +46,12 @@ public class C
             var expectedLevelBottom = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1006_FloatingPointFormatting.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1006_FloatingPointFormatting.MessageFormat)
                 .WithArguments("levelBottom")
-                .WithLocation("/0/Test0.cs", line: 11, column: 28);
+                .WithLocation(0);
 
             var expectedMaxLevel = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1006_FloatingPointFormatting.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1006_FloatingPointFormatting.MessageFormat)
                 .WithArguments("maxLevel")
-                .WithLocation("/0/Test0.cs", line: 11, column: 45);
+                .WithLocation(1);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1006_FloatingPointFormattingConcatenationCSCodeAnalyzer())
             {
@@ -74,7 +74,7 @@ public class C
 
     public void M()
     {
-        Message($""  level {levelBottom:F2}"");
+        Message($""  level {{|#0:levelBottom|}:F2}"");
     }
 }
 ";
@@ -82,7 +82,7 @@ public class C
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1006_FloatingPointFormatting.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1006_FloatingPointFormatting.MessageFormat)
                 .WithArguments("levelBottom")
-                .WithLocation("/0/Test0.cs", line: 10, column: 28);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1006_FloatingPointFormattingConcatenationCSCodeAnalyzer())
             {
@@ -105,7 +105,7 @@ public class C
 
     public void M()
     {
-        Message($""  level {levelBottom,5:F2}"");
+        Message($""  level {{|#0:levelBottom|},5:F2}"");
     }
 }
 ";
@@ -113,7 +113,7 @@ public class C
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1006_FloatingPointFormatting.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1006_FloatingPointFormatting.MessageFormat)
                 .WithArguments("levelBottom")
-                .WithLocation("/0/Test0.cs", line: 10, column: 28);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1006_FloatingPointFormattingConcatenationCSCodeAnalyzer())
             {

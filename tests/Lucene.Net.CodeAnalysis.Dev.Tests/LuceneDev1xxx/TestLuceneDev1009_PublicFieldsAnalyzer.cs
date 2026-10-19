@@ -34,14 +34,14 @@ public class TestLuceneDev1009_PublicFieldsAnalyzer
             """
             public class MyClass
             {
-                public int Value;
+                public int {|#0:Value|};
             }
             """;
 
         var expected = new DiagnosticResult(Descriptors.LuceneDev1009_PublicFields)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("Value")
-            .WithLocation(3, 16);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1009_PublicFieldsAnalyzer())
         {

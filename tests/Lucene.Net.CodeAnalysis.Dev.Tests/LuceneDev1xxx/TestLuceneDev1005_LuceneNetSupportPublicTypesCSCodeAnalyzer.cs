@@ -52,15 +52,15 @@ namespace Lucene.Net.CodeAnalysis.Dev
             string typeName = $"Public{typeKindDesc.Replace(" ", "")}";
 
             string testCode =
-                $"""
+                $$"""
                 namespace Lucene.Net.Support;
-                public {typeKind} {typeName};
+                {|#0:public {{typeKind}} {{typeName}};|}
                 """;
 
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
                 .WithArguments(typeKindDesc, typeName)
-                .WithLocation(2, 1);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeAnalyzer())
             {
@@ -129,13 +129,13 @@ namespace Lucene.Net.CodeAnalysis.Dev
             const string testCode =
                 """
                 namespace Lucene.Net.Support;
-                public delegate void PublicDelegate();
+                {|#0:public delegate void PublicDelegate();|}
                 """;
 
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
                 .WithArguments("Delegate", "PublicDelegate")
-                .WithLocation(2, 1);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeAnalyzer())
             {
@@ -196,14 +196,14 @@ namespace Lucene.Net.CodeAnalysis.Dev
                 $$"""
                 namespace Lucene.Net.Support
                 {
-                    public {{typeKind}} {{typeName}};
+                    {|#0:public {{typeKind}} {{typeName}};|}
                 }
                 """;
 
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
                 .WithArguments(typeKindDesc, typeName)
-                .WithLocation(3, 5);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeAnalyzer())
             {
@@ -277,14 +277,14 @@ namespace Lucene.Net.CodeAnalysis.Dev
                 """
                 namespace Lucene.Net.Support
                 {
-                    public delegate void PublicDelegate();
+                    {|#0:public delegate void PublicDelegate();|}
                 }
                 """;
 
             var expected = DiagnosticResult.CompilerWarning(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.Id)
                 .WithMessageFormat(Descriptors.LuceneDev1005_LuceneNetSupportPublicTypes.MessageFormat)
                 .WithArguments("Delegate", "PublicDelegate")
-                .WithLocation(3, 5);
+                .WithLocation(0);
 
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1005_LuceneNetSupportPublicTypesCSCodeAnalyzer())
             {

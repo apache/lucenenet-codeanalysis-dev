@@ -52,7 +52,7 @@ public class TestLuceneDev7003_InterfaceNameAnalyzer
     {
         const string testCode =
             """
-            public interface Comparer
+            public interface {|#0:Comparer|}
             {
                 void DoWork();
             }
@@ -61,7 +61,7 @@ public class TestLuceneDev7003_InterfaceNameAnalyzer
         var expected = new DiagnosticResult(Descriptors.LuceneDev7003_InterfaceName)
             .WithSeverity(DiagnosticSeverity.Warning)
             .WithArguments("Comparer")
-            .WithLocation(1, 18);
+            .WithLocation(0);
 
         var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7003_InterfaceNameAnalyzer())
         {
