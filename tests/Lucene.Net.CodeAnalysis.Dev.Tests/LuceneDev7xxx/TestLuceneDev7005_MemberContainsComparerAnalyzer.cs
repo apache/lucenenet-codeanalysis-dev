@@ -115,4 +115,44 @@ public class TestLuceneDev7005_MemberContainsComparerAnalyzer
         };
         await test.RunAsync();
     }
+
+    [Test]
+    public async Task ExplicitInterfaceImplementationContainingComparator_Diagnostic()
+    {
+        // Matches the original reflection-based scan, which sees the explicit implementation
+        // under its qualified name (e.g. "IComparator.ComparatorMethod").
+        const string testCode =
+            """
+            public interface IComparator
+            {
+                void ComparatorMethod();
+            }
+
+            public class MyClass : IComparator
+            {
+                void IComparator.ComparatorMethod() { }
+            }
+            """;
+
+        var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev7005_MemberContainsComparerAnalyzer())
+        {
+            TestCode = testCode,
+            ExpectedDiagnostics =
+            {
+                new DiagnosticResult(Descriptors.LuceneDev7005_MemberContainsComparer)
+                    .WithSeverity(DiagnosticSeverity.Warning)
+                    .WithArguments("IComparator")
+                    .WithLocation(1, 18),
+                new DiagnosticResult(Descriptors.LuceneDev7005_MemberContainsComparer)
+                    .WithSeverity(DiagnosticSeverity.Warning)
+                    .WithArguments("ComparatorMethod")
+                    .WithLocation(3, 10),
+                new DiagnosticResult(Descriptors.LuceneDev7005_MemberContainsComparer)
+                    .WithSeverity(DiagnosticSeverity.Warning)
+                    .WithArguments("IComparator.ComparatorMethod")
+                    .WithLocation(8, 22),
+            }
+        };
+        await test.RunAsync();
+    }
 }

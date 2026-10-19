@@ -72,4 +72,50 @@ public class TestLuceneDev7003_InterfaceNameCodeFixProvider
 
         await test.RunAsync();
     }
+
+    [Test]
+    public async Task RenamesLowercaseIPrefixToUppercase()
+    {
+        const string testCode =
+            """
+            public interface iWalkable
+            {
+                void Walk();
+            }
+
+            public class Dog : iWalkable
+            {
+                public void Walk() { }
+            }
+            """;
+
+        const string fixedCode =
+            """
+            public interface IWalkable
+            {
+                void Walk();
+            }
+
+            public class Dog : IWalkable
+            {
+                public void Walk() { }
+            }
+            """;
+
+        var expected = new DiagnosticResult(Descriptors.LuceneDev7003_InterfaceName)
+            .WithSeverity(DiagnosticSeverity.Warning)
+            .WithArguments("iWalkable")
+            .WithLocation(1, 18);
+
+        var test = new InjectableCodeFixTest(
+            () => new LuceneDev7003_InterfaceNameAnalyzer(),
+            () => new LuceneDev7003_InterfaceNameCodeFixProvider())
+        {
+            TestCode = testCode.ReplaceLineEndings(),
+            FixedCode = fixedCode.ReplaceLineEndings(),
+            ExpectedDiagnostics = { expected }
+        };
+
+        await test.RunAsync();
+    }
 }

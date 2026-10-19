@@ -64,9 +64,10 @@ internal static class FieldRenameHelper
 
         var pascal = char.ToUpper(core[0], CultureInfo.InvariantCulture) + core.Substring(1);
 
-        // If it already starts with 'I' followed by an uppercase letter it is already valid.
+        // If it already starts with 'I' followed by an uppercase letter, the prefix is present and
+        // only the case or leading underscores needed fixing (e.g. 'iFoo' or '_IFoo' -> 'IFoo').
         if (pascal.Length >= 2 && pascal[0] == 'I' && char.IsUpper(pascal[1]))
-            return null;
+            return pascal == name ? null : pascal;
 
         return "I" + pascal;
     }

@@ -117,4 +117,30 @@ public class TestLuceneDev1012_MethodReturnsWritableArrayAnalyzer
         };
         await test.RunAsync();
     }
+
+    [Test]
+    public async Task ReturnsFieldDirectly_NullableArrayReturnType_Diagnostic()
+    {
+        const string testCode =
+            """
+            #nullable enable
+            public class MyClass
+            {
+                private readonly int[]? m_values = null;
+                public int[]? GetValues() => m_values;
+            }
+            """;
+
+        var expected = new DiagnosticResult(Descriptors.LuceneDev1012_MethodReturnsWritableArray)
+            .WithSeverity(DiagnosticSeverity.Warning)
+            .WithArguments("GetValues")
+            .WithLocation(5, 19);
+
+        var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev1012_MethodReturnsWritableArrayAnalyzer())
+        {
+            TestCode = testCode,
+            ExpectedDiagnostics = { expected }
+        };
+        await test.RunAsync();
+    }
 }

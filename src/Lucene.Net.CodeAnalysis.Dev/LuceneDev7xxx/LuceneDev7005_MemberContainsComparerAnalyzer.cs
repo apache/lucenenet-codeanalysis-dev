@@ -82,7 +82,9 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev7xxx
         private void AnalyzeMethod(SymbolAnalysisContext context)
         {
             var method = (IMethodSymbol)context.Symbol;
-            if (method.MethodKind != MethodKind.Ordinary)
+            // The original test also sees explicit interface implementations, which reflection
+            // reports under their qualified name (e.g. "IComparator.Compare").
+            if (method.MethodKind is not (MethodKind.Ordinary or MethodKind.ExplicitInterfaceImplementation))
                 return;
 
             if (ShouldExamineMember(method) && Matches(method.Name))

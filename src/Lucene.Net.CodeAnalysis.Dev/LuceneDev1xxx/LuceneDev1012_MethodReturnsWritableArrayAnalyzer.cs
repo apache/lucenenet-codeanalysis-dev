@@ -57,8 +57,8 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev1xxx
             if (methodDeclaration.Parent is not ClassDeclarationSyntax)
                 return;
 
-            // Return type must be an array.
-            if (methodDeclaration.ReturnType is not ArrayTypeSyntax)
+            // Return type must be an array (possibly nullable-annotated, e.g. int[]?).
+            if (methodDeclaration.ReturnType is not (ArrayTypeSyntax or NullableTypeSyntax { ElementType: ArrayTypeSyntax }))
                 return;
 
             var semanticModel = context.SemanticModel;
