@@ -19,7 +19,7 @@ Globalization: LuceneDev2000-LuceneDev2008
 Mobility:
 Performance: LuceneDev4000-LuceneDev4003
 Security:
-Usage: LuceneDev6000-LuceneDev6005
+Usage: LuceneDev6000-LuceneDev6007
 Naming: LuceneDev7000-LuceneDev7008
 Interoperability:
 Maintainability:
