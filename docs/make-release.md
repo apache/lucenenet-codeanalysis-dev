@@ -27,7 +27,7 @@
 ## Prerequisites
 
 - [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell) 6.0 or higher (see [this question](http://stackoverflow.com/questions/1825585/determine-installed-powershell-version) to check your PowerShell version)
-- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 - [nbgv tool](https://www.nuget.org/packages/nbgv/) (the version must match the one defined in [Directory.Packages.props](../Directory.Packages.props))
 - [Java 8](https://adoptium.net/temurin/releases) or higher (either a JRE or JDK)
 - Bash (Installed automatically with [Git for Windows](https://gitforwindows.org/) on Windows).

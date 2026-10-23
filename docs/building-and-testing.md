@@ -25,7 +25,7 @@
 
 ### Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 
 ### Building
 
@@ -65,8 +65,8 @@ dotnet test -c Release --logger:"console;verbosity=normal"
 
 ### Prerequisites
 
-1. Visual Studio 2022 or higher
-2. [.NET 8.0 SDK](https://dotnet.microsoft.com/download/visual-studio-sdks) or higher
+1. Visual Studio 2026 or higher
+2. [.NET 10.0 SDK](https://dotnet.microsoft.com/download/visual-studio-sdks) or higher
 
 ### Execution
 
