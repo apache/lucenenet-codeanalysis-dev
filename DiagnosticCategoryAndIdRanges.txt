@@ -16,7 +16,7 @@
 #
 Design: LuceneDev1000-LuceneDev1015
 Globalization: LuceneDev2000-LuceneDev2008
-Mobility:
+Documentation: LuceneDev3000
 Performance: LuceneDev4000-LuceneDev4003
 Security:
 Usage: LuceneDev6000-LuceneDev6007
@@ -24,4 +24,3 @@ Naming: LuceneDev7000-LuceneDev7008
 Interoperability:
 Maintainability:
 Reliability:
-Documentation: LuceneDev3000
