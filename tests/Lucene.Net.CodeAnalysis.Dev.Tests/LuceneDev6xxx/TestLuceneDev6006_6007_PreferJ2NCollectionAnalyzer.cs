@@ -64,7 +64,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
 
                 public class Sample
                 {
-                    private readonly List<int> values = new List<int>();
+                    private readonly {|#0:List<int>|} values = new {|#1:List<int>|}();
                 }
                 """;
 
@@ -72,11 +72,11 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
             test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6006_PreferJ2NCollection)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.List<T>", "System.Collections.Generic.List<T>")
-                .WithLocation(5, 22));
+                .WithLocation(0));
             test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6006_PreferJ2NCollection)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.List<T>", "System.Collections.Generic.List<T>")
-                .WithLocation(5, 45));
+                .WithLocation(1));
             await test.RunAsync();
         }
 
@@ -91,8 +91,8 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
                 {
                     public void M()
                     {
-                        var set = new HashSet<string>();
-                        var map = new Dictionary<string, int>();
+                        var set = new {|#0:HashSet<string>|}();
+                        var map = new {|#1:Dictionary<string, int>|}();
                     }
                 }
                 """;
@@ -101,11 +101,11 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
             test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6006_PreferJ2NCollection)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.HashSet<T>", "System.Collections.Generic.HashSet<T>")
-                .WithLocation(7, 23));
+                .WithLocation(0));
             test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6006_PreferJ2NCollection)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.Dictionary<TKey, TValue>", "System.Collections.Generic.Dictionary<TKey, TValue>")
-                .WithLocation(8, 23));
+                .WithLocation(1));
             await test.RunAsync();
         }
 
@@ -245,8 +245,8 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
                 {
                     public void M()
                     {
-                        var set = new JCG.LinkedHashSet<int>();
-                        var map = new JCG.LinkedDictionary<string, int>();
+                        var set = new {|#0:JCG.LinkedHashSet<int>|}();
+                        var map = new {|#1:JCG.LinkedDictionary<string, int>|}();
                     }
                 }
                 """;
@@ -256,11 +256,11 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
             test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6007_PreferJ2NOrderedCollection)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.OrderedHashSet<T>", "J2N.Collections.Generic.LinkedHashSet<T>")
-                .WithLocation("/0/Test0.cs", 7, 23));
+                .WithLocation(0));
             test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6007_PreferJ2NOrderedCollection)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.OrderedDictionary<TKey, TValue>", "J2N.Collections.Generic.LinkedDictionary<TKey, TValue>")
-                .WithLocation("/0/Test0.cs", 8, 23));
+                .WithLocation(1));
             await test.RunAsync();
         }
 
@@ -295,7 +295,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
                 {
                     public void M()
                     {
-                        var map = new OrderedDictionary<string, int>();
+                        var map = new {|#0:OrderedDictionary<string, int>|}();
                     }
                 }
                 """;
@@ -306,7 +306,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
             test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6006_PreferJ2NCollection)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.OrderedDictionary<TKey, TValue>", "System.Collections.Generic.OrderedDictionary<TKey, TValue>")
-                .WithLocation("/0/Test0.cs", 7, 23));
+                .WithLocation(0));
             await test.RunAsync();
         }
     }
