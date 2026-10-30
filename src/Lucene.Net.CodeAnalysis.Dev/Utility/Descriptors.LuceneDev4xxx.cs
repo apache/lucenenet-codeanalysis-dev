@@ -53,5 +53,14 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
                 Performance,
                 Warning
             );
+
+        // 4003: Enum.ToString() called on an enum member known at compile time;
+        // use nameof() instead
+        public static readonly DiagnosticDescriptor LuceneDev4003_EnumMemberToString =
+            Diagnostic(
+                "LuceneDev4003",
+                Performance,
+                Warning
+            );
     }
 }
