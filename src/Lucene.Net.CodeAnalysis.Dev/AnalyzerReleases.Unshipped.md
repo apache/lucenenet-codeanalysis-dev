@@ -9,6 +9,7 @@ LuceneDev1012 | Design   | Warning  | Methods should not return writable arrays
 LuceneDev1013 | Design   | Warning  | Public members should not be nullable enums
 LuceneDev1014 | Design   | Disabled | Members should not accept or return IEnumerable<T> (one-time port aid; disabled by default)
 LuceneDev1015 | Design   | Warning  | Members should not accept or return List<T> or Dictionary<K, V>; prefer interface types
+LuceneDev4003 | Performance | Warning | Use nameof() instead of calling ToString() on an enum member known at compile time
 LuceneDev7000 | Naming   | Warning  | Private fields should be camelCase, optionally with a leading underscore
 LuceneDev7001 | Naming   | Warning  | Protected fields should use the 'm_' prefix followed by camelCase
 LuceneDev7002 | Naming   | Warning  | Method parameters should be camelCase

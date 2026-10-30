@@ -439,6 +439,17 @@ under the License.
     <value>'{0}' is referenced by this StackTraceHelper.DoesStackTraceContainMethod call and should be marked with [MethodImpl(MethodImplOptions.NoInlining)] to prevent the JIT from inlining it out of the stack trace.</value>
   </data>
 
+  <!-- 4003: ToString() on a compile-time enum member -->
+  <data name="LuceneDev4003_AnalyzerTitle" xml:space="preserve">
+    <value>Use nameof instead of calling ToString() on an enum member</value>
+  </data>
+  <data name="LuceneDev4003_AnalyzerDescription" xml:space="preserve">
+    <value>Calling ToString() on an enum member that is known at compile time boxes the value and looks up its name at runtime. Use nameof(EnumType.Member) instead, which is a compile-time constant string.</value>
+  </data>
+  <data name="LuceneDev4003_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Use nameof({0}) instead of {0}.ToString() to avoid a runtime enum name lookup.</value>
+  </data>
+
   <!-- 1009: Public fields -->
   <data name="LuceneDev1009_AnalyzerTitle" xml:space="preserve">
     <value>Fields should not be public</value>
