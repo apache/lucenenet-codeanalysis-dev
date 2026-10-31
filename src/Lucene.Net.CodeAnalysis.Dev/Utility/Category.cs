@@ -23,7 +23,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
     {
         Design,
         Globalization,
-        Mobility,
+        Documentation,
         Performance,
         Security,
         Usage,
@@ -31,6 +31,5 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
         Interoperability,
         Maintainability,
         Reliability,
-        Documentation,
     }
 }
