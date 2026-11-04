@@ -28,7 +28,9 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.CodeAnalysis.Text;
 
@@ -58,82 +60,56 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev4xxx
             if (invocation is null)
                 return;
 
+            var targetDecl = await FindTargetDeclarationAsync(context.Document, invocation, context.CancellationToken).ConfigureAwait(false);
+            if (targetDecl is null)
+                return;
+
+            var targetDocument = context.Document.Project.Solution.GetDocument(targetDecl.SyntaxTree);
+            if (targetDocument is null)
+                return;
+
             context.RegisterCodeFix(
                 CodeAction.Create(
                     Title,
-                    ct => AddNoInliningToTargetAsync(context.Document, invocation, ct),
+                    ct => AddNoInliningAsync(targetDocument, targetDecl, ct),
                     equivalenceKey: nameof(Title)),
                 diagnostic);
         }
 
-        private static async Task<Solution> AddNoInliningToTargetAsync(
+        // Finds a target's source, which may be in another project in the solution. Returns null
+        // if there is none, such as for a package reference, so there is nothing to fix.
+        private static async Task<MethodDeclarationSyntax?> FindTargetDeclarationAsync(
             Document document,
             InvocationExpressionSyntax invocation,
             CancellationToken cancellationToken)
         {
-            var solution = document.Project.Solution;
-
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            if (semanticModel is null || invocation.ArgumentList.Arguments.Count != 2)
-                return solution;
+            if (semanticModel?.GetOperation(invocation, cancellationToken) is not IInvocationOperation operation)
+                return null;
 
-            var classArg = invocation.ArgumentList.Arguments[0].Expression;
-            var methodArg = invocation.ArgumentList.Arguments[1].Expression;
-
-            var (classNameValue, classTypeFromNameof) = ResolveClassReference(classArg, semanticModel);
-            if (classNameValue is null)
-                return solution;
-
-            var methodNameValue = ResolveMethodNameValue(methodArg, semanticModel);
-            if (methodNameValue is null)
-                return solution;
-
-            var compilation = semanticModel.Compilation;
-            var targetType = classTypeFromNameof
-                ?? FindSourceTypeByName(compilation, classNameValue);
-            if (targetType is null)
-                return solution;
-
-            var methodImplAttrSymbol = compilation.GetTypeByMetadataName(
-                "System.Runtime.CompilerServices.MethodImplAttribute");
-            if (methodImplAttrSymbol is null)
-                return solution;
-
-            MethodDeclarationSyntax? targetDecl = null;
-            foreach (var member in targetType.GetMembers(methodNameValue).OfType<IMethodSymbol>())
+            foreach (var method in StackTraceHelperInvocation.GetReferencedMethods(operation, cancellationToken))
             {
-                if (member.MethodKind != MethodKind.Ordinary)
+                var source = await SymbolFinder.FindSourceDefinitionAsync(method, document.Project.Solution, cancellationToken).ConfigureAwait(false);
+                if (source is not IMethodSymbol sourceMethod
+                    || !NoInliningAttributeHelper.IsMissingNoInlining(sourceMethod, cancellationToken))
                     continue;
 
-                if (NoInliningAttributeHelper.HasNoInliningAttribute(member, methodImplAttrSymbol))
-                    continue;
-
-                foreach (var declRef in member.DeclaringSyntaxReferences)
+                foreach (var reference in sourceMethod.DeclaringSyntaxReferences)
                 {
-                    if (declRef.GetSyntax(cancellationToken) is not MethodDeclarationSyntax methodDecl)
-                        continue;
-
-                    if (NoInliningAttributeHelper.HasEmptyBody(methodDecl))
-                        continue;
-                    if (NoInliningAttributeHelper.IsInterfaceOrAbstractMethod(methodDecl))
-                        continue;
-
-                    targetDecl = methodDecl;
-                    break;
+                    if (reference.GetSyntax(cancellationToken) is MethodDeclarationSyntax declaration)
+                        return declaration;
                 }
-
-                if (targetDecl is not null)
-                    break;
             }
 
-            if (targetDecl is null)
-                return solution;
+            return null;
+        }
 
+        private static async Task<Solution> AddNoInliningAsync(
+            Document targetDocument,
+            MethodDeclarationSyntax targetDecl,
+            CancellationToken cancellationToken)
+        {
             var targetTree = targetDecl.SyntaxTree;
-            var targetDocument = solution.GetDocument(targetTree);
-            if (targetDocument is null)
-                return solution;
-
             var targetRoot = await targetTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 
             // Build [MethodImpl(MethodImplOptions.NoInlining)] with no manual trivia,
@@ -203,80 +179,6 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.LuceneDev4xxx
                     return "\r";
             }
             return "\n";
-        }
-
-        // ---- Argument resolution (mirrors the analyzer) ----
-
-        private static (string? Name, INamedTypeSymbol? TypeFromNameof) ResolveClassReference(
-            ExpressionSyntax expr,
-            SemanticModel semantic)
-        {
-            if (expr is InvocationExpressionSyntax inv
-                && inv.Expression is IdentifierNameSyntax id
-                && id.Identifier.ValueText == "nameof"
-                && inv.ArgumentList.Arguments.Count == 1)
-            {
-                var inner = inv.ArgumentList.Arguments[0].Expression;
-                var typeSymbol = semantic.GetTypeInfo(inner).Type as INamedTypeSymbol
-                    ?? semantic.GetSymbolInfo(inner).Symbol as INamedTypeSymbol;
-                if (typeSymbol is not null)
-                    return (typeSymbol.Name, typeSymbol);
-            }
-
-            if (expr is LiteralExpressionSyntax literal && literal.IsKind(SyntaxKind.StringLiteralExpression))
-                return (literal.Token.ValueText, null);
-
-            var constant = semantic.GetConstantValue(expr);
-            if (constant.HasValue && constant.Value is string s)
-                return (s, null);
-
-            return (null, null);
-        }
-
-        private static string? ResolveMethodNameValue(ExpressionSyntax expr, SemanticModel semantic)
-        {
-            if (expr is InvocationExpressionSyntax inv
-                && inv.Expression is IdentifierNameSyntax id
-                && id.Identifier.ValueText == "nameof"
-                && inv.ArgumentList.Arguments.Count == 1)
-            {
-                var inner = inv.ArgumentList.Arguments[0].Expression;
-                return ExtractRightmostIdentifier(inner);
-            }
-
-            if (expr is LiteralExpressionSyntax literal && literal.IsKind(SyntaxKind.StringLiteralExpression))
-                return literal.Token.ValueText;
-
-            var constant = semantic.GetConstantValue(expr);
-            if (constant.HasValue && constant.Value is string s)
-                return s;
-
-            return null;
-        }
-
-        private static string? ExtractRightmostIdentifier(ExpressionSyntax expr)
-        {
-            return expr switch
-            {
-                IdentifierNameSyntax id => id.Identifier.ValueText,
-                MemberAccessExpressionSyntax ma => ma.Name.Identifier.ValueText,
-                _ => null,
-            };
-        }
-
-        private static INamedTypeSymbol? FindSourceTypeByName(Compilation compilation, string typeName)
-        {
-            // Use Roslyn's symbol-name index instead of walking every namespace.
-            // Restrict to the source assembly so we don't match metadata types.
-            foreach (var symbol in compilation.GetSymbolsWithName(n => n == typeName, SymbolFilter.Type))
-            {
-                if (symbol is INamedTypeSymbol type
-                    && SymbolEqualityComparer.Default.Equals(type.ContainingAssembly, compilation.Assembly))
-                {
-                    return type;
-                }
-            }
-            return null;
         }
     }
 }

@@ -18,14 +18,11 @@
  */
 
 using System.Runtime.CompilerServices;
-using Lucene.Net.Support.ExceptionHandling;
+using Lucene.Net.Util;
 
-// Stub mirroring Lucene.Net.Support.ExceptionHandling.StackTraceHelper so the
-// sample compiles in isolation. The analyzer matches by full type name.
-// Suppress LuceneDev1005 — that rule flags real public types in Lucene.Net.Support;
-// this is just a local stand-in for the sample.
-#pragma warning disable LuceneDev1005
-namespace Lucene.Net.Support.ExceptionHandling
+// Stub mirroring Lucene.Net.Util.StackTraceHelper so the sample compiles in
+// isolation. The analyzer matches by full type name.
+namespace Lucene.Net.Util
 {
     public static class StackTraceHelper
     {
@@ -33,16 +30,15 @@ namespace Lucene.Net.Support.ExceptionHandling
         public static bool DoesStackTraceContainMethod(string className, string methodName) => false;
     }
 }
-#pragma warning restore LuceneDev1005
 
 namespace Lucene.Net.CodeAnalysis.Dev.Sample.LuceneDev4xxx
 {
     public class LuceneDev4002_TargetWithoutNoInlining
     {
         // Triggers LuceneDev4002 (Warning): this method is referenced by the
-        // 2-argument StackTraceHelper.DoesStackTraceContainMethod overload below
-        // but is missing [MethodImpl(MethodImplOptions.NoInlining)]. The JIT may
-        // inline it out of the stack trace, silently breaking the check.
+        // StackTraceHelper.DoesStackTraceContainMethod calls below but is missing
+        // [MethodImpl(MethodImplOptions.NoInlining)]. The JIT may inline it out of
+        // the stack trace, silently breaking the check.
         public void Merge()
         {
             System.Console.WriteLine(1 + 2);
@@ -63,9 +59,15 @@ namespace Lucene.Net.CodeAnalysis.Dev.Sample.LuceneDev4xxx
     {
         public void Check()
         {
-            // The 2-argument overload triggers LuceneDev4002 on the referenced method.
+            // Triggers LuceneDev4002 on the referenced method.
             if (StackTraceHelper.DoesStackTraceContainMethod(
                     nameof(LuceneDev4002_TargetWithoutNoInlining),
+                    nameof(LuceneDev4002_TargetWithoutNoInlining.Merge)))
+            {
+            }
+
+            // The single-argument overload also triggers it.
+            if (StackTraceHelper.DoesStackTraceContainMethod(
                     nameof(LuceneDev4002_TargetWithoutNoInlining.Merge)))
             {
             }

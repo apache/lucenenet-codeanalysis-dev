@@ -5,3 +5,4 @@
 dotnet_diagnostic.LuceneDev6001.severity = warning
 dotnet_diagnostic.LuceneDev6002.severity = warning
 dotnet_diagnostic.LuceneDev6004.severity = warning
+dotnet_diagnostic.LuceneDev6014.severity = warning
