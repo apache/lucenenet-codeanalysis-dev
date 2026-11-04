@@ -21,9 +21,11 @@ using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.CodeAnalysis.Dev.Sample.LuceneDev6xxx;
 
-public class LuceneDev6006_6007_PreferJ2NCollectionSample
+public class LuceneDev6006_6011_PreferJ2NCollectionSample
 {
-    // BCL collection types: trigger LuceneDev6006 (Warning).
+    // BCL collection types: trigger LuceneDev6006, LuceneDev6007 and LuceneDev6008 respectively (Warning).
+    // SCG.OrderedDictionary<TKey, TValue> triggers LuceneDev6009 (Warning) on .NET 9+
+    // once JCG.OrderedDictionary<TKey, TValue> is available (J2N 2.2+).
     private readonly IList<int> list = new List<int>();
     private readonly ISet<string> set = new HashSet<string>();
     private readonly IDictionary<string, int> map = new Dictionary<string, int>();
@@ -33,7 +35,9 @@ public class LuceneDev6006_6007_PreferJ2NCollectionSample
     private readonly ISet<string> jcgSet = new JCG.HashSet<string>();
     private readonly IDictionary<string, int> jcgMap = new JCG.Dictionary<string, int>();
 
-    // JCG.LinkedHashSet<T> and JCG.LinkedDictionary<TKey, TValue> trigger LuceneDev6007 (Warning)
-    // once JCG.OrderedHashSet<T> and JCG.OrderedDictionary<TKey, TValue> are available (J2N 2.2+).
+    // JCG.LinkedHashSet<T> and JCG.LinkedDictionary<TKey, TValue> trigger LuceneDev6010 and LuceneDev6011
+    // respectively (Warning) once JCG.OrderedHashSet<T> and JCG.OrderedDictionary<TKey, TValue> are
+    // available (J2N 2.2+).
     private readonly ISet<string> linkedSet = new JCG.LinkedHashSet<string>();
+    private readonly IDictionary<string, int> linkedMap = new JCG.LinkedDictionary<string, int>();
 }

@@ -77,18 +77,50 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
                 Info
             );
 
-        // 6006: BCL collection type used where a J2N collection type should be preferred
-        public static readonly DiagnosticDescriptor LuceneDev6006_PreferJ2NCollection =
+        // 6006: SCG.List<T> used where JCG.List<T> should be preferred
+        public static readonly DiagnosticDescriptor LuceneDev6006_PreferJ2NList =
             Diagnostic(
                 "LuceneDev6006",
                 Usage,
                 Warning
             );
 
-        // 6007: J2N Linked* collection type used where the J2N Ordered* collection type should be preferred
-        public static readonly DiagnosticDescriptor LuceneDev6007_PreferJ2NOrderedCollection =
+        // 6007: SCG.HashSet<T> used where JCG.HashSet<T> should be preferred
+        public static readonly DiagnosticDescriptor LuceneDev6007_PreferJ2NHashSet =
             Diagnostic(
                 "LuceneDev6007",
+                Usage,
+                Warning
+            );
+
+        // 6008: SCG.Dictionary<TKey, TValue> used where JCG.Dictionary<TKey, TValue> should be preferred
+        public static readonly DiagnosticDescriptor LuceneDev6008_PreferJ2NDictionary =
+            Diagnostic(
+                "LuceneDev6008",
+                Usage,
+                Warning
+            );
+
+        // 6009: SCG.OrderedDictionary<TKey, TValue> used where JCG.OrderedDictionary<TKey, TValue> should be preferred
+        public static readonly DiagnosticDescriptor LuceneDev6009_PreferJ2NOrderedDictionary =
+            Diagnostic(
+                "LuceneDev6009",
+                Usage,
+                Warning
+            );
+
+        // 6010: JCG.LinkedHashSet<T> used where JCG.OrderedHashSet<T> should be preferred
+        public static readonly DiagnosticDescriptor LuceneDev6010_PreferOrderedHashSetOverLinkedHashSet =
+            Diagnostic(
+                "LuceneDev6010",
+                Usage,
+                Warning
+            );
+
+        // 6011: JCG.LinkedDictionary<TKey, TValue> used where JCG.OrderedDictionary<TKey, TValue> should be preferred
+        public static readonly DiagnosticDescriptor LuceneDev6011_PreferOrderedDictionaryOverLinkedDictionary =
+            Diagnostic(
+                "LuceneDev6011",
                 Usage,
                 Warning
             );

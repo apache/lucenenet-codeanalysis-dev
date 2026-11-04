@@ -29,18 +29,22 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
     /// <summary>
     /// Detects references to collection types that have a preferred J2N equivalent:
     /// <list type="bullet">
-    ///     <item><description>LuceneDev6006: SCG.List&lt;T&gt;, SCG.HashSet&lt;T&gt;, SCG.Dictionary&lt;TKey, TValue&gt;
-    ///     and SCG.OrderedDictionary&lt;TKey, TValue&gt; should be replaced with their JCG counterparts.</description></item>
-    ///     <item><description>LuceneDev6007: JCG.LinkedHashSet&lt;T&gt; and JCG.LinkedDictionary&lt;TKey, TValue&gt;
-    ///     should be replaced with JCG.OrderedHashSet&lt;T&gt; and JCG.OrderedDictionary&lt;TKey, TValue&gt;.</description></item>
+    ///     <item><description>LuceneDev6006: SCG.List&lt;T&gt; should be replaced with JCG.List&lt;T&gt;.</description></item>
+    ///     <item><description>LuceneDev6007: SCG.HashSet&lt;T&gt; should be replaced with JCG.HashSet&lt;T&gt;.</description></item>
+    ///     <item><description>LuceneDev6008: SCG.Dictionary&lt;TKey, TValue&gt; should be replaced with JCG.Dictionary&lt;TKey, TValue&gt;.</description></item>
+    ///     <item><description>LuceneDev6009: SCG.OrderedDictionary&lt;TKey, TValue&gt; should be replaced with JCG.OrderedDictionary&lt;TKey, TValue&gt;.</description></item>
+    ///     <item><description>LuceneDev6010: JCG.LinkedHashSet&lt;T&gt; should be replaced with JCG.OrderedHashSet&lt;T&gt;.</description></item>
+    ///     <item><description>LuceneDev6011: JCG.LinkedDictionary&lt;TKey, TValue&gt; should be replaced with JCG.OrderedDictionary&lt;TKey, TValue&gt;.</description></item>
     /// </list>
+    /// Each collection type has its own ID so that it can be suppressed independently, for example
+    /// with a target framework-specific <c>NoWarn</c> in MSBuild.
     /// A rule is only reported when both the original and the replacement type are available
     /// in the compilation. Unbound generic names (e.g. <c>typeof(List&lt;&gt;)</c>) and XML doc
     /// comment references are ignored.
     /// Severity: Warning.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class LuceneDev6006_6007_PreferJ2NCollectionAnalyzer : DiagnosticAnalyzer
+    public sealed class LuceneDev6006_6011_PreferJ2NCollectionAnalyzer : DiagnosticAnalyzer
     {
         /// <summary>
         /// The diagnostic property key containing the metadata name (e.g. <c>List`1</c>)
@@ -52,12 +56,12 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
 
         private static readonly (string Original, string Replacement, DiagnosticDescriptor Descriptor)[] Mappings =
         {
-            ("System.Collections.Generic.List`1", "List`1", Descriptors.LuceneDev6006_PreferJ2NCollection),
-            ("System.Collections.Generic.HashSet`1", "HashSet`1", Descriptors.LuceneDev6006_PreferJ2NCollection),
-            ("System.Collections.Generic.Dictionary`2", "Dictionary`2", Descriptors.LuceneDev6006_PreferJ2NCollection),
-            ("System.Collections.Generic.OrderedDictionary`2", "OrderedDictionary`2", Descriptors.LuceneDev6006_PreferJ2NCollection),
-            ("J2N.Collections.Generic.LinkedHashSet`1", "OrderedHashSet`1", Descriptors.LuceneDev6007_PreferJ2NOrderedCollection),
-            ("J2N.Collections.Generic.LinkedDictionary`2", "OrderedDictionary`2", Descriptors.LuceneDev6007_PreferJ2NOrderedCollection),
+            ("System.Collections.Generic.List`1", "List`1", Descriptors.LuceneDev6006_PreferJ2NList),
+            ("System.Collections.Generic.HashSet`1", "HashSet`1", Descriptors.LuceneDev6007_PreferJ2NHashSet),
+            ("System.Collections.Generic.Dictionary`2", "Dictionary`2", Descriptors.LuceneDev6008_PreferJ2NDictionary),
+            ("System.Collections.Generic.OrderedDictionary`2", "OrderedDictionary`2", Descriptors.LuceneDev6009_PreferJ2NOrderedDictionary),
+            ("J2N.Collections.Generic.LinkedHashSet`1", "OrderedHashSet`1", Descriptors.LuceneDev6010_PreferOrderedHashSetOverLinkedHashSet),
+            ("J2N.Collections.Generic.LinkedDictionary`2", "OrderedDictionary`2", Descriptors.LuceneDev6011_PreferOrderedDictionaryOverLinkedDictionary),
         };
 
         private static readonly SymbolDisplayFormat TypeDisplayFormat = new SymbolDisplayFormat(
@@ -66,8 +70,12 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             => ImmutableArray.Create(
-                Descriptors.LuceneDev6006_PreferJ2NCollection,
-                Descriptors.LuceneDev6007_PreferJ2NOrderedCollection);
+                Descriptors.LuceneDev6006_PreferJ2NList,
+                Descriptors.LuceneDev6007_PreferJ2NHashSet,
+                Descriptors.LuceneDev6008_PreferJ2NDictionary,
+                Descriptors.LuceneDev6009_PreferJ2NOrderedDictionary,
+                Descriptors.LuceneDev6010_PreferOrderedHashSetOverLinkedHashSet,
+                Descriptors.LuceneDev6011_PreferOrderedDictionaryOverLinkedDictionary);
 
         public override void Initialize(AnalysisContext context)
         {

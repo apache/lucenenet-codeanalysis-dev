@@ -29,26 +29,34 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using static Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx.LuceneDev6006_6007_PreferJ2NCollectionAnalyzer;
+using static Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx.LuceneDev6006_6011_PreferJ2NCollectionAnalyzer;
 
 namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev6xxx
 {
     /// <summary>
-    /// Code fix for <see cref="Descriptors.LuceneDev6006_PreferJ2NCollection"/> and
-    /// <see cref="Descriptors.LuceneDev6007_PreferJ2NOrderedCollection"/>: replaces the collection type
-    /// with its J2N equivalent, qualified with the <c>JCG</c> alias (e.g. <c>JCG.List&lt;T&gt;</c>),
+    /// Code fix for <see cref="Descriptors.LuceneDev6006_PreferJ2NList"/>,
+    /// <see cref="Descriptors.LuceneDev6007_PreferJ2NHashSet"/>,
+    /// <see cref="Descriptors.LuceneDev6008_PreferJ2NDictionary"/>,
+    /// <see cref="Descriptors.LuceneDev6009_PreferJ2NOrderedDictionary"/>,
+    /// <see cref="Descriptors.LuceneDev6010_PreferOrderedHashSetOverLinkedHashSet"/> and
+    /// <see cref="Descriptors.LuceneDev6011_PreferOrderedDictionaryOverLinkedDictionary"/>:
+    /// replaces the collection type with its J2N equivalent, qualified with the <c>JCG</c> alias (e.g. <c>JCG.List&lt;T&gt;</c>),
     /// and adds <c>using JCG = J2N.Collections.Generic;</c> if it is not already in scope.
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LuceneDev6006_6007_PreferJ2NCollectionCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LuceneDev6006_6011_PreferJ2NCollectionCodeFixProvider))]
     [Shared]
-    public sealed class LuceneDev6006_6007_PreferJ2NCollectionCodeFixProvider : CodeFixProvider
+    public sealed class LuceneDev6006_6011_PreferJ2NCollectionCodeFixProvider : CodeFixProvider
     {
         private const string JcgAlias = "JCG";
 
         public override ImmutableArray<string> FixableDiagnosticIds
             => ImmutableArray.Create(
-                Descriptors.LuceneDev6006_PreferJ2NCollection.Id,
-                Descriptors.LuceneDev6007_PreferJ2NOrderedCollection.Id);
+                Descriptors.LuceneDev6006_PreferJ2NList.Id,
+                Descriptors.LuceneDev6007_PreferJ2NHashSet.Id,
+                Descriptors.LuceneDev6008_PreferJ2NDictionary.Id,
+                Descriptors.LuceneDev6009_PreferJ2NOrderedDictionary.Id,
+                Descriptors.LuceneDev6010_PreferOrderedHashSetOverLinkedHashSet.Id,
+                Descriptors.LuceneDev6011_PreferOrderedDictionaryOverLinkedDictionary.Id);
 
         // Nested type names (e.g. List<List<int>>) produce overlapping diagnostics, which the
         // batch fixer cannot merge, so all diagnostics in a document are fixed in a single pass.

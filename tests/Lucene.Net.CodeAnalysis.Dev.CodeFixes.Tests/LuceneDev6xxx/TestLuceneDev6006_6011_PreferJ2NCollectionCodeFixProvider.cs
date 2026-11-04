@@ -26,7 +26,7 @@ using NUnit.Framework;
 namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev6xxx
 {
     [TestFixture]
-    public class TestLuceneDev6006_6007_PreferJ2NCollectionCodeFixProvider
+    public class TestLuceneDev6006_6011_PreferJ2NCollectionCodeFixProvider
     {
         private static readonly MetadataReference J2NReference =
             MetadataReference.CreateFromFile(typeof(J2N.Collections.Generic.List<>).Assembly.Location);
@@ -45,8 +45,8 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev6xxx
         private static InjectableCodeFixTest CreateTest(string testCode, string fixedCode)
         {
             var test = new InjectableCodeFixTest(
-                () => new LuceneDev6006_6007_PreferJ2NCollectionAnalyzer(),
-                () => new LuceneDev6006_6007_PreferJ2NCollectionCodeFixProvider())
+                () => new LuceneDev6006_6011_PreferJ2NCollectionAnalyzer(),
+                () => new LuceneDev6006_6011_PreferJ2NCollectionCodeFixProvider())
             {
                 TestCode = testCode.ReplaceLineEndings(),
                 FixedCode = fixedCode.ReplaceLineEndings(),
@@ -96,7 +96,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev6xxx
 
                 public class Sample
                 {
-                    private readonly IDictionary<string, int> map = new {|LuceneDev6006:Dictionary<string, int>|}();
+                    private readonly IDictionary<string, int> map = new {|LuceneDev6008:Dictionary<string, int>|}();
                     private readonly ISet<int> set = new JCG.HashSet<int>();
                 }
                 """;
@@ -125,9 +125,9 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev6xxx
 
                 public class Sample
                 {
-                    private readonly SCG.ISet<int> set = new {|LuceneDev6006:SCG.HashSet<int>|}();
+                    private readonly SCG.ISet<int> set = new {|LuceneDev6007:SCG.HashSet<int>|}();
                     private readonly SCG.IList<int> list = new {|LuceneDev6006:System.Collections.Generic.List<int>|}();
-                    private readonly SCG.IDictionary<int, int> map = new {|LuceneDev6006:global::System.Collections.Generic.Dictionary<int, int>|}();
+                    private readonly SCG.IDictionary<int, int> map = new {|LuceneDev6008:global::System.Collections.Generic.Dictionary<int, int>|}();
                 }
                 """;
 
@@ -156,7 +156,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev6xxx
 
                 public class Sample
                 {
-                    private readonly {|LuceneDev6006:Dictionary<string, {|LuceneDev6006:List<int>|}>|} map = new {|LuceneDev6006:Dictionary<string, {|LuceneDev6006:List<int>|}>|}();
+                    private readonly {|LuceneDev6008:Dictionary<string, {|LuceneDev6006:List<int>|}>|} map = new {|LuceneDev6008:Dictionary<string, {|LuceneDev6006:List<int>|}>|}();
                 }
                 """;
 
@@ -264,6 +264,38 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev6xxx
         }
 
         [Test]
+        public async Task SCGOrderedDictionary_IsReplacedWithJCGOrderedDictionary()
+        {
+            const string testCode =
+                """
+                using System.Collections.Generic;
+                using JCG = J2N.Collections.Generic;
+
+                public class Sample
+                {
+                    private readonly object map = new {|LuceneDev6009:OrderedDictionary<string, int>|}();
+                }
+                """;
+
+            const string fixedCode =
+                """
+                using System.Collections.Generic;
+                using JCG = J2N.Collections.Generic;
+
+                public class Sample
+                {
+                    private readonly object map = new JCG.OrderedDictionary<string, int>();
+                }
+                """;
+
+            var test = CreateTest(testCode, fixedCode);
+            test.ReferenceAssemblies = ReferenceAssemblies.Net.Net90;
+            test.TestState.Sources.Add(J2NOrderedCollectionStubs.ReplaceLineEndings());
+            test.FixedState.Sources.Add(J2NOrderedCollectionStubs.ReplaceLineEndings());
+            await test.RunAsync();
+        }
+
+        [Test]
         public async Task JCGLinkedTypes_AreReplacedWithOrderedTypes()
         {
             const string testCode =
@@ -272,8 +304,8 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev6xxx
 
                 public class Sample
                 {
-                    private readonly object set = new {|LuceneDev6007:JCG.LinkedHashSet<int>|}();
-                    private readonly object map = new {|LuceneDev6007:J2N.Collections.Generic.LinkedDictionary<string, int>|}();
+                    private readonly object set = new {|LuceneDev6010:JCG.LinkedHashSet<int>|}();
+                    private readonly object map = new {|LuceneDev6011:J2N.Collections.Generic.LinkedDictionary<string, int>|}();
                 }
                 """;
 
