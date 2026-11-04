@@ -9,6 +9,9 @@ LuceneDev1012 | Design        | Warning  | Methods should not return writable ar
 LuceneDev1013 | Design        | Warning  | Public members should not be nullable enums
 LuceneDev1014 | Design        | Disabled | Members should not accept or return IEnumerable<T> (one-time port aid; disabled by default)
 LuceneDev1015 | Design        | Warning  | Members should not accept or return List<T> or Dictionary<K, V>; prefer interface types
+LuceneDev1016 | Design        | Warning  | Anonymous classes should be private
+LuceneDev1017 | Design        | Warning  | Anonymous classes should be sealed
+LuceneDev1018 | Design        | Warning  | Instance fields of anonymous classes should be private
 LuceneDev3000 | Documentation | Warning  | Publicly visible XML doc comments should not use see/seealso cref to reference non-publicly-visible symbols (broken API doc links)
 LuceneDev4003 | Performance   | Warning  | Use nameof() instead of calling ToString() on an enum member known at compile time
 LuceneDev6006 | Usage         | Warning  | Use JCG.List<T> instead of SCG.List<T>
@@ -29,3 +32,4 @@ LuceneDev7005 | Naming        | Warning  | Public members should not contain the
 LuceneDev7006 | Naming        | Warning  | Public members should not be named 'Size'; use 'Count' or 'Length'
 LuceneDev7007 | Naming        | Warning  | Public members should not contain non-.NET numeric type names (Int/Long/Short/Float)
 LuceneDev7008 | Naming        | Warning  | Type names should not contain non-.NET numeric type names (Int/Long/Short/Float)
+LuceneDev7009 | Naming        | Warning  | Anonymous class names should end in 'AnonymousClass', optionally followed by digits
