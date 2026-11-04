@@ -27,7 +27,7 @@ using NUnit.Framework;
 namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
 {
     [TestFixture]
-    public class TestLuceneDev6006_6007_PreferJ2NCollectionAnalyzer
+    public class TestLuceneDev6006_6011_PreferJ2NCollectionAnalyzer
     {
         private static readonly MetadataReference J2NReference =
             MetadataReference.CreateFromFile(typeof(J2N.Collections.Generic.List<>).Assembly.Location);
@@ -45,7 +45,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
 
         private static InjectableCSharpAnalyzerTest CreateTest(string testCode, bool referenceJ2N = true)
         {
-            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6006_6007_PreferJ2NCollectionAnalyzer())
+            var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6006_6011_PreferJ2NCollectionAnalyzer())
             {
                 TestCode = testCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
@@ -69,11 +69,11 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
                 """;
 
             var test = CreateTest(testCode);
-            test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6006_PreferJ2NCollection)
+            test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6006_PreferJ2NList)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.List<T>", "System.Collections.Generic.List<T>")
                 .WithLocation(0));
-            test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6006_PreferJ2NCollection)
+            test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6006_PreferJ2NList)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.List<T>", "System.Collections.Generic.List<T>")
                 .WithLocation(1));
@@ -98,11 +98,11 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
                 """;
 
             var test = CreateTest(testCode);
-            test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6006_PreferJ2NCollection)
+            test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6007_PreferJ2NHashSet)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.HashSet<T>", "System.Collections.Generic.HashSet<T>")
                 .WithLocation(0));
-            test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6006_PreferJ2NCollection)
+            test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6008_PreferJ2NDictionary)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.Dictionary<TKey, TValue>", "System.Collections.Generic.Dictionary<TKey, TValue>")
                 .WithLocation(1));
@@ -128,8 +128,8 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
                     public IDictionary<string, ISet<int>> M(IList<int> input)
                     {
                         {|LuceneDev6006:SCG.List<int>|} copy = new(input);
-                        var nested = new {|LuceneDev6006:List<{|LuceneDev6006:HashSet<int>|}>|}();
-                        var global = new {|LuceneDev6006:global::System.Collections.Generic.Dictionary<string, ISet<int>>|}();
+                        var nested = new {|LuceneDev6006:List<{|LuceneDev6007:HashSet<int>|}>|}();
+                        var global = new {|LuceneDev6008:global::System.Collections.Generic.Dictionary<string, ISet<int>>|}();
                         var enumerator = default({|LuceneDev6006:List<int>|}.Enumerator);
                         return global;
                     }
@@ -153,6 +153,29 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
                 """;
 
             await CreateTest(testCode).RunAsync();
+        }
+
+        [Test]
+        public async Task DisablingOneRule_OnlySuppressesThatCollectionType()
+        {
+            const string testCode =
+                """
+                using System.Collections.Generic;
+
+                public class Sample
+                {
+                    public void M()
+                    {
+                        var list = new List<int>();
+                        var set = new {|LuceneDev6007:HashSet<int>|}();
+                        var map = new {|LuceneDev6008:Dictionary<string, int>|}();
+                    }
+                }
+                """;
+
+            var test = CreateTest(testCode);
+            test.DisabledDiagnostics.Add("LuceneDev6006");
+            await test.RunAsync();
         }
 
         [Test]
@@ -253,11 +276,11 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
 
             var test = CreateTest(testCode);
             test.TestState.Sources.Add(J2NOrderedCollectionStubs);
-            test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6007_PreferJ2NOrderedCollection)
+            test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6010_PreferOrderedHashSetOverLinkedHashSet)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.OrderedHashSet<T>", "J2N.Collections.Generic.LinkedHashSet<T>")
                 .WithLocation(0));
-            test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6007_PreferJ2NOrderedCollection)
+            test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6011_PreferOrderedDictionaryOverLinkedDictionary)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.OrderedDictionary<TKey, TValue>", "J2N.Collections.Generic.LinkedDictionary<TKey, TValue>")
                 .WithLocation(1));
@@ -303,7 +326,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
             var test = CreateTest(testCode);
             test.ReferenceAssemblies = ReferenceAssemblies.Net.Net90;
             test.TestState.Sources.Add(J2NOrderedCollectionStubs);
-            test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6006_PreferJ2NCollection)
+            test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6009_PreferJ2NOrderedDictionary)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.OrderedDictionary<TKey, TValue>", "System.Collections.Generic.OrderedDictionary<TKey, TValue>")
                 .WithLocation(0));
