@@ -17,6 +17,8 @@
  */
 
 using System.Linq;
+using System.Reflection;
+using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -48,25 +50,26 @@ namespace Lucene.Net.CodeAnalysis.Dev.LuceneDev4xxx
             return null;
         }
 
-        // Symbol-based variant: works across syntax trees and avoids
-        // Compilation.GetSemanticModel (which would trip RS1030 in an analyzer).
-        public static bool HasNoInliningAttribute(
-            IMethodSymbol method,
-            INamedTypeSymbol methodImplAttrSymbol)
+        /// <summary>
+        /// Returns <c>true</c> if a method referenced by StackTraceHelper needs NoInlining and
+        /// doesn't have it. A method in a referenced assembly has no source to show whether its
+        /// body is empty, so it is treated as non-empty.
+        /// </summary>
+        public static bool IsMissingNoInlining(IMethodSymbol method, CancellationToken cancellationToken)
         {
-            foreach (var attr in method.GetAttributes())
-            {
-                if (!SymbolEqualityComparer.Default.Equals(attr.AttributeClass, methodImplAttrSymbol))
-                    continue;
+            if (method.MethodKind != MethodKind.Ordinary
+                || method.IsAbstract
+                || method.ContainingType.TypeKind == TypeKind.Interface)
+                return false;
 
-                if (attr.ConstructorArguments.Length == 0)
-                    continue;
+            // Compiled code stores MethodImpl as metadata flags rather than as an attribute, so
+            // GetAttributes wouldn't find it on a method in a referenced assembly.
+            if ((method.MethodImplementationFlags & MethodImplAttributes.NoInlining) != 0)
+                return false;
 
-                var first = attr.ConstructorArguments[0];
-                if (first.Value is int intValue && (intValue & NoInlining) == NoInlining)
-                    return true;
-            }
-            return false;
+            return !method.DeclaringSyntaxReferences.Any(reference =>
+                reference.GetSyntax(cancellationToken) is MethodDeclarationSyntax declaration
+                && HasEmptyBody(declaration));
         }
 
         private static bool AttributeSpecifiesNoInlining(AttributeSyntax attr, SemanticModel semantic)
