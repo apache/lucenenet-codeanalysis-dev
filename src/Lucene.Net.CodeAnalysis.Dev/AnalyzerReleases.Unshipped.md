@@ -9,6 +9,9 @@ LuceneDev1012 | Design   | Warning  | Methods should not return writable arrays
 LuceneDev1013 | Design   | Warning  | Public members should not be nullable enums
 LuceneDev1014 | Design   | Disabled | Members should not accept or return IEnumerable<T> (one-time port aid; disabled by default)
 LuceneDev1015 | Design   | Warning  | Members should not accept or return List<T> or Dictionary<K, V>; prefer interface types
+LuceneDev1016 | Design   | Warning  | Anonymous classes should be private
+LuceneDev1017 | Design   | Warning  | Anonymous classes should be sealed
+LuceneDev1018 | Design   | Warning  | Instance fields of anonymous classes should be private
 LuceneDev7000 | Naming   | Warning  | Private fields should be camelCase, optionally with a leading underscore
 LuceneDev7001 | Naming   | Warning  | Protected fields should use the 'm_' prefix followed by camelCase
 LuceneDev7002 | Naming   | Warning  | Method parameters should be camelCase
@@ -18,3 +21,4 @@ LuceneDev7005 | Naming   | Warning  | Public members should not contain the word
 LuceneDev7006 | Naming   | Warning  | Public members should not be named 'Size'; use 'Count' or 'Length'
 LuceneDev7007 | Naming   | Warning  | Public members should not contain non-.NET numeric type names (Int/Long/Short/Float)
 LuceneDev7008 | Naming   | Warning  | Type names should not contain non-.NET numeric type names (Int/Long/Short/Float)
+LuceneDev7009 | Naming   | Warning  | Anonymous class names should end in 'AnonymousClass', optionally followed by digits

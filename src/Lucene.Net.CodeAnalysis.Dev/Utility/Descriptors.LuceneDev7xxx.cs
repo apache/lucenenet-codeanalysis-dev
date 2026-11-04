@@ -91,5 +91,12 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
                 Naming,
                 Warning
             );
+
+        public static readonly DiagnosticDescriptor LuceneDev7009_AnonymousClassName =
+            Diagnostic(
+                "LuceneDev7009",
+                Naming,
+                Warning
+            );
     }
 }
