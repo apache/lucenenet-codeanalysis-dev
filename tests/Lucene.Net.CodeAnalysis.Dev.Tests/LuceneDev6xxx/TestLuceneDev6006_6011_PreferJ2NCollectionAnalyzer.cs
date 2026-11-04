@@ -32,14 +32,13 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
         private static readonly MetadataReference J2NReference =
             MetadataReference.CreateFromFile(typeof(J2N.Collections.Generic.List<>).Assembly.Location);
 
-        // OrderedHashSet<T> and OrderedDictionary<TKey, TValue> are not in the J2N version
-        // referenced by the tests, so they are declared in source.
-        private const string J2NOrderedCollectionStubs =
+        // Simulates a J2N version that predates OrderedHashSet<T> and OrderedDictionary<TKey, TValue>.
+        private const string J2NLinkedCollectionStubs =
             """
             namespace J2N.Collections.Generic
             {
-                public class OrderedHashSet<T> { }
-                public class OrderedDictionary<TKey, TValue> { }
+                public class LinkedHashSet<T> { }
+                public class LinkedDictionary<TKey, TValue> { }
             }
             """;
 
@@ -48,7 +47,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev6006_6011_PreferJ2NCollectionAnalyzer())
             {
                 TestCode = testCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net100,
             };
             if (referenceJ2N)
                 test.TestState.AdditionalReferences.Add(J2NReference);
@@ -275,7 +274,6 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
                 """;
 
             var test = CreateTest(testCode);
-            test.TestState.Sources.Add(J2NOrderedCollectionStubs);
             test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6010_PreferOrderedHashSetOverLinkedHashSet)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.OrderedHashSet<T>", "J2N.Collections.Generic.LinkedHashSet<T>")
@@ -304,7 +302,9 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
                 }
                 """;
 
-            await CreateTest(testCode).RunAsync();
+            var test = CreateTest(testCode, referenceJ2N: false);
+            test.TestState.Sources.Add(J2NLinkedCollectionStubs);
+            await test.RunAsync();
         }
 
         [Test]
@@ -324,8 +324,6 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev6xxx
                 """;
 
             var test = CreateTest(testCode);
-            test.ReferenceAssemblies = ReferenceAssemblies.Net.Net90;
-            test.TestState.Sources.Add(J2NOrderedCollectionStubs);
             test.ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.LuceneDev6009_PreferJ2NOrderedDictionary)
                 .WithSeverity(DiagnosticSeverity.Warning)
                 .WithArguments("J2N.Collections.Generic.OrderedDictionary<TKey, TValue>", "System.Collections.Generic.OrderedDictionary<TKey, TValue>")
