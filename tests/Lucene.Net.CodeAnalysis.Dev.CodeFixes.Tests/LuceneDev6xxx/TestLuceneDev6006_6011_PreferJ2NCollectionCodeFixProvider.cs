@@ -31,17 +31,6 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev6xxx
         private static readonly MetadataReference J2NReference =
             MetadataReference.CreateFromFile(typeof(J2N.Collections.Generic.List<>).Assembly.Location);
 
-        // OrderedHashSet<T> and OrderedDictionary<TKey, TValue> are not in the J2N version
-        // referenced by the tests, so they are declared in source.
-        private const string J2NOrderedCollectionStubs =
-            """
-            namespace J2N.Collections.Generic
-            {
-                public class OrderedHashSet<T> { }
-                public class OrderedDictionary<TKey, TValue> { }
-            }
-            """;
-
         private static InjectableCodeFixTest CreateTest(string testCode, string fixedCode)
         {
             var test = new InjectableCodeFixTest(
@@ -50,7 +39,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev6xxx
             {
                 TestCode = testCode.ReplaceLineEndings(),
                 FixedCode = fixedCode.ReplaceLineEndings(),
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net100,
             };
             test.TestState.AdditionalReferences.Add(J2NReference);
             test.FixedState.AdditionalReferences.Add(J2NReference);
@@ -288,11 +277,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev6xxx
                 }
                 """;
 
-            var test = CreateTest(testCode, fixedCode);
-            test.ReferenceAssemblies = ReferenceAssemblies.Net.Net90;
-            test.TestState.Sources.Add(J2NOrderedCollectionStubs.ReplaceLineEndings());
-            test.FixedState.Sources.Add(J2NOrderedCollectionStubs.ReplaceLineEndings());
-            await test.RunAsync();
+            await CreateTest(testCode, fixedCode).RunAsync();
         }
 
         [Test]
@@ -320,10 +305,7 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev6xxx
                 }
                 """;
 
-            var test = CreateTest(testCode, fixedCode);
-            test.TestState.Sources.Add(J2NOrderedCollectionStubs.ReplaceLineEndings());
-            test.FixedState.Sources.Add(J2NOrderedCollectionStubs.ReplaceLineEndings());
-            await test.RunAsync();
+            await CreateTest(testCode, fixedCode).RunAsync();
         }
     }
 }

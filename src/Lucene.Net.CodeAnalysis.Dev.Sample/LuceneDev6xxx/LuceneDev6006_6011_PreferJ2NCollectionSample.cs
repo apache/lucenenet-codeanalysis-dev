@@ -23,21 +23,21 @@ namespace Lucene.Net.CodeAnalysis.Dev.Sample.LuceneDev6xxx;
 
 public class LuceneDev6006_6011_PreferJ2NCollectionSample
 {
-    // BCL collection types: trigger LuceneDev6006, LuceneDev6007 and LuceneDev6008 respectively (Warning).
-    // SCG.OrderedDictionary<TKey, TValue> triggers LuceneDev6009 (Warning) on .NET 9+
-    // once JCG.OrderedDictionary<TKey, TValue> is available (J2N 2.2+).
+    // BCL collection types: trigger LuceneDev6006, LuceneDev6007, LuceneDev6008 and LuceneDev6009
+    // respectively (Warning).
     private readonly IList<int> list = new List<int>();
     private readonly ISet<string> set = new HashSet<string>();
     private readonly IDictionary<string, int> map = new Dictionary<string, int>();
+    private readonly IDictionary<string, int> orderedMap = new OrderedDictionary<string, int>();
 
     // J2N collection types: no diagnostic.
     private readonly IList<int> jcgList = new JCG.List<int>();
     private readonly ISet<string> jcgSet = new JCG.HashSet<string>();
     private readonly IDictionary<string, int> jcgMap = new JCG.Dictionary<string, int>();
+    private readonly IDictionary<string, int> jcgOrderedMap = new JCG.OrderedDictionary<string, int>();
+    private readonly ISet<string> jcgOrderedSet = new JCG.OrderedHashSet<string>();
 
-    // JCG.LinkedHashSet<T> and JCG.LinkedDictionary<TKey, TValue> trigger LuceneDev6010 and LuceneDev6011
-    // respectively (Warning) once JCG.OrderedHashSet<T> and JCG.OrderedDictionary<TKey, TValue> are
-    // available (J2N 2.2+).
+    // J2N linked collection types: trigger LuceneDev6010 and LuceneDev6011 respectively (Warning).
     private readonly ISet<string> linkedSet = new JCG.LinkedHashSet<string>();
     private readonly IDictionary<string, int> linkedMap = new JCG.LinkedDictionary<string, int>();
 }
