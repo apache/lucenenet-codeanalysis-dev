@@ -76,5 +76,21 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
                 Usage,
                 Info
             );
+
+        // 6015: Catch clause filtered by an exception helper must catch System.Exception
+        public static readonly DiagnosticDescriptor LuceneDev6015_CatchFilteredByHelperMustCatchException =
+            Diagnostic(
+                "LuceneDev6015",
+                Usage,
+                Error
+            );
+
+        // 6016: Catch clause should use a when clause with an exception helper
+        public static readonly DiagnosticDescriptor LuceneDev6016_CatchShouldUseHelperFilter =
+            Diagnostic(
+                "LuceneDev6016",
+                Usage,
+                Warning
+            );
     }
 }

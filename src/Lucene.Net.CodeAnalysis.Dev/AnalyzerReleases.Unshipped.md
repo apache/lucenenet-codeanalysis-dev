@@ -9,6 +9,8 @@ LuceneDev1012 | Design   | Warning  | Methods should not return writable arrays
 LuceneDev1013 | Design   | Warning  | Public members should not be nullable enums
 LuceneDev1014 | Design   | Disabled | Members should not accept or return IEnumerable<T> (one-time port aid; disabled by default)
 LuceneDev1015 | Design   | Warning  | Members should not accept or return List<T> or Dictionary<K, V>; prefer interface types
+LuceneDev6015 | Usage    | Error    | Catch clauses filtered by a Lucene exception helper method must catch System.Exception, never a more specific type
+LuceneDev6016 | Usage    | Warning  | Catch clauses should use a when clause with a Lucene exception helper method
 LuceneDev7000 | Naming   | Warning  | Private fields should be camelCase, optionally with a leading underscore
 LuceneDev7001 | Naming   | Warning  | Protected fields should use the 'm_' prefix followed by camelCase
 LuceneDev7002 | Naming   | Warning  | Method parameters should be camelCase
