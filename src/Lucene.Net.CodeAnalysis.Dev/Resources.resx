@@ -307,6 +307,28 @@ under the License.
     <value>Call to '{0}' uses a single-character string literal. Use the char overload instead (e.g., 'x' instead of "x").</value>
   </data>
 
+  <!-- 6015: Catch clause filtered by an exception helper must catch System.Exception -->
+  <data name="LuceneDev6015_AnalyzerTitle" xml:space="preserve">
+    <value>Catch clause filtered by an exception helper method must catch System.Exception</value>
+  </data>
+  <data name="LuceneDev6015_AnalyzerDescription" xml:space="preserve">
+    <value>The exception helper methods in Lucene.ExceptionExtensions match .NET exceptions that do not necessarily derive from the type the method is named after. Catching a type more specific than System.Exception prevents the filter from seeing some of the exceptions it is meant to match.</value>
+  </data>
+  <data name="LuceneDev6015_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Catch clause is filtered by '{0}', so it must catch 'System.Exception' instead of '{1}'</value>
+  </data>
+
+  <!-- 6016: Catch clause should use a when clause with an exception helper -->
+  <data name="LuceneDev6016_AnalyzerTitle" xml:space="preserve">
+    <value>Catch clause should use a when clause with an exception helper method</value>
+  </data>
+  <data name="LuceneDev6016_AnalyzerDescription" xml:space="preserve">
+    <value>Java and .NET exception hierarchies do not map 1-to-1. Using a when clause with a method from Lucene.ExceptionExtensions makes the catch match what Java does. Suppress this diagnostic where a catch intentionally has no filter.</value>
+  </data>
+  <data name="LuceneDev6016_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Catch clause has no when clause; use one with a method from Lucene.ExceptionExtensions, such as 'catch (Exception e) when (e.IsIOException())'</value>
+  </data>
+
   <!-- 2000: BCL numeric Parse/TryParse missing IFormatProvider -->
   <data name="LuceneDev2000_AnalyzerTitle" xml:space="preserve">
     <value>Numeric Parse/TryParse should specify an IFormatProvider</value>
