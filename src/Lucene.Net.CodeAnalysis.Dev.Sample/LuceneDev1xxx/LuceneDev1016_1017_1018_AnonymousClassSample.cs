@@ -34,10 +34,10 @@ namespace Lucene.Net.CodeAnalysis.Dev.Sample.LuceneDev1xxx
         private sealed class FieldsAnonymousClass
         {
             // Triggers LuceneDev1018 (Warning): instance fields should be private.
-            internal int value;
+            internal int value = 1;
 
             // No diagnostic: private instance field.
-            private int total;
+            private int total = 2;
 
             // No diagnostic: static and const fields are not checked.
             public static readonly FieldsAnonymousClass Default = new FieldsAnonymousClass();
