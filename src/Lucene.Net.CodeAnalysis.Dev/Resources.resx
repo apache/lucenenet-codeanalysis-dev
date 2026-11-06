@@ -516,6 +516,39 @@ under the License.
     <value>Member '{0}' accepts or returns '{1}'; prefer an interface type such as IList&lt;T&gt; or IDictionary&lt;K, V&gt; instead.</value>
   </data>
 
+  <!-- 1016: Anonymous class should be private -->
+  <data name="LuceneDev1016_AnalyzerTitle" xml:space="preserve">
+    <value>Anonymous classes should be private</value>
+  </data>
+  <data name="LuceneDev1016_AnalyzerDescription" xml:space="preserve">
+    <value>Types with 'AnonymousClass' in their name represent Java anonymous classes, which cannot be used outside the code that declares them. They should be private nested types.</value>
+  </data>
+  <data name="LuceneDev1016_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Anonymous class '{0}' should be private.</value>
+  </data>
+
+  <!-- 1017: Anonymous class should be sealed -->
+  <data name="LuceneDev1017_AnalyzerTitle" xml:space="preserve">
+    <value>Anonymous classes should be sealed</value>
+  </data>
+  <data name="LuceneDev1017_AnalyzerDescription" xml:space="preserve">
+    <value>Types with 'AnonymousClass' in their name represent Java anonymous classes, which cannot be inherited from. They should be sealed.</value>
+  </data>
+  <data name="LuceneDev1017_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Anonymous class '{0}' should be sealed.</value>
+  </data>
+
+  <!-- 1018: Anonymous class instance field should be private -->
+  <data name="LuceneDev1018_AnalyzerTitle" xml:space="preserve">
+    <value>Instance fields of anonymous classes should be private</value>
+  </data>
+  <data name="LuceneDev1018_AnalyzerDescription" xml:space="preserve">
+    <value>Types with 'AnonymousClass' in their name represent Java anonymous classes, whose state is not accessible to other code. Their instance fields should be private. Static and const fields are not checked.</value>
+  </data>
+  <data name="LuceneDev1018_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Instance field '{0}' of anonymous class '{1}' should be private.</value>
+  </data>
+
   <!-- 7000: Private field name -->
   <data name="LuceneDev7000_AnalyzerTitle" xml:space="preserve">
     <value>Private fields should follow the naming convention</value>
@@ -613,6 +646,17 @@ under the License.
   </data>
   <data name="LuceneDev7008_AnalyzerMessageFormat" xml:space="preserve">
     <value>Type '{0}' contains a non-.NET numeric term; use .NET numeric type names such as Int32, Int64, Int16 or Single.</value>
+  </data>
+
+  <!-- 7009: Anonymous class name -->
+  <data name="LuceneDev7009_AnalyzerTitle" xml:space="preserve">
+    <value>Anonymous class names should end in 'AnonymousClass'</value>
+  </data>
+  <data name="LuceneDev7009_AnalyzerDescription" xml:space="preserve">
+    <value>Types with 'AnonymousClass' in their name represent Java anonymous classes. By convention the name should end in 'AnonymousClass', optionally followed by digits, such as ThreadAnonymousClass or ThreadAnonymousClass2.</value>
+  </data>
+  <data name="LuceneDev7009_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Type '{0}' should end in 'AnonymousClass', optionally followed by digits.</value>
   </data>
 
 </root>

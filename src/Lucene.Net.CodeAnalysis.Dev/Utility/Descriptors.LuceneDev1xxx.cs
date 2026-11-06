@@ -143,5 +143,26 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
                 Design,
                 Warning
             );
+
+        public static readonly DiagnosticDescriptor LuceneDev1016_AnonymousClassShouldBePrivate =
+            Diagnostic(
+                "LuceneDev1016",
+                Design,
+                Warning
+            );
+
+        public static readonly DiagnosticDescriptor LuceneDev1017_AnonymousClassShouldBeSealed =
+            Diagnostic(
+                "LuceneDev1017",
+                Design,
+                Warning
+            );
+
+        public static readonly DiagnosticDescriptor LuceneDev1018_AnonymousClassFieldShouldBePrivate =
+            Diagnostic(
+                "LuceneDev1018",
+                Design,
+                Warning
+            );
     }
 }
