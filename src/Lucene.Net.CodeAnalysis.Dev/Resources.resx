@@ -306,6 +306,60 @@ under the License.
   <data name="LuceneDev6005_AnalyzerMessageFormat" xml:space="preserve">
     <value>Call to '{0}' uses a single-character string literal. Use the char overload instead (e.g., 'x' instead of "x").</value>
   </data>
+  <data name="LuceneDev6006_AnalyzerTitle" xml:space="preserve">
+    <value>Use JCG.List&lt;T&gt; instead of SCG.List&lt;T&gt;</value>
+  </data>
+  <data name="LuceneDev6006_AnalyzerDescription" xml:space="preserve">
+    <value>JCG.List&lt;T&gt; provides Java-compatible structural equality and formatting, and should be used instead of System.Collections.Generic.List&lt;T&gt;. Suppress this warning where the BCL type is required.</value>
+  </data>
+  <data name="LuceneDev6006_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Use '{0}' instead of '{1}'</value>
+  </data>
+  <data name="LuceneDev6007_AnalyzerTitle" xml:space="preserve">
+    <value>Use JCG.HashSet&lt;T&gt; instead of SCG.HashSet&lt;T&gt;</value>
+  </data>
+  <data name="LuceneDev6007_AnalyzerDescription" xml:space="preserve">
+    <value>JCG.HashSet&lt;T&gt; provides Java-compatible structural equality, formatting and null support, and should be used instead of System.Collections.Generic.HashSet&lt;T&gt;. Suppress this warning where the BCL type is required.</value>
+  </data>
+  <data name="LuceneDev6007_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Use '{0}' instead of '{1}'</value>
+  </data>
+  <data name="LuceneDev6008_AnalyzerTitle" xml:space="preserve">
+    <value>Use JCG.Dictionary&lt;TKey, TValue&gt; instead of SCG.Dictionary&lt;TKey, TValue&gt;</value>
+  </data>
+  <data name="LuceneDev6008_AnalyzerDescription" xml:space="preserve">
+    <value>JCG.Dictionary&lt;TKey, TValue&gt; provides Java-compatible structural equality, formatting and null key support, and should be used instead of System.Collections.Generic.Dictionary&lt;TKey, TValue&gt;. Suppress this warning where the BCL type is required.</value>
+  </data>
+  <data name="LuceneDev6008_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Use '{0}' instead of '{1}'</value>
+  </data>
+  <data name="LuceneDev6009_AnalyzerTitle" xml:space="preserve">
+    <value>Use JCG.OrderedDictionary&lt;TKey, TValue&gt; instead of SCG.OrderedDictionary&lt;TKey, TValue&gt;</value>
+  </data>
+  <data name="LuceneDev6009_AnalyzerDescription" xml:space="preserve">
+    <value>JCG.OrderedDictionary&lt;TKey, TValue&gt; provides Java-compatible structural equality, formatting and null key support, and should be used instead of System.Collections.Generic.OrderedDictionary&lt;TKey, TValue&gt;. Suppress this warning where the BCL type is required.</value>
+  </data>
+  <data name="LuceneDev6009_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Use '{0}' instead of '{1}'</value>
+  </data>
+  <data name="LuceneDev6010_AnalyzerTitle" xml:space="preserve">
+    <value>Use JCG.OrderedHashSet&lt;T&gt; instead of JCG.LinkedHashSet&lt;T&gt;</value>
+  </data>
+  <data name="LuceneDev6010_AnalyzerDescription" xml:space="preserve">
+    <value>JCG.OrderedHashSet&lt;T&gt; should be used instead of JCG.LinkedHashSet&lt;T&gt;. Suppress this warning where the linked type is required.</value>
+  </data>
+  <data name="LuceneDev6010_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Use '{0}' instead of '{1}'</value>
+  </data>
+  <data name="LuceneDev6011_AnalyzerTitle" xml:space="preserve">
+    <value>Use JCG.OrderedDictionary&lt;TKey, TValue&gt; instead of JCG.LinkedDictionary&lt;TKey, TValue&gt;</value>
+  </data>
+  <data name="LuceneDev6011_AnalyzerDescription" xml:space="preserve">
+    <value>JCG.OrderedDictionary&lt;TKey, TValue&gt; should be used instead of JCG.LinkedDictionary&lt;TKey, TValue&gt;. Suppress this warning where the linked type is required.</value>
+  </data>
+  <data name="LuceneDev6011_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Use '{0}' instead of '{1}'</value>
+  </data>
 
   <!-- 2000: BCL numeric Parse/TryParse missing IFormatProvider -->
   <data name="LuceneDev2000_AnalyzerTitle" xml:space="preserve">

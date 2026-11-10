@@ -9,6 +9,12 @@ LuceneDev1012 | Design   | Warning  | Methods should not return writable arrays
 LuceneDev1013 | Design   | Warning  | Public members should not be nullable enums
 LuceneDev1014 | Design   | Disabled | Members should not accept or return IEnumerable<T> (one-time port aid; disabled by default)
 LuceneDev1015 | Design   | Warning  | Members should not accept or return List<T> or Dictionary<K, V>; prefer interface types
+LuceneDev6006 | Usage    | Warning  | Use JCG.List<T> instead of SCG.List<T>
+LuceneDev6007 | Usage    | Warning  | Use JCG.HashSet<T> instead of SCG.HashSet<T>
+LuceneDev6008 | Usage    | Warning  | Use JCG.Dictionary<TKey, TValue> instead of SCG.Dictionary<TKey, TValue>
+LuceneDev6009 | Usage    | Warning  | Use JCG.OrderedDictionary<TKey, TValue> instead of SCG.OrderedDictionary<TKey, TValue>
+LuceneDev6010 | Usage    | Warning  | Use JCG.OrderedHashSet<T> instead of JCG.LinkedHashSet<T>
+LuceneDev6011 | Usage    | Warning  | Use JCG.OrderedDictionary<TKey, TValue> instead of JCG.LinkedDictionary<TKey, TValue>
 LuceneDev7000 | Naming   | Warning  | Private fields should be camelCase, optionally with a leading underscore
 LuceneDev7001 | Naming   | Warning  | Protected fields should use the 'm_' prefix followed by camelCase
 LuceneDev7002 | Naming   | Warning  | Method parameters should be camelCase
