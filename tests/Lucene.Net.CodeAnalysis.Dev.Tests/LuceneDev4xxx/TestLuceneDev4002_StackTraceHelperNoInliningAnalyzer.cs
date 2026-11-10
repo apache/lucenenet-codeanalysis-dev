@@ -20,8 +20,12 @@ using Lucene.Net.CodeAnalysis.Dev.LuceneDev4xxx;
 using Lucene.Net.CodeAnalysis.Dev.TestUtilities;
 using Lucene.Net.CodeAnalysis.Dev.Utility;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Testing;
 using NUnit.Framework;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev4xxx
@@ -30,9 +34,9 @@ namespace Lucene.Net.CodeAnalysis.Dev.Tests.LuceneDev4xxx
     public class TestLuceneDev4002_StackTraceHelperNoInliningAnalyzer
     {
         // Stub of StackTraceHelper appended to test sources, matching the
-        // Lucene.Net.Support.ExceptionHandling.StackTraceHelper API surface.
+        // Lucene.Net.Util.StackTraceHelper API surface.
         private const string StackTraceHelperStub = @"
-namespace Lucene.Net.Support.ExceptionHandling
+namespace Lucene.Net.Util
 {
     public static class StackTraceHelper
     {
@@ -58,7 +62,7 @@ public class Caller
 {
     public void Check()
     {
-        if ({|#0:Lucene.Net.Support.ExceptionHandling.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge))|})
+        if ({|#0:Lucene.Net.Util.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge))|})
         {
         }
     }
@@ -100,7 +104,7 @@ public class Caller
 {
     public void Check()
     {
-        if (Lucene.Net.Support.ExceptionHandling.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge)))
+        if (Lucene.Net.Util.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge)))
         {
         }
     }
@@ -131,7 +135,7 @@ public class Caller
 {
     public void Check()
     {
-        if (Lucene.Net.Support.ExceptionHandling.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge)))
+        if (Lucene.Net.Util.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge)))
         {
         }
     }
@@ -174,7 +178,7 @@ public class Caller
 {
     public void Check()
     {
-        if ({|#0:Lucene.Net.Support.ExceptionHandling.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge))|})
+        if ({|#0:Lucene.Net.Util.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge))|})
         {
         }
     }
@@ -196,36 +200,219 @@ public class Caller
         }
 
         [Test]
-        public async Task LuceneDev4002_NoDiagnostic_For_SingleArgOverload()
+        public async Task LuceneDev4002_Reports_For_SingleArgOverload_With_Nameof()
         {
-            // The single-arg overload doesn't validate the owning class, so we don't
-            // require methods referenced through it to have NoInlining. Per the issue,
-            // only the 2-arg form is in scope.
-            var testCode = @"
+            await VerifyAsync(
+                Target("public void Merge() { var x = 1; }")
+                    + Caller("{|#0:StackTraceHelper.DoesStackTraceContainMethod(nameof(Target.Merge))|}"),
+                references: null,
+                Missing("Target.Merge"));
+        }
+
+        [Test]
+        public async Task LuceneDev4002_NoDiagnostic_For_SingleArgOverload_When_Target_Has_NoInlining()
+        {
+            await VerifyAsync(
+                Target("[MethodImpl(MethodImplOptions.NoInlining)] public void Merge() { var x = 1; }")
+                    + Caller("StackTraceHelper.DoesStackTraceContainMethod(nameof(Target.Merge))"),
+                references: null);
+        }
+
+        [Test]
+        public async Task LuceneDev4002_NoDiagnostic_For_SingleArgOverload_With_Literal()
+        {
+            // A name alone doesn't identify a method, and could match any type's method.
+            await VerifyAsync(
+                Target("public void Merge() { var x = 1; }")
+                    + Caller(@"StackTraceHelper.DoesStackTraceContainMethod(""Merge"")"),
+                references: null);
+        }
+
+        [Test]
+        public async Task LuceneDev4002_NoDiagnostic_For_SingleArgOverload_When_Target_Has_EmptyBody()
+        {
+            await VerifyAsync(
+                Target("public void Merge() { }")
+                    + Caller("StackTraceHelper.DoesStackTraceContainMethod(nameof(Target.Merge))"),
+                references: null);
+        }
+
+        [Test]
+        public async Task LuceneDev4002_NoDiagnostic_For_SingleArgOverload_When_Target_Is_Not_A_Method()
+        {
+            await VerifyAsync(
+                Target("public int Count => 0;")
+                    + Caller("StackTraceHelper.DoesStackTraceContainMethod(nameof(Target.Count))"),
+                references: null);
+        }
+
+        [Test]
+        public async Task LuceneDev4002_Reports_For_SingleArgOverload_When_Any_Overload_Is_Missing_NoInlining()
+        {
+            // StackTraceHelper compares names, so either overload could be the one that's inlined.
+            await VerifyAsync(
+                Target(@"
+    [MethodImpl(MethodImplOptions.NoInlining)] public void Merge() { var x = 1; }
+    public void Merge(int y) { var x = y; }")
+                    + Caller("{|#0:StackTraceHelper.DoesStackTraceContainMethod(nameof(Target.Merge))|}"),
+                references: null,
+                Missing("Target.Merge"));
+        }
+
+        [Test]
+        public async Task LuceneDev4002_Reports_When_Arguments_Are_Named_Out_Of_Order()
+        {
+            await VerifyAsync(
+                Target("public void Merge() { var x = 1; }")
+                    + Caller("{|#0:StackTraceHelper.DoesStackTraceContainMethod(methodName: nameof(Target.Merge), className: nameof(Target))|}"),
+                references: null,
+                Missing("Target.Merge"));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task LuceneDev4002_Reports_When_Referenced_Assembly_Target_Is_Missing_NoInlining(bool referenceAssembly)
+        {
+            await VerifyAsync(
+                Caller("{|#0:StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge))|}"),
+                await EmitAsync(Target("public void Merge() { var x = 1; }"), referenceAssembly),
+                Missing("Target.Merge"));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task LuceneDev4002_NoDiagnostic_When_Referenced_Assembly_Target_Has_NoInlining(bool referenceAssembly)
+        {
+            await VerifyAsync(
+                Caller("StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge))"),
+                await EmitAsync(Target("[MethodImpl(MethodImplOptions.NoInlining)] public void Merge() { var x = 1; }"), referenceAssembly));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task LuceneDev4002_Reports_For_SingleArgOverload_When_Referenced_Assembly_Target_Is_Missing_NoInlining(bool referenceAssembly)
+        {
+            await VerifyAsync(
+                Caller("{|#0:StackTraceHelper.DoesStackTraceContainMethod(nameof(Target.Merge))|}"),
+                await EmitAsync(Target("public void Merge() { var x = 1; }"), referenceAssembly),
+                Missing("Target.Merge"));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task LuceneDev4002_NoDiagnostic_For_SingleArgOverload_When_Referenced_Assembly_Target_Has_NoInlining(bool referenceAssembly)
+        {
+            await VerifyAsync(
+                Caller("StackTraceHelper.DoesStackTraceContainMethod(nameof(Target.Merge))"),
+                await EmitAsync(Target("[MethodImpl(MethodImplOptions.NoInlining)] public void Merge() { var x = 1; }"), referenceAssembly));
+        }
+
+        [Test]
+        public async Task LuceneDev4002_Reports_Literal_Method_On_Referenced_Assembly_Type()
+        {
+            await VerifyAsync(
+                Caller(@"{|#0:StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), ""Merge"")|}"),
+                await EmitAsync(Target("public void Merge() { var x = 1; }"), referenceAssembly: true),
+                Missing("Target.Merge"));
+        }
+
+        [Test]
+        public async Task LuceneDev4002_NoDiagnostic_For_Private_Method_On_Referenced_Assembly_Type()
+        {
+            // Not visible to this compilation, so there is nothing to check.
+            await VerifyAsync(
+                Caller(@"StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), ""Merge"")"),
+                await EmitAsync(Target("private void Merge() { var x = 1; }"), referenceAssembly: true));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task LuceneDev4002_NoDiagnostic_For_Abstract_Method_On_Referenced_Assembly_Type(bool referenceAssembly)
+        {
+            // NoInlining isn't inherited and has no effect here (LuceneDev4000).
+            var library = @"
+public abstract class Target
+{
+    public abstract void Merge();
+}";
+            await VerifyAsync(
+                Caller("StackTraceHelper.DoesStackTraceContainMethod(nameof(Target), nameof(Target.Merge))"),
+                await EmitAsync(library, referenceAssembly));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task LuceneDev4002_NoDiagnostic_For_Interface_Method_On_Referenced_Assembly_Type(bool referenceAssembly)
+        {
+            var library = @"
+public interface ITarget
+{
+    void Merge();
+}";
+            await VerifyAsync(
+                Caller("StackTraceHelper.DoesStackTraceContainMethod(nameof(ITarget.Merge))"),
+                await EmitAsync(library, referenceAssembly));
+        }
+
+        private static string Target(string members) => @"
+using System.Runtime.CompilerServices;
+
 public class Target
 {
-    public void Merge()
+    " + members + @"
+}
+";
+
+        private static string Caller(string expression) => @"
+namespace CallerNamespace
+{
+    using Lucene.Net.Util;
+
+    public class Caller
     {
-        var x = 1;
+        public bool Check() => " + expression + @";
     }
 }
+" + StackTraceHelperStub;
 
-public class Caller
-{
-    public void Check()
-    {
-        if (Lucene.Net.Support.ExceptionHandling.StackTraceHelper.DoesStackTraceContainMethod(nameof(Target.Merge)))
+        private static DiagnosticResult Missing(string methodName) =>
+            new DiagnosticResult(Descriptors.LuceneDev4002_MissingNoInlining)
+                .WithSeverity(DiagnosticSeverity.Warning)
+                .WithLocation(0)
+                .WithArguments(methodName);
+
+        private static async Task VerifyAsync(string testCode, MetadataReference? references, params DiagnosticResult[] expected)
         {
-        }
-    }
-}" + StackTraceHelperStub;
-
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev4002_StackTraceHelperNoInliningAnalyzer())
             {
                 TestCode = testCode
             };
+            test.ExpectedDiagnostics.AddRange(expected);
+            if (references is not null)
+                test.TestState.AdditionalReferences.Add(references);
 
             await test.RunAsync();
+        }
+
+        // Emits a real assembly, because a project reference within a test is an in-memory
+        // compilation whose symbols still have their source. A reference assembly is what
+        // MSBuild passes the compiler for a project reference.
+        private static async Task<MetadataReference> EmitAsync(string source, bool referenceAssembly)
+        {
+            var references = await ReferenceAssemblies.Default.ResolveAsync(LanguageNames.CSharp, CancellationToken.None);
+            var compilation = CSharpCompilation.Create(
+                "TargetLibrary",
+                new[] { CSharpSyntaxTree.ParseText(source) },
+                references,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+            using var stream = new MemoryStream();
+            var result = compilation.Emit(
+                stream,
+                options: new EmitOptions(metadataOnly: referenceAssembly, includePrivateMembers: !referenceAssembly));
+            Assert.That(result.Success, Is.True, string.Join("\n", result.Diagnostics));
+
+            return MetadataReference.CreateFromImage(stream.ToArray());
         }
     }
 }

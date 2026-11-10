@@ -307,6 +307,39 @@ under the License.
     <value>Call to '{0}' uses a single-character string literal. Use the char overload instead (e.g., 'x' instead of "x").</value>
   </data>
 
+  <!-- 6012: StackTraceHelper className argument should use nameof -->
+  <data name="LuceneDev6012_AnalyzerTitle" xml:space="preserve">
+    <value>StackTraceHelper className argument should use nameof</value>
+  </data>
+  <data name="LuceneDev6012_AnalyzerDescription" xml:space="preserve">
+    <value>Using nameof for the className argument of StackTraceHelper.DoesStackTraceContainMethod lets the compiler check the reference and keeps it correct when the type is renamed. Suppress this if the type cannot be referenced from the calling code.</value>
+  </data>
+  <data name="LuceneDev6012_AnalyzerMessageFormat" xml:space="preserve">
+    <value>The className argument {0} of StackTraceHelper.DoesStackTraceContainMethod should use nameof.</value>
+  </data>
+
+  <!-- 6013: StackTraceHelper methodName argument should use nameof -->
+  <data name="LuceneDev6013_AnalyzerTitle" xml:space="preserve">
+    <value>StackTraceHelper methodName argument should use nameof</value>
+  </data>
+  <data name="LuceneDev6013_AnalyzerDescription" xml:space="preserve">
+    <value>Using nameof for the methodName argument of StackTraceHelper.DoesStackTraceContainMethod lets the compiler check the reference and keeps it correct when the method is renamed. Suppress this if the method cannot be referenced from the calling code.</value>
+  </data>
+  <data name="LuceneDev6013_AnalyzerMessageFormat" xml:space="preserve">
+    <value>The methodName argument {0} of StackTraceHelper.DoesStackTraceContainMethod should use nameof.</value>
+  </data>
+
+  <!-- 6014: StackTraceHelper references a method that is not declared on the named type -->
+  <data name="LuceneDev6014_AnalyzerTitle" xml:space="preserve">
+    <value>StackTraceHelper call should reference a method declared on the named type</value>
+  </data>
+  <data name="LuceneDev6014_AnalyzerDescription" xml:space="preserve">
+    <value>StackTraceHelper.DoesStackTraceContainMethod matches the exact type that declares a stack frame's method, so a call naming a method that the type does not declare, including an inherited method or a property, can never match. Method names that do not use nameof are only checked against types declared in the current project, because private members of types in referenced assemblies are not visible to this rule.</value>
+  </data>
+  <data name="LuceneDev6014_AnalyzerMessageFormat" xml:space="preserve">
+    <value>Type '{0}' does not declare a method named '{1}', so this StackTraceHelper.DoesStackTraceContainMethod call can never match.</value>
+  </data>
+
   <!-- 2000: BCL numeric Parse/TryParse missing IFormatProvider -->
   <data name="LuceneDev2000_AnalyzerTitle" xml:space="preserve">
     <value>Numeric Parse/TryParse should specify an IFormatProvider</value>
