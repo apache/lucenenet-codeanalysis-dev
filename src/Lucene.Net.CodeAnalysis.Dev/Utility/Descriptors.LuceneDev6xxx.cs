@@ -76,5 +76,29 @@ namespace Lucene.Net.CodeAnalysis.Dev.Utility
                 Usage,
                 Info
             );
+
+        // 6012: StackTraceHelper className argument should use nameof
+        public static readonly DiagnosticDescriptor LuceneDev6012_StackTraceHelperClassNameShouldUseNameof =
+            Diagnostic(
+                "LuceneDev6012",
+                Usage,
+                Warning
+            );
+
+        // 6013: StackTraceHelper methodName argument should use nameof
+        public static readonly DiagnosticDescriptor LuceneDev6013_StackTraceHelperMethodNameShouldUseNameof =
+            Diagnostic(
+                "LuceneDev6013",
+                Usage,
+                Warning
+            );
+
+        // 6014: StackTraceHelper references a method that is not declared on the named type
+        public static readonly DiagnosticDescriptor LuceneDev6014_StackTraceHelperMethodNotDeclared =
+            Diagnostic(
+                "LuceneDev6014",
+                Usage,
+                Error
+            );
     }
 }
