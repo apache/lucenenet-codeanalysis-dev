@@ -129,4 +129,16 @@ under the License.
     <value>Rename to '{0}'</value>
     <comment>Title for a rename code fix; {0} is the suggested new name.</comment>
   </data>
+  <data name="ReplaceWithCodeTagX" xml:space="preserve">
+    <value>Replace with &lt;c&gt;{0}&lt;/c&gt;</value>
+    <comment>Title for a code fix that replaces an XML doc tag with a code tag; {0} is the text inside the code tag.</comment>
+  </data>
+  <data name="ReplaceWithTextX" xml:space="preserve">
+    <value>Replace with '{0}'</value>
+    <comment>Title for a code fix that replaces an XML doc tag with plain text; {0} is the replacement text.</comment>
+  </data>
+  <data name="MakeXPublic" xml:space="preserve">
+    <value>Make '{0}' public</value>
+    <comment>Title for a code fix that changes the accessibility of a member to public; {0} is the member name.</comment>
+  </data>
 </root>

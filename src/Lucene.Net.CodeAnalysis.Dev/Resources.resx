@@ -615,4 +615,14 @@ under the License.
     <value>Type '{0}' contains a non-.NET numeric term; use .NET numeric type names such as Int32, Int64, Int16 or Single.</value>
   </data>
 
+  <data name="LuceneDev3000_AnalyzerTitle" xml:space="preserve">
+    <value>Publicly visible XML doc comments should not reference non-public symbols with cref</value>
+  </data>
+  <data name="LuceneDev3000_AnalyzerDescription" xml:space="preserve">
+    <value>A &lt;see cref="..."/&gt; or &lt;seealso cref="..."/&gt; tag in the XML doc comment of a publicly visible symbol references a symbol that is not publicly visible. This compiles without warning, but produces a broken link in the generated API documentation. Use a &lt;c&gt; tag or plain text instead, or make the referenced symbol publicly visible.</value>
+  </data>
+  <data name="LuceneDev3000_AnalyzerMessageFormat" xml:space="preserve">
+    <value>The cref '{0}' references a symbol that is not publicly visible, which produces a broken link in the API documentation</value>
+  </data>
+
 </root>
