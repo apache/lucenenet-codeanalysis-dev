@@ -106,6 +106,36 @@ namespace Lucene.Net.CodeAnalysis.Dev.CodeFixes.Tests.LuceneDev6xxx
         }
 
         [Test]
+        public async Task ConflictingJCGAlias_UsesFullyQualifiedName()
+        {
+            const string testCode =
+                """
+                using System.Collections.Generic;
+                using JCG = System.Text;
+
+                public class Sample
+                {
+                    private readonly IList<int> values = new {|LuceneDev6006:List<int>|}();
+                    private readonly JCG.StringBuilder builder = new JCG.StringBuilder();
+                }
+                """;
+
+            const string fixedCode =
+                """
+                using System.Collections.Generic;
+                using JCG = System.Text;
+
+                public class Sample
+                {
+                    private readonly IList<int> values = new J2N.Collections.Generic.List<int>();
+                    private readonly JCG.StringBuilder builder = new JCG.StringBuilder();
+                }
+                """;
+
+            await CreateTest(testCode, fixedCode).RunAsync();
+        }
+
+        [Test]
         public async Task QualifiedNames_AreReplacedWithJCGAlias()
         {
             const string testCode =
