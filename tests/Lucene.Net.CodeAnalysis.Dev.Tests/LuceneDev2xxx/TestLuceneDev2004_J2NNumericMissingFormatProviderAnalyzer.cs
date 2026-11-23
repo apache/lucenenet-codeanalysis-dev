@@ -49,7 +49,7 @@ public class Sample
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2004_J2NNumericMissingFormatProviderAnalyzer())
             {
                 TestCode = testCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net100,
                 ExpectedDiagnostics = { expected }
             };
             test.TestState.AdditionalReferences.Add(J2NReference);
@@ -69,7 +69,7 @@ public class Sample
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2004_J2NNumericMissingFormatProviderAnalyzer())
             {
                 TestCode = testCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net80
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net100
             };
             test.TestState.AdditionalReferences.Add(J2NReference);
             await test.RunAsync();

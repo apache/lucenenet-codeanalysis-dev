@@ -94,7 +94,7 @@ public class Sample
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2001_BclNumericToStringAnalyzer())
             {
                 TestCode = testCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net100,
                 ExpectedDiagnostics = { expected }
             };
             await test.RunAsync();
@@ -114,7 +114,7 @@ public class Sample
             var test = new InjectableCSharpAnalyzerTest(() => new LuceneDev2001_BclNumericToStringAnalyzer())
             {
                 TestCode = testCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net80
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net100
             };
             await test.RunAsync();
         }

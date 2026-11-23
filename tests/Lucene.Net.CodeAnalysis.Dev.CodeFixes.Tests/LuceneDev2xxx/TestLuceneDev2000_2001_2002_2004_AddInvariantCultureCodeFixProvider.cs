@@ -160,7 +160,7 @@ public class Sample
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net100,
                 ExpectedDiagnostics = { expected },
                 CodeActionEquivalenceKey = "Add CultureInfo.InvariantCulture",
                 NumberOfIncrementalIterations = 2,
